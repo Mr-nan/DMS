@@ -3,36 +3,34 @@ var Platform = require('Platform');
 import * as StorageKeyNames from "../constant/storageKeyNames";
 const request = (url, method, params,backToLogin) => {
 
-    let isOk;
-    let body = '';
-    for (let key of Object.keys(params)) {
-        body += key;
-        body += '=';
-        body += params[key];
-        body += '&';
-    }
-    if (body.length > 0) {
-        body = body.substring(0, body.length - 1);
-    }
+
 
     return new Promise((resolve, reject) => {
         StorageUtil.mGetItem(StorageKeyNames.TOKEN, (data) => {
-            let token = '';
             if (data.code === 1) {
-                token = data.result;
+                params.reqtoken = data.result;
+                console.log('reqtoken===' + data.result);
             }
-            console.log('token===' + token);
-            let device_code = '';
 
             if (Platform.OS === 'android') {
-                device_code = 'dycd_dms_manage_android';
+                params.device_code = 'dycd_dms_manage_android';
             } else {
-                device_code = 'dycd_dms_manage_ios';
+                params.device_code = 'dycd_dms_manage_ios';
             }
 
-            console.log(url + '?token=' + token + '&device_code=' + device_code+'&'+body);
+            let isOk;
+            let body = '';
+            for (let key of Object.keys(params)) {
+                body += key;
+                body += '=';
+                body += params[key];
+                body += '&';
+            }
+            if (body.length > 0) {
+                body = body.substring(0, body.length - 1);
+            }
 
-            fetch(url + '?token=' + token + '&device_code=' + device_code+'&'+body, {
+            fetch(url + '?'+body, {
                 method,
                 body
             })
@@ -51,7 +49,7 @@ const request = (url, method, params,backToLogin) => {
                             console.log(key+"===" + params[key]);
                         }
                         console.log("success----------" + JSON.stringify(responseData));
-                        if (responseData.code == 1) {
+                        if (responseData.retcode == 1) {
                             resolve({mjson: responseData, mycode: 1});
                         } else {
                             if(responseData.code==7040011){
