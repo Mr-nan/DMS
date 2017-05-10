@@ -1,0 +1,24 @@
+export const ERRORRESULT = "errorresult";  //判断是否有错误信息
+export const ISLOGIN = "islogin";         //判断是否登录
+export const USERNAME = "username";       //用户名
+export const USERPWD = "userpwd";         //用户密码
+export const UPDATAURL = "updataurl";     //判断是否需要更新
+export const TOKEN = "token";             //应用TOKEN
+export const BLIUETOOTH_SHOW = "bliuetooth_show"; //蓝牙页面是否开启
+export const AUTO_ASSESS = "auto_assess";  //评估权限
+export const CHECK_CAR = "check_car";      //盘库权限
+export const CLOSE_THE_CAR = "close_the_car"; //收车权限
+export const VEHICLE_STORAGE = "vehicle_storage"; //全库存权限
+export const PATROL_REPORT = "PATROL_REPORT";     //巡查报告权限
+export const OBD_SUPERVICE = "OBD_SUPERVICE";     //OBD监管权限
+export const TAG_VIEW = "tag_view";               //查看部位json
+export const NEED_REFRASH = "NEED_REFRASH";       //添加成功，需要刷新
+export const ERROE_JSON = "erroe_json";           //错误json
+export const ERROE_REQUEST = "erroe_request";     //错误参数
+export const PATROLEVALONE = "patrolevalone";     //巡察报告存储1
+export const PATROLEVALTWO = "patrolevaltwo";     //巡察报告存储2
+export const PATROLEVALTHREE = "patrolevalthree"; //巡查报告存储3
+export const PATROLEVALREFRESH = "patrolevalrefresh"; //巡查报告暂存刷新
+export const CHANGE_URL = "change_url";               //手动更改地址
+
+export const USER_FUNCTION = "user_function";         //功能模块
