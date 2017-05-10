@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {AppRegistry, ListView, Text, View} from 'react-native';
+import {AppRegistry, ListView, Text, View,StyleSheet,RefreshControl} from 'react-native';
 import {ObdCustomItem, ObdCarItem, ObdCarDetailTable} from './ComponentBlob'
 import BaseComponent from '../component/BaseComponent';
 import {request} from '../utils/RequestUtil';
@@ -22,7 +22,8 @@ export  default class ObdCustom extends BaseComponent {
             isRefreshing: false
         };
     }
-    initFinish(){
+
+    initFinish() {
         this.getData();
     }
 
@@ -34,11 +35,11 @@ export  default class ObdCustom extends BaseComponent {
         request(Urls.OBD_CUSTOMER_LIST, 'Post', maps)
 
             .then((response) => {
-            console.log(response.mjson.retdata);
+                    console.log('asdfk;alsdkf;lksd;fk;sd');
                     if (page == 1 && response.mjson.retdata.list.length <= 0) {
                         this.setState({renderPlaceholderOnly: 'null'});
                     } else {
-                        allPage= response.mjson.retdata.total/10;
+                        allPage = response.mjson.retdata.total / 10;
                         allSouce.push(...response.mjson.retdata.list);
                         const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
                         this.setState({
@@ -85,7 +86,7 @@ export  default class ObdCustom extends BaseComponent {
             return (<View style={{backgroundColor: fontAndColor.COLORA3, flex: 1, paddingTop: Pixel.getPixel(15)}}>
                 {this.loadView()}
             </View>);
-        }else{
+        } else {
 
             return (
                 <View style={styles.container}>
@@ -116,7 +117,6 @@ export  default class ObdCustom extends BaseComponent {
         return (
             <ObdCustomItem
                 onPress={()=>{alert('safsdf')}}
-                textStyle={rowData === 'John' ? {color: 'red'} : null}
                 name={'刘勇（123）'} carNum={'OBD监管车辆:'+"4辆"} status={'预警'} warningTip={'预警说明：'+'风控待审核'}
                 onPressCheckResult={()=>{alert('查看')}}
             />);
@@ -149,3 +149,15 @@ export  default class ObdCustom extends BaseComponent {
 
     }
 }
+
+const styles = StyleSheet.create({
+    container: {
+
+        flex: 1,
+        marginTop: Pixel.getPixel(0),   //设置listView 顶在最上面
+        backgroundColor: fontAndColor.COLORA3,
+    },
+    listStyle: {
+        marginTop: Pixel.getPixel(0)
+    },
+});
