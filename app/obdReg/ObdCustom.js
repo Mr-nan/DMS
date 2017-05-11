@@ -133,7 +133,7 @@ export  default class ObdCustom extends BaseComponent {
                     merge_id: rowData.merge_id,
                 });}}
                 textStyle={rowData.threshold_warning_status == '1' ? {color: 'red'} : null}
-                checkStyle={rowData.merge_threshold_warn_record_id == '0' ? {height: 0, width: 0,backgroundColor:'white'} : null}
+                checkStyle={rowData.merge_threshold_warn_record_id == '0' ? {display: 'none'} : null}
                 warningStyle={(rowData.threshold_warning_status == '3' || rowData.threshold_warning_status == '5') ? {color: 'red'} : null}
                 name={rowData.name+'（'+rowData.companyname+'）'} carNum={'OBD监管车辆：'+rowData.obd_reg_num+"辆"}
                 status={rowData.threshold_warning_status_text} warningTip={'预警说明：'+rowData.threshold_warning_audit_status_text}
@@ -146,18 +146,6 @@ export  default class ObdCustom extends BaseComponent {
 
     }
 
-    _tableRenderRow = (rowData, sectionID, rowId) => {
-        //warningStatus, time,obdNum,explains,borderStyle
-        return (
-
-            <ObdCarDetailTable
-                borderStyle={rowId==(data.length-1) ? {borderBottomWidth: 1}:null}
-                warningStatus={'正常'}
-                obdNum={'32749'} time={'3478'}
-                explains={'jfadsjlioppioipip'}
-            />);
-
-    }
 }
 
 const styles = StyleSheet.create({

@@ -1,5 +1,15 @@
 import React, {Component} from 'react';
-import {AppRegistry, ListView, Text, View,StyleSheet,RefreshControl,TextInput,Image,TouchableOpacity} from 'react-native';
+import {
+    AppRegistry,
+    ListView,
+    Text,
+    View,
+    StyleSheet,
+    RefreshControl,
+    TextInput,
+    Image,
+    TouchableOpacity
+} from 'react-native';
 import {ObdCarItem} from './ComponentBlob'
 import BaseComponent from '../component/BaseComponent';
 import {request} from '../utils/RequestUtil';
@@ -18,7 +28,7 @@ export  default class ObdCarList extends BaseComponent {
     // 初始化模拟数据
     constructor(props) {
         super(props);
-        this.keyword=''
+        this.keyword = ''
         this.state = {
             dataSource: {},
             renderPlaceholderOnly: 'blank',
@@ -27,8 +37,8 @@ export  default class ObdCarList extends BaseComponent {
     }
 
     initFinish() {
-        allSouce=[]
-        page=1;
+        allSouce = []
+        page = 1;
         this.props.screenProps.showModal(true);
         this.getData();
     }
@@ -93,6 +103,7 @@ export  default class ObdCarList extends BaseComponent {
     textChange = (text) => {
         this.keyword = text;
     };
+
     render() {
         if (this.state.renderPlaceholderOnly !== 'success') {
             return (<View style={{backgroundColor: fontAndColor.COLORA3, flex: 1, paddingTop: Pixel.getPixel(15)}}>
@@ -144,9 +155,10 @@ export  default class ObdCarList extends BaseComponent {
             );
         }
     }
-    searchData=()=>{
-        allSouce=[]
-        page=1;
+
+    searchData = () => {
+        allSouce = []
+        page = 1;
         this.props.screenProps.showModal(true);
         this.getData();
     }
@@ -155,7 +167,9 @@ export  default class ObdCarList extends BaseComponent {
         //modelName, vin, businessType, obdNum,obdStatus, noneSubmit, textStyle, onPress,vinTextStyle,auto_vin_from_obd
         return (
             <ObdCarItem
-                onPress={()=>{alert('safsdf')}}
+                onPress={()=>{this.toNextPage('ObdCarDetail',{
+                    rid: this.props.navigation.state.params.merge_id,
+                });}}
                 textStyle={rowData.is_explain=='1' ? {color: 'red'} : null}
                 modelName={rowData.model_name}
                 vin={'实车车架号：'+rowData.auto_vin}
@@ -164,7 +178,6 @@ export  default class ObdCarList extends BaseComponent {
                 businessType={rowData.business_type+'：'+rowData.payment_number}
                 obdNum={'Obd设备号：'+rowData.obd_number}
                 obdStatus={rowData.obd_status_text} noneSubmit={rowData.is_explain == '1' ?  '未提交说明！': ''}
-                onPressCheckResult={()=>{alert('查看')}}
             />);
 
     }
@@ -179,19 +192,19 @@ const styles = StyleSheet.create({
     listStyle: {
         marginTop: Pixel.getPixel(10),
     },
-    searchStyle:{
-        flexDirection:'row',
-        marginHorizontal:10,
-        paddingHorizontal:10,
-        alignItems:'center',
+    searchStyle: {
+        flexDirection: 'row',
+        marginHorizontal: 10,
+        paddingHorizontal: 10,
+        alignItems: 'center',
         marginTop: Pixel.getPixel(58),
-        backgroundColor:'white',
-        borderRadius:92,
-        height:Pixel.getPixel(40)
+        backgroundColor: 'white',
+        borderRadius: 92,
+        height: Pixel.getPixel(40)
     },
-    searchIcon:{
-        width:Pixel.getPixel(28),
-        height:Pixel.getPixel(28),
-        margin:3
+    searchIcon: {
+        width: Pixel.getPixel(28),
+        height: Pixel.getPixel(28),
+        margin: 3
     }
 });
