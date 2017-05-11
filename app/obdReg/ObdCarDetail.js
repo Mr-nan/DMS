@@ -23,6 +23,7 @@ let allSouce = [];
 let tabSouce = [];
 let obd_info = null;
 let regulation_info = null;
+let auto_base_info;
 
 export  default class ObdCarDetail extends BaseComponent {
     // 初始化模拟数据
@@ -44,9 +45,9 @@ export  default class ObdCarDetail extends BaseComponent {
     }
 
     getData = () => {
-        let auto_base_info = null;
+        auto_base_info = null;
         regulation_info = null;
-        tabSouce=[];
+        tabSouce = [];
         let maps = {
             // rid: this.props.navigation.state.params.rid,
             rid: '39',
@@ -107,7 +108,7 @@ export  default class ObdCarDetail extends BaseComponent {
     }
 
     render() {
-        if (this.state.renderPlaceholderOnly !== 'success') {
+        if (this.state.renderPlaceholderOnly !== 'success' || auto_base_info ==null ) {
             return (<View style={{backgroundColor: fontAndColor.COLORA3, flex: 1, paddingTop: Pixel.getPixel(15)}}>
                 {this.loadView()}
                 <AllNavigationView title={this.props.navigation.state.params.name} backIconClick={() => {
@@ -151,17 +152,23 @@ export  default class ObdCarDetail extends BaseComponent {
                                 <View style={styles.obdStatus}>
                                     <View style={{flexDirection:'row', flex: 1}}>
                                         <Text>OBD状态：</Text>
-                                        <Text style={obd_info.is_explain=='1'? {color: 'red'}: null}>{obd_info.obd_status}</Text>
+                                        <Text
+                                            style={obd_info.is_explain=='1'? {color: 'red'}: null}>{obd_info.obd_status}</Text>
                                     </View>
                                     <TouchableOpacity style={{marginRight:Pixel.getPixel(10)}} activeOpacity={0.8}
-                                                      onPress={()=>{}}>
+                                                      onPress={()=>{this.toNextPage('ObdWarningExplain',{
+                                                          warn_record_id: regulation_info.warn_record_id,
+                                                          freshDataClick: this.freshDataClick});}}>
                                         <Text style={[styles.explainButton, {width: Pixel.getPixel(50)}]}>说明</Text>
                                     </TouchableOpacity>
                                 </View>
                                 <View style={styles.obdStatus}>
                                     <View style={{flex: 1}}/>
                                     <TouchableOpacity style={{marginRight:Pixel.getPixel(10)}} activeOpacity={0.8}
-                                                      onPress={()=>{}}>
+                                                      onPress={()=>{this.toNextPage('ObdChangeBind',{
+                                                          product_type_code : regulation_info.product_type_code,
+                                                          regulator_id : regulation_info.regulator_id,
+                                                          freshDataClick: this.freshDataClick});}}>
                                         <Text style={styles.explainButton}>重新绑定</Text>
                                     </TouchableOpacity>
                                 </View>
@@ -182,6 +189,12 @@ export  default class ObdCarDetail extends BaseComponent {
                 </View>
             );
         }
+    }
+
+    freshDataClick=()=>{
+        allSouce = [];
+        this.props.screenProps.showModal(true);
+        this.getData();
     }
 
     renderRow = (rowData, sectionID, rowId) => {
@@ -251,7 +264,8 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         backgroundColor: '#08c5a7',
         padding: Pixel.getPixel(3),
-        marginTop:Pixel.getPixel(10)
+        marginTop: Pixel.getPixel(10),
+        borderRadius: 3,
     }
 
 });

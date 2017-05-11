@@ -9,6 +9,8 @@ import ObdCheckoutRecordFragment from '../obdReg/ObdCheckoutRecordFragment';
 import ObdCarList from '../obdReg/ObdCarList';
 import ObdCarDetail from '../obdReg/ObdCarDetail';
 import WebScene from '../component/WebScene';
+import ObdWarningExplain from '../obdReg/ObdWarningExplain';
+import ObdChangeBind from '../obdReg/ObdChangeBind';
 
 export default MyApp = StackNavigator({
         Root: {screen: RootScene},
@@ -19,6 +21,8 @@ export default MyApp = StackNavigator({
         ObdCarList:{screen:ObdCarList},
         ObdCarDetail:{screen:ObdCarDetail},
         WebScene:{screen:WebScene},
+        ObdWarningExplain:{screen:ObdWarningExplain},
+        ObdChangeBind:{screen:ObdChangeBind},
     },
     {
         initialRouteName: 'Root',

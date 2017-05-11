@@ -145,7 +145,8 @@ let ObdCustomItemStyles = StyleSheet.create({
         padding: 2,
         backgroundColor: '#08c5a7',
         color: 'white',
-        textAlign: 'center'
+        textAlign: 'center',
+        borderRadius: 3,
     },
     tableContain: {
         flex: 1,
