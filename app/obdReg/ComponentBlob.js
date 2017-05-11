@@ -18,7 +18,7 @@ import {
 export class ObdCustomItem extends PureComponent {
 
     render() {
-        const {name, carNum, status, warningTip, textStyle, onPress, onPressCheckResult}=this.props;
+        const {name, carNum, status, warningTip, textStyle, warningStyle,checkStyle,onPress, onPressCheckResult}=this.props;
         return (
             <TouchableOpacity style={ObdCustomItemStyles.container} activeOpacity={0.8} onPress={onPress}>
                 <View style={ObdCustomItemStyles.container1}>
@@ -32,8 +32,8 @@ export class ObdCustomItem extends PureComponent {
 
                     </View>
                     <View style={{marginTop:10,flexDirection: 'row', alignItems:'center'}}>
-                        <Text style={{textAlign:'left',flex : 1}}>{warningTip}</Text>
-                        <Text style={ObdCustomItemStyles.checkResult} onPress={onPressCheckResult}>查看审核结果</Text>
+                        <Text style={[{textAlign:'left',flex : 1},warningStyle]}>{warningTip}</Text>
+                        <Text style={[ObdCustomItemStyles.checkResult, checkStyle]} onPress={onPressCheckResult}>查看审核结果</Text>
                     </View>
                 </View>
             </TouchableOpacity>
@@ -44,18 +44,22 @@ export class ObdCustomItem extends PureComponent {
 export class ObdCarItem extends PureComponent {
 
     render() {
-        const {modelName, vin, businessType, obdNum, obdStatus, noneSubmit, textStyle, onPress}=this.props;
+        const {modelName, vin, auto_vin_from_obd,businessType, obdNum, obdStatus, noneSubmit, textStyle,vinTextStyle, onPress}=this.props;
         return (
             <TouchableOpacity style={ObdCustomItemStyles.container} activeOpacity={0.8} onPress={onPress}>
                 <View style={ObdCustomItemStyles.container1}>
                     <Text style={{fontWeight: 'bold'}}>{modelName}</Text>
                     <Text style={{marginTop:5}}>{vin}</Text>
+                    <View style={{flexDirection:'row', marginTop:5}}>
+                        <Text>识别车架号：</Text>
+                        <Text style={vinTextStyle}>{auto_vin_from_obd}</Text>
+                    </View>
                     <Text style={{marginTop:5}}>{businessType}</Text>
                     <Text style={{marginTop:5}}>{obdNum}</Text>
                     <View style={{marginTop:5,flexDirection: 'row', alignItems:'center'}}>
                         <View style={{flexDirection:'row', marginRight: 20}}>
                             <Text>OBD状态：</Text>
-                            <Text style={[{color: 'black'},textStyle]}>{obdStatus}</Text>
+                            <Text style={textStyle}>{obdStatus}</Text>
                         </View>
                         <Text style={{color: 'red'}}>{noneSubmit}</Text>
                     </View>
@@ -87,6 +91,34 @@ export class ObdCarDetailTable extends PureComponent {
                     </View>
                 </View>
                 <Text style={{flex:0.3, textAlign: 'center'}}>{explains}</Text>
+            </View>
+
+        )
+    }
+}
+
+export class ObdCheckoutRecordTable extends PureComponent {
+
+    render() {
+        const {userName, explains, time, record, borderStyle}=this.props;
+        return (
+            <View style={[ObdCustomItemStyles.tableContain, borderStyle]}>
+                <View style={[ObdCustomItemStyles.rightLine,{flex:0.38}]}>
+                    <View style={ObdCustomItemStyles.tableView}>
+                        <Text style={{fontSize:11, paddingVertical:5}}>{time}</Text>
+                    </View>
+                </View>
+                <View style={[ObdCustomItemStyles.rightLine,{flex:0.12}]}>
+                    <View style={ObdCustomItemStyles.tableView}>
+                        <Text style={{fontSize:11, paddingVertical:5}}>{userName}</Text>
+                    </View>
+                </View>
+                <View style={[ObdCustomItemStyles.rightLine,{flex:0.2}]}>
+                    <View style={ObdCustomItemStyles.tableView}>
+                        <Text style={{fontSize:11, paddingVertical:5}}>{record}</Text>
+                    </View>
+                </View>
+                <Text style={{flex:0.3, textAlign: 'center',fontSize:11,paddingVertical:5}}>{explains}</Text>
             </View>
 
         )
@@ -132,5 +164,8 @@ let ObdCustomItemStyles = StyleSheet.create({
         flex: 1,
         alignItems:'center',
         justifyContent:'center'
+    },
+    warningText:{
+
     }
 })
