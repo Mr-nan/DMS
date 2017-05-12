@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {AppRegistry, ListView, Text, View, StyleSheet} from 'react-native';
-import {ObdCheckoutRecordTable} from './ComponentBlob'
+import {ObdCheckoutRecordTable} from '../component/ComponentBlob'
 import BaseComponent from '../component/BaseComponent';
 import {request} from '../utils/RequestUtil';
 import * as Urls from '../constant/appUrls';

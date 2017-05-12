@@ -11,7 +11,7 @@ import {
     WebView,
     BackAndroid
 } from 'react-native';
-import {ObdCarDetailTable} from './ComponentBlob'
+import {ObdCarDetailTable} from '../component/ComponentBlob'
 import BaseComponent from '../component/BaseComponent';
 import {request} from '../utils/RequestUtil';
 import * as Urls from '../constant/appUrls';
@@ -108,7 +108,7 @@ export  default class ObdCarDetail extends BaseComponent {
     }
 
     render() {
-        if (this.state.renderPlaceholderOnly !== 'success' || auto_base_info ==null ) {
+        if (this.state.renderPlaceholderOnly !== 'success' || auto_base_info == null) {
             return (<View style={{backgroundColor: fontAndColor.COLORA3, flex: 1, paddingTop: Pixel.getPixel(15)}}>
                 {this.loadView()}
                 <AllNavigationView title={this.props.navigation.state.params.name} backIconClick={() => {
@@ -133,7 +133,7 @@ export  default class ObdCarDetail extends BaseComponent {
                                 <TouchableOpacity
                                     style={{flex:1,flexDirection:'row',justifyContent:'center'}}
                                     onPress={()=>{
-                                this.toNextPage('WebScene',{
+                                        this.toNextPage('WebScene',{
                                     title: 'OBD位置及护栏',
                                     webUrl: obd_info.obd_track_url, });
                             }}>
@@ -191,7 +191,7 @@ export  default class ObdCarDetail extends BaseComponent {
         }
     }
 
-    freshDataClick=()=>{
+    freshDataClick = () => {
         allSouce = [];
         this.props.screenProps.showModal(true);
         this.getData();

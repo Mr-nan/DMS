@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {AppRegistry, ListView, Text, View,StyleSheet,RefreshControl} from 'react-native';
-import {ObdCustomItem, ObdCarItem, ObdCarDetailTable} from './ComponentBlob'
+import {ObdCustomItem, ObdCarItem, ObdCarDetailTable} from '../component/ComponentBlob'
 import BaseComponent from '../component/BaseComponent';
 import {request} from '../utils/RequestUtil';
 import * as Urls from '../constant/appUrls';

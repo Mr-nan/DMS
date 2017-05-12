@@ -11,6 +11,8 @@ import ObdCarDetail from '../obdReg/ObdCarDetail';
 import WebScene from '../component/WebScene';
 import ObdWarningExplain from '../obdReg/ObdWarningExplain';
 import ObdChangeBind from '../obdReg/ObdChangeBind';
+import CarCheckCustomer from '../makingInventory/CarCheckCustomer';
+import CarCheckWifiSelect from '../makingInventory/CarCheckWifiSelect';
 
 export default MyApp = StackNavigator({
         Root: {screen: RootScene},
@@ -23,6 +25,8 @@ export default MyApp = StackNavigator({
         WebScene:{screen:WebScene},
         ObdWarningExplain:{screen:ObdWarningExplain},
         ObdChangeBind:{screen:ObdChangeBind},
+        CarCheckCustomer:{screen:CarCheckCustomer},
+        CarCheckWifiSelect:{screen:CarCheckWifiSelect},
     },
     {
         initialRouteName: 'Root',
