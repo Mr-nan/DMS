@@ -104,38 +104,29 @@ export default class LoginScene extends BaseComponent {
 
     _getImageCode = (code)=>{
         let url = AppUrls.USER_IMG_CODE + "?img_ver_code_key=" + code;
-        console.log('code=========>>>>');
-        console.log(url);
         this.setState({
-            isCheck: true
+            isCheck: true,
         });
         fetch(url).then((response) => {
-            // console.log('arraybuffer=========>>>>');
-            // response.arrayBuffer().then((buffer)=>{
-            //     console.log(buffer);
-            // });
-            // console.log('blob=========>>>>');
-            // response.blob().then((blob) => {
-            //     console.log(blob);
-            // });
-            // console.log('text=========>>>>');
-            // console.log(response.text());
-            // let headers = response.headers;
-            // console.log('headers=========>>>>');
-            // console.log(response);
-            // console.log(headers.map);
-            // for (let key of Object.keys(headers.map)) {
-            //     if(key == 'auth' && !this.isEmpty(headers.map[key][0])){
-            //         let auth = headers.map[key][0];
-            //         let split = auth.split('=');
-            //         this.imageCode = split[1];
-            //         break;
-            //     }
-            // }
+            let headers = response.headers;
+            for (let key of Object.keys(headers.map)) {
+                if(key == 'auth' && !this.isEmpty(headers.map[key][0])){
+                    let auth = headers.map[key][0];
+                    let split = auth.split('=');
+                    this.imageCode = split[1];
+                    break;
+                }
+            }
             return response.arrayBuffer();
+        },()=>{
+            this._showHint('获取验证码失败');
         }).then((rd)=>{
-            console.log('9788888898');
-            console.log(JSON.stringify(rd.get));
+            let base64String ='data:image/png;base64,' + btoa(String.fromCharCode(...new Uint8Array(rd)));
+            this.setState({
+                codeUrl:base64String
+            });
+        },(error)=>{
+            this._showHint('获取验证码失败');
         })
     };
 
@@ -195,8 +186,6 @@ export default class LoginScene extends BaseComponent {
                         || rd.retcode == '-4620002') {
                         //需要输入验证码
                         this._showHint("" + rd.retmsg);
-                        console.log('55566666=====>>>>');
-                        console.log(rd.retdata.img_ver_code_key);
                         this._getImageCode(rd.retdata.img_ver_code_key);
                     }else{
                         if (!this.isEmpty(rd.retmsg)) {

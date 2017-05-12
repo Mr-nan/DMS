@@ -30,16 +30,16 @@ export default class RootScene extends BaseComponent {
     }
 
     initFinish = () => {
-        this.toNextPage('LoginScene',{});
-        // StorageUtil.mGetItem(StorageKeyNames.ISLOGIN, (data) => {
-        //     if (data.code == 1) {
-        //         if(!this.isEmpty(data.result) && data.result == 'true'){
-        //             this.placePage('FunctionScene');
-        //         }else{
-        //             this.toNextPage('LoginScene',{});
-        //         }
-        //     }
-        // });
+        // this.toNextPage('LoginScene',{});
+        StorageUtil.mGetItem(StorageKeyNames.ISLOGIN, (data) => {
+            if (data.code == 1) {
+                if(!this.isEmpty(data.result) && data.result == 'true'){
+                    this.placePage('FunctionScene');
+                }else{
+                    this.toNextPage('LoginScene',{});
+                }
+            }
+        });
 
 
         // let maps = {

@@ -1,6 +1,16 @@
 import React, {Component} from 'react';
-import {AppRegistry, ListView, Text, View,StyleSheet,RefreshControl} from 'react-native';
-import {ObdCustomItem, ObdCarItem, ObdCarDetailTable} from './ComponentBlob'
+import {
+    AppRegistry,
+    ListView,
+    Text,
+    View,
+    StyleSheet,
+    RefreshControl,
+    TextInput,
+    Image,
+    TouchableOpacity
+} from 'react-native';
+import {ObdCarItem} from './ComponentBlob'
 import BaseComponent from '../component/BaseComponent';
 import {request} from '../utils/RequestUtil';
 import * as Urls from '../constant/appUrls';
@@ -12,22 +22,23 @@ var Pixel = new PixelUtil();
 let page = 1;
 let allPage = 1;
 let allSouce = [];
+const searchIcon = require('../../images/assessment_customer_find.png');
 
-export  default class ObdCustom extends BaseComponent {
+export  default class ObdCarList extends BaseComponent {
     // 初始化模拟数据
     constructor(props) {
         super(props);
+        this.keyword = ''
         this.state = {
             dataSource: {},
             renderPlaceholderOnly: 'blank',
-            isRefreshing: false
+            isRefreshing: false,
         };
     }
 
     initFinish() {
-        allSouce=[]
-        page=1;
-        allPage=1;
+        allSouce = []
+        page = 1;
         this.props.screenProps.showModal(true);
         this.getData();
     }
@@ -36,8 +47,10 @@ export  default class ObdCustom extends BaseComponent {
         let maps = {
             p: page,
             r: 10,
+            merge_id: this.props.navigation.state.params.merge_id,
+            keyword: this.keyword,
         };
-        request(Urls.OBD_CUSTOMER_LIST, 'Post', maps)
+        request(Urls.OBD_CAR_LIST, 'Post', maps)
 
             .then((response) => {
                     this.props.screenProps.showModal(false);
@@ -87,11 +100,15 @@ export  default class ObdCustom extends BaseComponent {
         }
     }
 
+    textChange = (text) => {
+        this.keyword = text;
+    };
+
     render() {
         if (this.state.renderPlaceholderOnly !== 'success') {
             return (<View style={{backgroundColor: fontAndColor.COLORA3, flex: 1, paddingTop: Pixel.getPixel(15)}}>
                 {this.loadView()}
-                <AllNavigationView title={'客户列表'} backIconClick={() => {
+                <AllNavigationView title={'车辆列表'} backIconClick={() => {
                     this.backPage();
                 }} rightFootClick={()=>{}}/>
             </View>);
@@ -99,7 +116,19 @@ export  default class ObdCustom extends BaseComponent {
 
             return (
                 <View style={styles.container}>
+                    <View style={styles.searchStyle}>
+                        <TextInput
+                            multiline={true}
+                            style={{flex:1, flexWrap: 'wrap'}}
+                            placeholder={'车架号、OBD设备号、借款单号关键字'}
+                            underlineColorAndroid={"#00000000"}
+                            onChangeText={this.textChange}
+                        />
+                        <TouchableOpacity activeOpacity={0.8} onPress={this.searchData}>
+                            <Image style={styles.searchIcon} source={searchIcon}/>
+                        </TouchableOpacity>
 
+                    </View>
                     <ListView
                         contentContainerStyle={styles.listStyle}
                         dataSource={this.state.dataSource}
@@ -117,7 +146,8 @@ export  default class ObdCustom extends BaseComponent {
                             />
                         }
                     />
-                    <AllNavigationView title={'客户列表'} backIconClick={() => {
+
+                    <AllNavigationView title={'车辆列表'} backIconClick={() => {
                     this.backPage();
                 }} rightFootClick={()=>{}}/>
 
@@ -126,26 +156,31 @@ export  default class ObdCustom extends BaseComponent {
         }
     }
 
+    searchData = () => {
+        allSouce = []
+        page = 1;
+        this.props.screenProps.showModal(true);
+        this.getData();
+    }
+
     renderRow = (rowData, sectionID, rowId) => {
+        //modelName, vin, businessType, obdNum,obdStatus, noneSubmit, textStyle, onPress,vinTextStyle,auto_vin_from_obd
         return (
-            <ObdCustomItem
-                onPress={()=>{this.toNextPage('ObdCarList',{
-                    merge_id: rowData.merge_id,
+            <ObdCarItem
+                onPress={()=>{this.toNextPage('ObdCarDetail',{
+                    rid: this.props.navigation.state.params.merge_id,
                 });}}
-                textStyle={rowData.threshold_warning_status == '1' ? {color: 'red'} : null}
-                checkStyle={rowData.merge_threshold_warn_record_id == '0' ? {display: 'none'} : null}
-                warningStyle={(rowData.threshold_warning_status == '3' || rowData.threshold_warning_status == '5') ? {color: 'red'} : null}
-                name={rowData.name+'（'+rowData.companyname+'）'} carNum={'OBD监管车辆：'+rowData.obd_reg_num+"辆"}
-                status={rowData.threshold_warning_status_text} warningTip={'预警说明：'+rowData.threshold_warning_audit_status_text}
-                onPressCheckResult={()=>{
-                    this.toNextPage('ObdCheckoutRecordFragment',{
-                    name: rowData.name,
-                    merge_threshold_warn_record_id: rowData.merge_threshold_warn_record_id
-                });}}
+                textStyle={rowData.is_explain=='1' ? {color: 'red'} : null}
+                modelName={rowData.model_name}
+                vin={'实车车架号：'+rowData.auto_vin}
+                vinTextStyle={rowData.auto_vin_from_obd==''?{ color: 'red'}:null}
+                auto_vin_from_obd={rowData.auto_vin_from_obd=='' ? '未识别': rowData.auto_vin_from_obd}
+                businessType={rowData.business_type+'：'+rowData.payment_number}
+                obdNum={'Obd设备号：'+rowData.obd_number}
+                obdStatus={rowData.obd_status_text} noneSubmit={rowData.is_explain == '1' ?  '未提交说明！': ''}
             />);
 
     }
-
 }
 
 const styles = StyleSheet.create({
@@ -155,6 +190,21 @@ const styles = StyleSheet.create({
         backgroundColor: fontAndColor.COLORA3,
     },
     listStyle: {
-        marginTop: Pixel.getPixel(48)
+        marginTop: Pixel.getPixel(10),
     },
+    searchStyle: {
+        flexDirection: 'row',
+        marginHorizontal: 10,
+        paddingHorizontal: 10,
+        alignItems: 'center',
+        marginTop: Pixel.getPixel(58),
+        backgroundColor: 'white',
+        borderRadius: 92,
+        height: Pixel.getPixel(40)
+    },
+    searchIcon: {
+        width: Pixel.getPixel(28),
+        height: Pixel.getPixel(28),
+        margin: 3
+    }
 });
