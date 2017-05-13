@@ -115,7 +115,7 @@ export  default class CarCheckCustomer extends BaseComponent {
                 {this.loadView()}
                 <AllNavigationView title={'客户列表'} backIconClick={() => {
                     this.backPage();
-                }} rightFootClick={()=>{}}/>
+                }} parentNavigation={this}/>
             </View>);
         } else {
 
@@ -160,7 +160,7 @@ export  default class CarCheckCustomer extends BaseComponent {
 
                     <AllNavigationView title={'客户列表'} backIconClick={() => {
                     this.backPage();
-                }} rightFootClick={()=>{}}/>
+                }} parentNavigation={this}/>
 
                 </View>
             );

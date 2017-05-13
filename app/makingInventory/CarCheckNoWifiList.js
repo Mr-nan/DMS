@@ -121,7 +121,7 @@ export  default class CarCheckNoWifiList extends BaseComponent {
                 {this.loadView()}
                 <AllNavigationView title={name} backIconClick={() => {
                     this.backPage();
-                }} rightFootClick={()=>{}}/>
+                }} parentNavigation={this}/>
             </View>);
         } else {
 
@@ -179,7 +179,7 @@ export  default class CarCheckNoWifiList extends BaseComponent {
 
                     <AllNavigationView title={name} backIconClick={() => {
                     this.backPage();
-                }} rightFootClick={()=>{}}/>
+                }} parentNavigation={this}/>
 
                 </View>
             );

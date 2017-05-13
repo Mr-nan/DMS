@@ -99,7 +99,7 @@ export  default class ObdChangeBind extends BaseComponent {
                 </View>
                 <AllNavigationView title={'OBD异常报警说明'} backIconClick={() => {
                     this.backPage();
-                }} rightFootClick={()=>{}}/>
+                }} parentNavigation={this}/>
             </View>
         )
     }

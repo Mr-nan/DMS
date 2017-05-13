@@ -93,7 +93,7 @@ export  default class ObdCustom extends BaseComponent {
                 {this.loadView()}
                 <AllNavigationView title={'客户列表'} backIconClick={() => {
                     this.backPage();
-                }} rightFootClick={()=>{}}/>
+                }} parentNavigation={this}/>
             </View>);
         } else {
 
@@ -119,7 +119,7 @@ export  default class ObdCustom extends BaseComponent {
                     />
                     <AllNavigationView title={'客户列表'} backIconClick={() => {
                     this.backPage();
-                }} rightFootClick={()=>{}}/>
+                }} parentNavigation={this}/>
 
                 </View>
             );

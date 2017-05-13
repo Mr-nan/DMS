@@ -110,7 +110,7 @@ export  default class ObdCarList extends BaseComponent {
                 {this.loadView()}
                 <AllNavigationView title={'车辆列表'} backIconClick={() => {
                     this.backPage();
-                }} rightFootClick={()=>{}}/>
+                }} parentNavigation={this}/>
             </View>);
         } else {
 
@@ -149,7 +149,7 @@ export  default class ObdCarList extends BaseComponent {
 
                     <AllNavigationView title={'车辆列表'} backIconClick={() => {
                     this.backPage();
-                }} rightFootClick={()=>{}}/>
+                }} parentNavigation={this}/>
 
                 </View>
             );

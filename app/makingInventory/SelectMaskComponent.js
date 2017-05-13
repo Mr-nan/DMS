@@ -13,7 +13,6 @@ import {
 } from 'react-native';
 
 import * as fontAndColor from '../constant/fontAndColor';
-import {RadioGroup, RadioButton} from 'react-native-flexi-radio-button';
 import PixelUtil from '../utils/PixelUtil';
 const Pixel = new PixelUtil();
 const {width, height} = Dimensions.get('window');
@@ -25,7 +24,7 @@ export default class SelectMaskComponent extends Component {
         this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
             dataSource: this.ds.cloneWithRows(this.props.viewData),
-            modalVisible: false
+            modalVisible: false,
         };
     }
 
@@ -74,21 +73,13 @@ export default class SelectMaskComponent extends Component {
     _renderRow = (rowData, sectionID, rowID) => {
         return (
             <TouchableOpacity
-                activeOpacity={0.5}
+                activeOpacity={0.8}
                 key={rowID}
                 onPress={()=> {
-                    this.props.onClick(rowID),this._hideModal()
+                    this.props.onClick(rowID,rowData.name),this._hideModal()
                 }}>
                 <View style={styles.rowStyle}>
-                    <RadioGroup
-                        size={18}
-                        thickness={2}
-                        style={{flexDirection:'row',alignItems: 'center'}}
-                        color='red'>
-                        <RadioButton>
-                            <Text>{rowData.name}</Text>
-                        </RadioButton>
-                    </RadioGroup>
+                            <Text style={{fontSize:Pixel.getFontPixel(14), marginLeft:Pixel.getFontPixel(20)}}>{rowData.name}</Text>
                 </View>
             </TouchableOpacity>
         );
@@ -108,11 +99,9 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: 'white',
         width: width * 0.8,
-        flexDirection: 'row'
-    },
-    fontMain: {
-        color: '#000000',
-        fontSize: Pixel.getFontPixel(14)
+        flexDirection: 'row',
+        alignItems:'center',
+        paddingTop: Pixel.getFontPixel(10)
     },
 });
 

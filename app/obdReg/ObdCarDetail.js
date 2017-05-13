@@ -185,7 +185,7 @@ export  default class ObdCarDetail extends BaseComponent {
 
                     <AllNavigationView title={'OBD监管详情'} backIconClick={() => {
                     this.backPage();
-                }} rightFootClick={()=>{}}/>
+                }} parentNavigation={this}/>
                 </View>
             );
         }

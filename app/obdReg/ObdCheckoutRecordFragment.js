@@ -69,7 +69,7 @@ export  default class ObdCheckoutRecordFragment extends BaseComponent {
                 {this.loadView()}
                 <AllNavigationView title={this.props.navigation.state.params.name} backIconClick={() => {
                     this.backPage();
-                }} rightFootClick={()=>{}}/>
+                }} parentNavigation={this}/>
             </View>);
         } else {
             return (
@@ -85,7 +85,7 @@ export  default class ObdCheckoutRecordFragment extends BaseComponent {
 
                     <AllNavigationView title={this.props.navigation.state.params.name} backIconClick={() => {
                     this.backPage();
-                }} rightFootClick={()=>{}}/>
+                }} parentNavigation={this}/>
                 </View>
             );
         }

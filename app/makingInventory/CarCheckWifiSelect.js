@@ -123,7 +123,7 @@ export  default class CarCheckWifiSelect extends BaseComponent {
                 </TouchableOpacity>
                 <AllNavigationView title={'网络选择'} backIconClick={() => {
                     this.backPage();
-                }} rightFootClick={()=>{}}/>
+                }} parentNavigation={this}/>
 
             </View>
         );

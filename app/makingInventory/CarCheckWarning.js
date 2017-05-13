@@ -16,7 +16,9 @@ export  default class CarCheckWarning extends BaseComponent {
         super(props);
         this.state = {
             text: '',
+            warningStyle: '标签损坏',
             dataSource: {},
+            photoStyle:{}
         };
 
     }
@@ -79,15 +81,15 @@ export  default class CarCheckWarning extends BaseComponent {
                 </View>
                 <TouchableOpacity activeOpacity={0.8} onPress={this.labelClick}>
                     <View style={[styles.wainingExplain,{paddingVertical: Pixel.getPixel(18)}]}>
-                        <Text style={{marginRight: 3, marginLeft:10, color:'black',flex:1}}>异常类型:</Text>
-                        <Text style={{marginRight:10, color:'black'}}>标签损坏</Text>
+                        <Text style={{marginRight: 3, marginLeft:10, color:'black',flex:1}}>异常类型：</Text>
+                        <Text style={{marginRight:10, color:'black'}}>{this.state.warningStyle}</Text>
                     </View>
                 </TouchableOpacity>
                 <View style={styles.wainingExplain}>
-                    <Text style={{marginRight: 3, marginLeft:10, color:'black'}}>异常说明:</Text>
+                    <Text style={{marginRight: 3, marginLeft:10, color:'black'}}>异常说明：</Text>
                     <TextInput
                         multiline={true}
-                        style={{flex:1, flexWrap: 'wrap', height:this.state.height,textAlign: 'right'}}
+                        style={{flex:1, flexWrap: 'wrap', height:this.state.height,textAlign: 'right',marginRight:10}}
                         placeholder={'请输入异常类说明'}
                         onContentSizeChange={this.onContentSizeChange.bind(this)}
                         underlineColorAndroid={"#00000000"}
@@ -95,7 +97,7 @@ export  default class CarCheckWarning extends BaseComponent {
                         value={this.state.text}
                     />
                 </View>
-                <View style={styles.carPicture}>
+                <View style={[styles.carPicture, this.state.photoStyle]}>
                     <View style={{flexDirection:'row', alignItems:'center'}}>
                         <Text style={{color:'red',marginRight:3}}>*</Text>
                         <Text style={{flex:1}}>车辆照片 （体现防伪标签和车架号）</Text>
@@ -114,10 +116,11 @@ export  default class CarCheckWarning extends BaseComponent {
                 <SelectMaskComponent  ref={(modal) => {
                                          this.selectModal = modal
                                      }}
-                                      viewData={[]} onClick={(rowID) => this._onClick(rowID)}/>
+                                      viewData={[]} onClick={(rowID,value) => this._onClick(rowID,value)}/>
+
                 <AllNavigationView title={'盘库异常'} backIconClick={() => {
                     this.backPage();
-                }} rightFootClick={()=>{}}/>
+                }} parentNavigation={this}/>
             </View>
         );
     }
@@ -127,7 +130,13 @@ export  default class CarCheckWarning extends BaseComponent {
         this.selectModal.openModal();
     }
 
-    _onClick = (rowID) => {
+    _onClick = (rowID, value) => {
+        this.setState({
+            warningStyle: value,
+            text: value,
+            photoStyle: value=='标签损坏' ? {display: 'flex'}:{display: 'none'},
+
+        });
     }
 
     takePhoto = () => {
