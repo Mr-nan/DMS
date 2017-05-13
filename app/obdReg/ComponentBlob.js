@@ -14,6 +14,8 @@ import {
     Dimensions,
 
 } from 'react-native';
+import  PixelUtil from '../utils/PixelUtil'
+var Pixel = new PixelUtil();
 
 export class ObdCustomItem extends PureComponent {
 
@@ -75,22 +77,22 @@ export class ObdCarDetailTable extends PureComponent {
         const {obdNum, explains, time, warningStatus, borderStyle}=this.props;
         return (
             <View style={[ObdCustomItemStyles.tableContain, borderStyle]}>
-                <View style={[ObdCustomItemStyles.rightLine,{flex:0.18}]}>
+                <View style={[ObdCustomItemStyles.rightLine,{flex:0.16}]}>
                     <View style={ObdCustomItemStyles.tableView}>
-                        <Text >{warningStatus}</Text>
+                        <Text style={{fontSize:11,paddingVertical: Pixel.getPixel(5),}}>{warningStatus}</Text>
                     </View>
                 </View>
                 <View style={[ObdCustomItemStyles.rightLine,{flex:0.35}]}>
                     <View style={ObdCustomItemStyles.tableView}>
-                        <Text >{time}</Text>
+                        <Text style={{fontSize:10,paddingVertical: Pixel.getPixel(5)}}>{time}</Text>
                     </View>
                 </View>
-                <View style={[ObdCustomItemStyles.rightLine,{flex:0.2}]}>
+                <View style={[ObdCustomItemStyles.rightLine,{flex:0.32}]}>
                     <View style={ObdCustomItemStyles.tableView}>
-                        <Text >{obdNum}</Text>
+                        <Text style={{fontSize:10,paddingVertical: Pixel.getPixel(5)}}>{obdNum}</Text>
                     </View>
                 </View>
-                <Text style={{flex:0.3, textAlign: 'center'}}>{explains}</Text>
+                <Text style={{flex:0.28, textAlign: 'center',fontSize:11,paddingVertical: Pixel.getPixel(5)}}>{explains}</Text>
             </View>
 
         )
@@ -143,7 +145,8 @@ let ObdCustomItemStyles = StyleSheet.create({
         padding: 2,
         backgroundColor: '#08c5a7',
         color: 'white',
-        textAlign: 'center'
+        textAlign: 'center',
+        borderRadius: 3,
     },
     tableContain: {
         flex: 1,

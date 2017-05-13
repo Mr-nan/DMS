@@ -1,8 +1,15 @@
 import React, {Component} from 'react';
 import {AppRegistry, Text, View, Image, TextInput, StyleSheet, TouchableOpacity} from 'react-native';
 const shareIcon = require('../../images/login_logs.png');
+import BaseComponent from '../component/BaseComponent';
+import {request} from '../utils/RequestUtil';
+import * as Urls from '../constant/appUrls';
+import * as fontAndColor from '../constant/fontAndColor';
+import  PixelUtil from '../utils/PixelUtil'
+var Pixel = new PixelUtil();
+import AllNavigationView from '../component/AllNavigationView';
 
-export  default class ObdWarningExplain extends Component {
+export  default class ObdWarningExplain extends BaseComponent {
     // 初始化模拟数据
     constructor(props) {
         super(props);
@@ -49,6 +56,9 @@ export  default class ObdWarningExplain extends Component {
                         <Text style={{color:'white',fontSize:16}}>保存</Text>
                     </TouchableOpacity>
                 </View>
+                <AllNavigationView title={'OBD异常报警说明'} backIconClick={() => {
+                    this.backPage();
+                }} rightFootClick={()=>{}}/>
             </View>
         );
     }
@@ -57,10 +67,11 @@ export  default class ObdWarningExplain extends Component {
         alert('拍照');
     }
     cancel = () => {
-        alert('拍照');
+        this.backPage();
     }
     save = () => {
-        alert('拍照');
+        this.backPage();
+        this.props.navigation.state.params.freshDataClick();
     }
 
 }
@@ -73,32 +84,32 @@ let styles = StyleSheet.create({
     wainingExplain: {
         backgroundColor: 'white',
         flexDirection: 'row',
-        marginTop: 10,
-        marginBottom: 10,
+        marginTop: Pixel.getPixel(60),
+        marginBottom: Pixel.getPixel(10),
         alignItems: 'center',
-        paddingVertical: 12
+        paddingVertical: Pixel.getPixel(12)
     },
     image: {
-        height: 90,
-        width: 100,
-        marginTop: 10,
-        marginLeft: 20
+        height: Pixel.getPixel(90),
+        width: Pixel.getPixel(100),
+        marginTop: Pixel.getPixel(10),
+        marginLeft: Pixel.getPixel(20)
     },
     photoButton: {
         backgroundColor: '#08c5a7',
         borderRadius: 3,
-        width: 65,
-        height: 30,
-        marginRight: 10,
+        width: Pixel.getPixel(65),
+        height: Pixel.getPixel(30),
+        marginRight: Pixel.getPixel(10),
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     cancelButton: {
         backgroundColor: 'white',
         borderRadius: 3,
-        width: 75,
-        height: 35,
-        marginRight: 10,
+        width: Pixel.getPixel(75),
+        height: Pixel.getPixel(35),
+        marginRight: Pixel.getPixel(10),
         alignItems: 'center',
         justifyContent: 'center',
         borderColor:'black',
@@ -107,15 +118,15 @@ let styles = StyleSheet.create({
     saveButton: {
         backgroundColor: '#08c5a7',
         borderRadius: 3,
-        width: 75,
-        height: 35,
-        marginLeft: 10,
+        width: Pixel.getPixel(75),
+        height: Pixel.getPixel(35),
+        marginLeft: Pixel.getPixel(10),
         alignItems: 'center',
         justifyContent: 'center'
     },
     carPicture: {
         backgroundColor: 'white',
-        padding: 10
+        padding: Pixel.getPixel(10)
     },
 
 })

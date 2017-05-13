@@ -1,9 +1,10 @@
 /**
  * Created by Administrator on 2017/5/8.
  */
-import React, {Component} from 'react';
+import React, {Component,PureComponent} from 'react';
 import {
-    View
+    View,
+    
 } from 'react-native';
 
 import MyNavigator  from './component/MyNavigator';
