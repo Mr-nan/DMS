@@ -1,12 +1,16 @@
 package com.dms.custom;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.dms.custom.bluetooths.BluetoothControl;
 import com.dms.custom.bluetooths.IBluetoothCallBack;
 import com.dms.custom.bluetooths.ItemBluetoothDevice;
+import com.dms.custom.qr.scan.ScanCaptureAct;
+import com.dms.custom.utils.SoundUtil;
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
@@ -16,6 +20,8 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.RCTNativeAppEventEmitter;
 
+import java.io.Console;
+
 import rtzltech.cn.jni.RFIDUtils;
 
 /**
@@ -24,9 +30,16 @@ import rtzltech.cn.jni.RFIDUtils;
 
 public class DmsCustomModule extends ReactContextBaseJavaModule implements ActivityEventListener {
 
+
+    private final int QR_REQUEST = 0;
+    private Callback qr_success_ck;
+    private Callback qr_fail_ck;
+    private Context mContext;
+
     public DmsCustomModule(ReactApplicationContext reactContext) {
         super(reactContext);
         reactContext.addActivityEventListener(this);
+        mContext = reactContext;
 
         //蓝牙
         mBluetoothControl = BluetoothControl.getInstance(reactContext, new IBluetoothCallBack() {
@@ -71,6 +84,19 @@ public class DmsCustomModule extends ReactContextBaseJavaModule implements Activ
 
     @Override
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
+        if(requestCode == QR_REQUEST){
+            if(resultCode == Activity.RESULT_CANCELED){
+                qr_fail_ck.invoke("Result_Canceled");
+            }else if(resultCode == Activity.RESULT_OK){
+                boolean scan_hand = data.getBooleanExtra("SCAN_HAND",false);
+                String scan_result = data.getStringExtra("SCAN_RESULT");
+                WritableMap map = Arguments.createMap();
+                map.putString("scan_hand",scan_hand ? "input" : "scan");
+                map.putString("scan_result",scan_result);
+                qr_success_ck.invoke(map);
+                qr_success_ck = null;
+            }
+        }
 
     }
 
@@ -89,6 +115,43 @@ public class DmsCustomModule extends ReactContextBaseJavaModule implements Activ
     @Override
     public String getName() {
         return "DmsCustom";
+    }
+
+    /********************************************
+     * 扫描声音
+     *******************************************/
+    @ReactMethod
+    public void scanSound(int type){
+        if(type == 1){
+            SoundUtil.getInstance(mContext).soundSuccess();
+        }else{
+            SoundUtil.getInstance(mContext).soundError();
+        }
+    }
+
+
+    /********************************************
+     * 扫描条形码
+     *******************************************/
+    @ReactMethod
+    public void qrScan(Callback qsCallback,Callback qfCallback){
+
+        qr_success_ck = qsCallback;
+        qr_fail_ck = qfCallback;
+        Activity currentActivity = getCurrentActivity();
+
+        if (currentActivity == null) {
+            qr_fail_ck.invoke("扫描失败_01");
+            qr_fail_ck = null;
+            return;
+        }
+        try{
+            Intent vlIntent = new Intent(currentActivity,ScanCaptureAct.class);
+            currentActivity.startActivityForResult(vlIntent,QR_REQUEST);
+        }catch (Exception e){
+            qr_fail_ck.invoke(e.toString());
+            qr_fail_ck = null;
+        }
     }
 
 

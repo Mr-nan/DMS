@@ -9,7 +9,8 @@ import{
     TouchableOpacity,
     StyleSheet,
     Dimensions,
-    FlatList
+    FlatList,
+    NativeModules
 } from 'react-native';
 
 import BaseComponent from '../component/BaseComponent';
@@ -66,6 +67,8 @@ export default class FunctionScene extends BaseComponent {
     _itemClick = (type) => {
         switch (type) {
             case 1:
+                NativeModules.DmsCustom.scanSound(1);
+                // NativeModules.DmsCustom.qrScan((success)=>{console.log('success',success)},(error)=>{console.log('error',error)});
                 break;
             case 2:
                 break;
