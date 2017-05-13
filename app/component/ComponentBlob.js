@@ -147,6 +147,29 @@ export class CarCheckCustomerItem extends PureComponent {
     }
 }
 
+export class CarCheckCarListItem extends PureComponent {
+
+    render() {
+        const {brandName,modelName, vin, address,type, onPress}=this.props;
+        return (
+            <TouchableOpacity style={ObdCustomItemStyles.container} activeOpacity={0.8} onPress={onPress}>
+                <View style={ObdCustomItemStyles.container1}>
+                    <View style={{flexDirection:'row', marginTop:5, alignItems:'center'}}>
+                        <Text style={{flex:1}}>{brandName}</Text>
+                        <View style={{flexDirection:'row',alignItems:'center'}}>
+                            <Image style={ObdCustomItemStyles.starStyle} source={require('../../images/car_check_start.png')}></Image>
+                            <Text style={{color:'#00ff00'}}>{type}</Text>
+                        </View>
+                    </View>
+                    <Text style={{fontWeight: 'bold'}}>{modelName}</Text>
+                    <Text style={{marginTop:5, fontSize:Pixel.getPixel(13)}}>{vin}</Text>
+                    <Text style={{marginTop:5,fontSize:Pixel.getPixel(13)}}>{address}</Text>
+                </View>
+            </TouchableOpacity>
+        )
+    }
+}
+
 
 let ObdCustomItemStyles = StyleSheet.create({
     container: {
@@ -189,5 +212,9 @@ let ObdCustomItemStyles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center'
     },
-    warningText: {}
+    starStyle:{
+        width:Pixel.getPixel(30),
+        height:Pixel.getPixel(30),
+        marginRight:Pixel.getPixel(10)
+    }
 })

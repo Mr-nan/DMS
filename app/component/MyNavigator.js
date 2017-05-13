@@ -13,6 +13,8 @@ import ObdWarningExplain from '../obdReg/ObdWarningExplain';
 import ObdChangeBind from '../obdReg/ObdChangeBind';
 import CarCheckCustomer from '../makingInventory/CarCheckCustomer';
 import CarCheckWifiSelect from '../makingInventory/CarCheckWifiSelect';
+import CarCheckNoWifiList from '../makingInventory/CarCheckNoWifiList';
+import CarCheckWarning from '../makingInventory/CarCheckWarning';
 
 export default MyApp = StackNavigator({
         Root: {screen: RootScene},
@@ -27,6 +29,8 @@ export default MyApp = StackNavigator({
         ObdChangeBind:{screen:ObdChangeBind},
         CarCheckCustomer:{screen:CarCheckCustomer},
         CarCheckWifiSelect:{screen:CarCheckWifiSelect},
+        CarCheckNoWifiList:{screen:CarCheckNoWifiList},
+        CarCheckWarning:{screen:CarCheckWarning},
     },
     {
         initialRouteName: 'Root',
