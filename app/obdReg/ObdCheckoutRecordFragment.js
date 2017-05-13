@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {AppRegistry, ListView, Text, View, StyleSheet} from 'react-native';
-import {ObdCheckoutRecordTable} from './ComponentBlob'
+import {ObdCheckoutRecordTable} from '../component/ComponentBlob'
 import BaseComponent from '../component/BaseComponent';
 import {request} from '../utils/RequestUtil';
 import * as Urls from '../constant/appUrls';
@@ -69,7 +69,7 @@ export  default class ObdCheckoutRecordFragment extends BaseComponent {
                 {this.loadView()}
                 <AllNavigationView title={this.props.navigation.state.params.name} backIconClick={() => {
                     this.backPage();
-                }} rightFootClick={()=>{}}/>
+                }} parentNavigation={this}/>
             </View>);
         } else {
             return (
@@ -85,7 +85,7 @@ export  default class ObdCheckoutRecordFragment extends BaseComponent {
 
                     <AllNavigationView title={this.props.navigation.state.params.name} backIconClick={() => {
                     this.backPage();
-                }} rightFootClick={()=>{}}/>
+                }} parentNavigation={this}/>
                 </View>
             );
         }

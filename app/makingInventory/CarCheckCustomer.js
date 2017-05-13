@@ -10,7 +10,7 @@ import {
     Image,
     TouchableOpacity
 } from 'react-native';
-import {ObdCarItem} from '../component/ComponentBlob'
+import {CarCheckCustomerItem} from '../component/ComponentBlob'
 import BaseComponent from '../component/BaseComponent';
 import {request} from '../utils/RequestUtil';
 import * as Urls from '../constant/appUrls';
@@ -24,11 +24,12 @@ let allPage = 1;
 let allSouce = [];
 const searchIcon = require('../../images/assessment_customer_find.png');
 
-export  default class ObdCarList extends BaseComponent {
+export  default class CarCheckCustomer extends BaseComponent {
     // 初始化模拟数据
     constructor(props) {
         super(props);
         this.keyword = ''
+        this.retmsg = ''
         this.state = {
             dataSource: {},
             renderPlaceholderOnly: 'blank',
@@ -45,20 +46,19 @@ export  default class ObdCarList extends BaseComponent {
 
     getData = () => {
         let maps = {
-            p: page,
-            r: 10,
-            merge_id: this.props.navigation.state.params.merge_id,
-            keyword: this.keyword,
+            pages: page,
+            name: this.keyword,
         };
-        request(Urls.OBD_CAR_LIST, 'Post', maps)
+        request(Urls.CARCHECKUSER_GETBUSILIST, 'Post', maps)
 
             .then((response) => {
                     this.props.screenProps.showModal(false);
-                    if (page == 1 && response.mjson.retdata.list.length <= 0) {
+                    this.retmsg = response.mjson.retmsg;
+                    if (page == 1 && response.mjson.retdata.busilist.length <= 0) {
                         this.setState({renderPlaceholderOnly: 'null'});
                     } else {
-                        allPage = response.mjson.retdata.total / 10;
-                        allSouce.push(...response.mjson.retdata.list);
+                        allPage = response.mjson.retdata.listcount / 10;
+                        allSouce.push(...response.mjson.retdata.busilist);
                         const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
                         this.setState({
                             dataSource: ds.cloneWithRows(allSouce),
@@ -68,8 +68,13 @@ export  default class ObdCarList extends BaseComponent {
                     }
                 },
                 (error) => {
+                    if (error.mjson.retcode == -1 && error.mjson.retmsg == '客户列表为空！') {
+                        this.setState({renderPlaceholderOnly: 'null'});
+                    } else {
+
+                        this.setState({renderPlaceholderOnly: 'error', isRefreshing: false});
+                    }
                     this.props.screenProps.showModal(false);
-                    this.setState({renderPlaceholderOnly: 'error', isRefreshing: false});
                 });
     }
 
@@ -108,7 +113,7 @@ export  default class ObdCarList extends BaseComponent {
         if (this.state.renderPlaceholderOnly !== 'success') {
             return (<View style={{backgroundColor: fontAndColor.COLORA3, flex: 1, paddingTop: Pixel.getPixel(15)}}>
                 {this.loadView()}
-                <AllNavigationView title={'车辆列表'} backIconClick={() => {
+                <AllNavigationView title={'客户列表'} backIconClick={() => {
                     this.backPage();
                 }} parentNavigation={this}/>
             </View>);
@@ -116,14 +121,20 @@ export  default class ObdCarList extends BaseComponent {
 
             return (
                 <View style={styles.container}>
+                    <View style={styles.topStyle}>
+                        <Text style={{flex: 1, textAlign:'center'}}>{this.retmsg}</Text>
+                    </View>
                     <View style={styles.searchStyle}>
-                        <TextInput
-                            multiline={true}
-                            style={{flex:1, flexWrap: 'wrap'}}
-                            placeholder={'车架号、OBD设备号、借款单号关键字'}
-                            underlineColorAndroid={"#00000000"}
-                            onChangeText={this.textChange}
-                        />
+                        <View style={{flex:1, }}>
+                            <TextInput
+                                multiline={true}
+                                style={{height: Pixel.getPixel(40)}}
+                                placeholder={'客户姓名关键字'}
+                                underlineColorAndroid={"#00000000"}
+                                onChangeText={this.textChange}
+                            />
+                        </View>
+
                         <TouchableOpacity activeOpacity={0.8} onPress={this.searchData}>
                             <Image style={styles.searchIcon} source={searchIcon}/>
                         </TouchableOpacity>
@@ -147,7 +158,7 @@ export  default class ObdCarList extends BaseComponent {
                         }
                     />
 
-                    <AllNavigationView title={'车辆列表'} backIconClick={() => {
+                    <AllNavigationView title={'客户列表'} backIconClick={() => {
                     this.backPage();
                 }} parentNavigation={this}/>
 
@@ -164,20 +175,16 @@ export  default class ObdCarList extends BaseComponent {
     }
 
     renderRow = (rowData, sectionID, rowId) => {
-        //modelName, vin, businessType, obdNum,obdStatus, noneSubmit, textStyle, onPress,vinTextStyle,auto_vin_from_obd
+        //customerName, carNum, onPress
         return (
-            <ObdCarItem
-                onPress={()=>{this.toNextPage('ObdCarDetail',{
-                    rid: this.props.navigation.state.params.merge_id,
+            <CarCheckCustomerItem
+                onPress={()=>{
+                    this.toNextPage('CarCheckWifiSelect',{
+                    name: rowData.name,
+                    merge_id: rowData.busino
                 });}}
-                textStyle={rowData.is_explain=='1' ? {color: 'red'} : null}
-                modelName={rowData.model_name}
-                vin={'实车车架号：'+rowData.auto_vin}
-                vinTextStyle={rowData.auto_vin_from_obd==''?{ color: 'red'}:null}
-                auto_vin_from_obd={rowData.auto_vin_from_obd=='' ? '未识别': rowData.auto_vin_from_obd}
-                businessType={rowData.business_type+'：'+rowData.payment_number}
-                obdNum={'Obd设备号：'+rowData.obd_number}
-                obdStatus={rowData.obd_status_text} noneSubmit={rowData.is_explain == '1' ?  '未提交说明！': ''}
+                customerName={rowData.name}
+                carNum={rowData.wpkCount}
             />);
 
     }
@@ -197,14 +204,20 @@ const styles = StyleSheet.create({
         marginHorizontal: 10,
         paddingHorizontal: 10,
         alignItems: 'center',
-        marginTop: Pixel.getPixel(58),
+        marginTop: Pixel.getPixel(10),
         backgroundColor: 'white',
         borderRadius: 92,
-        height: Pixel.getPixel(40)
+        height: Pixel.getPixel(40),
     },
     searchIcon: {
         width: Pixel.getPixel(28),
         height: Pixel.getPixel(28),
         margin: 3
-    }
+    },
+    topStyle: {
+        flexDirection: 'row',
+        backgroundColor: 'white',
+        paddingVertical: 5,
+        marginTop: Pixel.getPixel(48),
+    },
 });

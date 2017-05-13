@@ -20,7 +20,7 @@ var Pixel = new PixelUtil();
 export class ObdCustomItem extends PureComponent {
 
     render() {
-        const {name, carNum, status, warningTip, textStyle, warningStyle,checkStyle,onPress, onPressCheckResult}=this.props;
+        const {name, carNum, status, warningTip, textStyle, warningStyle, checkStyle, onPress, onPressCheckResult}=this.props;
         return (
             <TouchableOpacity style={ObdCustomItemStyles.container} activeOpacity={0.8} onPress={onPress}>
                 <View style={ObdCustomItemStyles.container1}>
@@ -35,7 +35,8 @@ export class ObdCustomItem extends PureComponent {
                     </View>
                     <View style={{marginTop:10,flexDirection: 'row', alignItems:'center'}}>
                         <Text style={[{textAlign:'left',flex : 1},warningStyle]}>{warningTip}</Text>
-                        <Text style={[ObdCustomItemStyles.checkResult, checkStyle]} onPress={onPressCheckResult}>查看审核结果</Text>
+                        <Text style={[ObdCustomItemStyles.checkResult, checkStyle]}
+                              onPress={onPressCheckResult}>查看审核结果</Text>
                     </View>
                 </View>
             </TouchableOpacity>
@@ -46,7 +47,7 @@ export class ObdCustomItem extends PureComponent {
 export class ObdCarItem extends PureComponent {
 
     render() {
-        const {modelName, vin, auto_vin_from_obd,businessType, obdNum, obdStatus, noneSubmit, textStyle,vinTextStyle, onPress}=this.props;
+        const {modelName, vin, auto_vin_from_obd, businessType, obdNum, obdStatus, noneSubmit, textStyle, vinTextStyle, onPress}=this.props;
         return (
             <TouchableOpacity style={ObdCustomItemStyles.container} activeOpacity={0.8} onPress={onPress}>
                 <View style={ObdCustomItemStyles.container1}>
@@ -92,7 +93,8 @@ export class ObdCarDetailTable extends PureComponent {
                         <Text style={{fontSize:10,paddingVertical: Pixel.getPixel(5)}}>{obdNum}</Text>
                     </View>
                 </View>
-                <Text style={{flex:0.28, textAlign: 'center',fontSize:11,paddingVertical: Pixel.getPixel(5)}}>{explains}</Text>
+                <Text
+                    style={{flex:0.28, textAlign: 'center',fontSize:11,paddingVertical: Pixel.getPixel(5)}}>{explains}</Text>
             </View>
 
         )
@@ -127,6 +129,48 @@ export class ObdCheckoutRecordTable extends PureComponent {
     }
 }
 
+export class CarCheckCustomerItem extends PureComponent {
+
+    render() {
+        const {customerName, carNum, onPress}=this.props;
+        return (
+            <TouchableOpacity style={ObdCustomItemStyles.container} activeOpacity={0.8} onPress={onPress}>
+                <View style={ObdCustomItemStyles.container1}>
+                    <Text style={{fontWeight: 'bold'}}>{customerName}</Text>
+                    <View style={{marginTop:5,flexDirection:'row'}}>
+                        <Text>待盘车辆：</Text>
+                        <Text style={{color:'red'}}>{carNum}</Text>
+                    </View>
+                </View>
+            </TouchableOpacity>
+        )
+    }
+}
+
+export class CarCheckCarListItem extends PureComponent {
+
+    render() {
+        const {brandName,modelName, vin, address,type, onPress}=this.props;
+        return (
+            <TouchableOpacity style={ObdCustomItemStyles.container} activeOpacity={0.8} onPress={onPress}>
+                <View style={ObdCustomItemStyles.container1}>
+                    <View style={{flexDirection:'row', marginTop:5, alignItems:'center'}}>
+                        <Text style={{flex:1}}>{brandName}</Text>
+                        <View style={{flexDirection:'row',alignItems:'center'}}>
+                            <Image style={ObdCustomItemStyles.starStyle} source={require('../../images/car_check_start.png')}></Image>
+                            <Text style={{color:'#00ff00'}}>{type}</Text>
+                        </View>
+                    </View>
+                    <Text style={{fontWeight: 'bold'}}>{modelName}</Text>
+                    <Text style={{marginTop:5, fontSize:Pixel.getPixel(13)}}>{vin}</Text>
+                    <Text style={{marginTop:5,fontSize:Pixel.getPixel(13)}}>{address}</Text>
+                </View>
+            </TouchableOpacity>
+        )
+    }
+}
+
+
 let ObdCustomItemStyles = StyleSheet.create({
     container: {
         flex: 1,
@@ -154,21 +198,23 @@ let ObdCustomItemStyles = StyleSheet.create({
         backgroundColor: 'white',
         marginHorizontal: 10,
         alignItems: 'center',
-        borderTopWidth:1,
-        borderLeftWidth:1,
-        borderRightWidth:1,
+        borderTopWidth: 1,
+        borderLeftWidth: 1,
+        borderRightWidth: 1,
         borderColor: '#D8D8D8',
     },
     rightLine: {
         borderRightWidth: 1,
         borderRightColor: '#D8D8D8',
     },
-    tableView:{
+    tableView: {
         flex: 1,
-        alignItems:'center',
-        justifyContent:'center'
+        alignItems: 'center',
+        justifyContent: 'center'
     },
-    warningText:{
-
+    starStyle:{
+        width:Pixel.getPixel(30),
+        height:Pixel.getPixel(30),
+        marginRight:Pixel.getPixel(10)
     }
 })
