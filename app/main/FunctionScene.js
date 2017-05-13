@@ -8,7 +8,8 @@ import{
     Text,
     TouchableOpacity,
     StyleSheet,
-    Dimensions
+    Dimensions,
+    FlatList
 } from 'react-native';
 
 import BaseComponent from '../component/BaseComponent';
@@ -18,7 +19,6 @@ const Pixel = new PixelUtil();
 import * as fontAndColor from '../constant/fontAndColor';
 import StorageUtil from '../utils/StorageUtil';
 import * as StorageKeyNames from '../constant/storageKeyNames';
-import Grid from '../component/Grid';
 const {width} = Dimensions.get('window');
 
 const clpg = require('../../images/clpg.png');
@@ -32,40 +32,39 @@ export default class FunctionScene extends BaseComponent {
 
     constructor(props) {
         super(props);
-        this.funcs =[];
+        this.funcs = [];
     }
 
     initFinish = () => {
         StorageUtil.mGetItem(StorageKeyNames.USER_FUNCTION, (data) => {
             if (data.code == 1) {
                 let func = JSON.parse(data.result);
-                if(func.auto_assess == '1'){
+                if (func.auto_assess == '1') {
                     this.funcs.push('车辆评估');
                 }
-                if(func.close_the_car == '1'){
+                if (func.close_the_car == '1') {
                     this.funcs.push('收车');
                 }
-                if(func.check_car == '1'){
+                if (func.check_car == '1') {
                     this.funcs.push('盘库');
                 }
-                if(func.vehicle_storage == '1'){
+                if (func.vehicle_storage == '1') {
                     this.funcs.push('车辆建档');
                 }
-                if(func. patrol_report == '1'){
+                if (func.patrol_report == '1') {
                     this.funcs.push('巡查报告');
                 }
-                if(func.auto_assess == '1'){
+                if (func.auto_assess == '1') {
                     this.funcs.push('OBD监管');
                 }
-                this.funcGrid.refresh(this.funcs);
+
             }
         });
 
     };
 
-    _itemClick = (type)=>{
-        switch(type)
-        {
+    _itemClick = (type) => {
+        switch (type) {
             case 1:
                 break;
             case 2:
@@ -78,65 +77,67 @@ export default class FunctionScene extends BaseComponent {
             case 5:
                 break;
             case 6:
-                this.toNextPage('ObdCustom',{});
+                this.toNextPage('ObdCustom', {});
                 break;
         }
     };
 
-    _renderItem = (data, i)=>{
-        let type,img;
-        if(data == '车辆评估'){
+    _renderItem = (data) => {
+        let type, img;
+        if (data.item == '车辆评估') {
             img = clpg;
             type = 1;
-        }else if(data == '收车'){
+        } else if (data.item == '收车') {
             img = sc;
             type = 2;
-        }else if(data == '盘库'){
+        } else if (data.item == '盘库') {
             img = pk;
             type = 3;
-        }else if(data == '车辆建档'){
+        } else if (data.item == '车辆建档') {
             img = clrk;
             type = 4;
-        }else if(data == '巡查报告'){
+        } else if (data.item == '巡查报告') {
             img = xcbg;
             type = 5;
-        }else if(data == 'OBD监管'){
+        } else if (data.item == 'OBD监管') {
             img = obd_jg;
             type = 6;
         }
-        return(
-            <TouchableOpacity
-                key={i+''}
-                style={styles.item_container}
-                activeOpacity={0.6}
-                onPress={()=>{this._itemClick(type)}}
-            >
-                <Image style={styles.imgContainer} source={img}/>
-                <View style={{justifyContent:'center',alignItems:'center'}}>
-                    <Text style={styles.fontLabel}>{data}</Text>
-                </View>
-            </TouchableOpacity>
+        return (
+            <View
+                style={{height: Pixel.getPixel(150), width: width / 3, justifyContent: 'center', alignItems: 'center'}}>
+                <TouchableOpacity
+                    activeOpacity={0.6}
+                    onPress={() => {
+                        this._itemClick(type)
+                    }}
+                >
+                    <Image style={styles.imgContainer} source={img}/>
+                    <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                        <Text style={styles.fontLabel}>{data.item}</Text>
+                    </View>
+                </TouchableOpacity>
+            </View>
         )
     };
+
+    _keyExtractor = (item, index) => index;
 
     render() {
         return (
             <View style={styles.container}>
+                <View style={styles.wrapContainer}>
+                    <FlatList
+                        data={this.funcs}
+                        renderItem={this._renderItem}
+                        keyExtractor={this._keyExtractor}
+                        numColumns={3}
+                        horizontal={false}
+                    />
+                </View>
                 <AllNavigationView title={'第1车贷'} backIconClick={() => {
                     this.backPage();
-                }} rightFootClick={()=>{}}/>
-                <View style={styles.wrapContainer}>
-                    <View style={{flex:1,width:width,paddingHorizontal:Pixel.getPixel(30)}}>
-                        <Grid
-                            ref={(grid)=>{this.funcGrid = grid}}
-                            style={styles.girdContainer}
-                            renderItem={this._renderItem}
-                            data={this.funcs}
-                            itemsPerRow={3}
-                        />
-                    </View>
-
-                </View>
+                }} parentNavigation={this}/>
             </View>
         )
     }
@@ -148,30 +149,27 @@ const styles = StyleSheet.create({
     },
     wrapContainer: {
         flex: 1,
-        marginTop: Pixel.getPixel(48),
+        marginTop: Pixel.getTitlePixel(68),
         backgroundColor: fontAndColor.all_background,
-        alignItems: 'center'
+        alignItems: 'center',
+        width: width
     },
-    girdContainer: {
-        flex: 1,
+
+    itemContainer2: {
+        height: Pixel.getPixel(150),
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'blue',
     },
-    itemContainer:{
-        width:Pixel.getPixel(100),
-        height:Pixel.getPixel(150),
-        justifyContent:'center',
-        alignItems:'center',
-        marginTop:Pixel.getPixel(20),
-        backgroundColor:'red'
+    imgContainer: {
+        width: Pixel.getPixel(70),
+        height: Pixel.getPixel(70),
+        marginTop: Pixel.getPixel(30),
     },
-    imgContainer:{
-        width:Pixel.getPixel(70),
-        height:Pixel.getPixel(70),
-        marginTop:Pixel.getPixel(30),
-    },
-    fontLabel:{
-        fontSize:Pixel.getFontPixel(14),
-        color:fontAndColor.black,
-        marginTop:Pixel.getPixel(8)
+    fontLabel: {
+        fontSize: Pixel.getFontPixel(14),
+        color: fontAndColor.black,
+        marginTop: Pixel.getPixel(8)
     }
 
 });
