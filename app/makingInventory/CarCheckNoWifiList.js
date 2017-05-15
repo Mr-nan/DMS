@@ -81,6 +81,7 @@ export  default class CarCheckNoWifiList extends BaseComponent {
             .then((response) => {
                     this.props.screenProps.showModal(false);
                     if(response.mjson.retdata.chklist==null){
+                        this.props.screenProps.showToast('数据为空！');
                         const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
                         this.setState({
                             dataSource: ds.cloneWithRows(allSouce),
@@ -89,6 +90,7 @@ export  default class CarCheckNoWifiList extends BaseComponent {
                         return;
                     }
                     if (response.mjson.retdata.chklist.length <= 0) {
+                        this.props.screenProps.showToast('数据为空！');
                     } else {
                         allSouce.push(...response.mjson.retdata.chklist);
                         const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
@@ -118,7 +120,6 @@ export  default class CarCheckNoWifiList extends BaseComponent {
     render() {
         if (this.state.renderPlaceholderOnly !== 'success') {
             return (<View style={{backgroundColor: fontAndColor.COLORA3, flex: 1, paddingTop: Pixel.getPixel(15)}}>
-                {this.loadView()}
                 <AllNavigationView title={name} backIconClick={() => {
                     this.backPage();
                 }} parentNavigation={this}/>
@@ -201,7 +202,8 @@ export  default class CarCheckNoWifiList extends BaseComponent {
                     model: rowData.name,
                     brand: rowData.brand,
                     address: rowData.storage,
-                    status: rowData.type
+                    status: rowData.type,
+                    freshDataClick: this.freshDataClick
                 });}}
                 brandName={rowData.type==null ? '':(rowData.type=='0'?'【建档车辆  】' +rowData.brand : '【质押车辆  】'+rowData.brand)}
                 modelName={rowData.name}
@@ -210,6 +212,11 @@ export  default class CarCheckNoWifiList extends BaseComponent {
                 type={rowData.type==null || rowData.type=='' ? '': '盘库中'}
             />);
 
+    }
+    freshDataClick=()=>{
+        name = this.props.navigation.state.params.name;
+        merge_id = this.props.navigation.state.params.merge_id;
+        this.getData(index);
     }
 }
 

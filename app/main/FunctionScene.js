@@ -22,12 +22,33 @@ import StorageUtil from '../utils/StorageUtil';
 import * as StorageKeyNames from '../constant/storageKeyNames';
 const {width} = Dimensions.get('window');
 
+import * as appUrls from '../constant/appUrls';
+
+
 const clpg = require('../../images/clpg.png');
 const clrk = require('../../images/clrk.png');
 const pk = require('../../images/pk.png');
 const sc = require('../../images/sc.png');
 const xcbg = require('../../images/xcbg.png');
 const obd_jg = require('../../images/obd_jg.png');
+
+import ImagePicker from "react-native-image-picker";
+const options = {
+    //弹出框选项
+    title: '请选择',
+    cancelButtonTitle: '取消',
+    takePhotoButtonTitle: '拍照',
+    chooseFromLibraryButtonTitle: '选择相册',
+    allowsEditing: true,
+    noData: true,
+    quality: 1.0,
+    maxWidth: 480,
+    maxHeight: 800,
+    storageOptions: {
+        skipBackup: true,
+        path: 'images',
+    }
+};
 
 export default class FunctionScene extends BaseComponent {
 
@@ -58,7 +79,6 @@ export default class FunctionScene extends BaseComponent {
                 if (func.auto_assess == '1') {
                     this.funcs.push('OBD监管');
                 }
-
             }
         });
 
@@ -67,14 +87,36 @@ export default class FunctionScene extends BaseComponent {
     _itemClick = (type) => {
         switch (type) {
             case 1:
-                NativeModules.DmsCustom.scanSound(1);
+                ImagePicker.launchCamera(options, (response) => {
+                    if (response.didCancel) {
+                    }
+                    else if (response.error) {
+                    }
+                    else if (response.customButton) {
+                    }
+                    else {
+                        console.log('take camera', response);
+                        StorageUtil.mGetItem(StorageKeyNames.TOKEN, (data) => {
+                            if (data.code == 1) {
+                                let token = data.result;
+
+                                NativeModules.DmsCustom.uploadFile(appUrls.FILEUPLOAD,token,response.path,
+                                    (rep)=>{console.log('success',rep)},(error)=>{console.log(error)});
+                            }
+                        });
+
+
+                    }
+                });
+                //NativeModules.DmsCustom.scanSound(1);
                 // NativeModules.DmsCustom.qrScan((success)=>{console.log('success',success)},(error)=>{console.log('error',error)});
+                // this.toNextPage('AssessCustomerScene', {});
                 break;
             case 2:
                 this.toNextPage('CustomerList',{});
                 break;
             case 3:
-                this.toNextPage('CarCheckCustomer',{});
+                this.toNextPage('CarCheckCustomer', {});
                 break;
             case 4:
                 break;
@@ -138,6 +180,9 @@ export default class FunctionScene extends BaseComponent {
                         keyExtractor={this._keyExtractor}
                         numColumns={3}
                         horizontal={false}
+                        onEndReached={() => {
+                            console.log("=================111")
+                        }}
                     />
                 </View>
                 <AllNavigationView title={'第1车贷'} backIconClick={() => {

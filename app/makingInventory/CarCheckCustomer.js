@@ -55,7 +55,7 @@ export  default class CarCheckCustomer extends BaseComponent {
                     this.props.screenProps.showModal(false);
                     this.retmsg = response.mjson.retmsg;
                     if (page == 1 && response.mjson.retdata.busilist.length <= 0) {
-                        this.setState({renderPlaceholderOnly: 'null'});
+                        this.props.screenProps.showToast('数据为空！');
                     } else {
                         allPage = response.mjson.retdata.listcount / 10;
                         allSouce.push(...response.mjson.retdata.busilist);
@@ -68,12 +68,7 @@ export  default class CarCheckCustomer extends BaseComponent {
                     }
                 },
                 (error) => {
-                    if (error.mjson.retcode == -1 && error.mjson.retmsg == '客户列表为空！') {
-                        this.setState({renderPlaceholderOnly: 'null'});
-                    } else {
-
-                        this.setState({renderPlaceholderOnly: 'error', isRefreshing: false});
-                    }
+                    this.props.screenProps.showToast(error.mjson.retmsg);
                     this.props.screenProps.showModal(false);
                 });
     }
@@ -112,7 +107,6 @@ export  default class CarCheckCustomer extends BaseComponent {
     render() {
         if (this.state.renderPlaceholderOnly !== 'success') {
             return (<View style={{backgroundColor: fontAndColor.COLORA3, flex: 1, paddingTop: Pixel.getPixel(15)}}>
-                {this.loadView()}
                 <AllNavigationView title={'客户列表'} backIconClick={() => {
                     this.backPage();
                 }} parentNavigation={this}/>
