@@ -24,6 +24,7 @@ import StorageUtil from '../utils/StorageUtil';
 import * as StorageKeyNames from '../constant/storageKeyNames';
 import md5 from 'react-native-md5';
 import * as AppUrls from '../constant/appUrls';
+import * as baseUtil from 'base64-arraybuffer';
 const IS_ANDROID = Platform.OS === 'android';
 
 export default class LoginScene extends BaseComponent {
@@ -36,7 +37,7 @@ export default class LoginScene extends BaseComponent {
         this.imageCode = '';
         this.state = {
             isCheck: false,
-            codeUrl:''
+            codeUrl: ''
         }
     }
 
@@ -102,32 +103,56 @@ export default class LoginScene extends BaseComponent {
         }
     };
 
-    _getImageCode = (code)=>{
+    _getImageCode = (code) => {
         let url = AppUrls.USER_IMG_CODE + "?img_ver_code_key=" + code;
-        this.setState({
-            isCheck: true,
-        });
-        fetch(url).then((response) => {
-            let headers = response.headers;
-            for (let key of Object.keys(headers.map)) {
-                if(key == 'auth' && !this.isEmpty(headers.map[key][0])){
-                    let auth = headers.map[key][0];
-                    let split = auth.split('=');
-                    this.imageCode = split[1];
-                    break;
-                }
+        let request = new XMLHttpRequest();
+        request.responseType = 'arraybuffer';
+        request.onreadystatechange = (e) => {
+            if (request.readyState !== 4) {
+                return;
             }
-            return response.arrayBuffer();
-        },()=>{
-            this._showHint('获取验证码失败');
-        }).then((rd)=>{
-            let base64String ='data:image/png;base64,' + btoa(String.fromCharCode(...new Uint8Array(rd)));
-            this.setState({
-                codeUrl:base64String
-            });
-        },(error)=>{
-            this._showHint('获取验证码失败');
-        })
+
+            if (request.status === 200) {
+                let auth = request.getResponseHeader('auth');
+                let split = auth.split('=');
+                this.imageCode = split[1];
+
+                let base64String = 'data:image/png;base64,' + baseUtil.encode(request.response);;
+                // let base64String = 'data:image/png;base64,' + request.response;
+                this.setState({
+                    codeUrl: base64String,
+                    isCheck: true
+                });
+            } else {
+                this._showHint('获取验证码失败');
+            }
+        };
+
+        request.open('GET', url);
+        request.send();
+
+
+        // fetch(url).then((response) => {
+        //     let headers = response.headers;
+        //     for (let key of Object.keys(headers.map)) {
+        //         if(key == 'auth' && !this.isEmpty(headers.map[key][0])){
+        //             let auth = headers.map[key][0];
+        //             let split = auth.split('=');
+        //             this.imageCode = split[1];
+        //             break;
+        //         }
+        //     }
+        //     return response.arrayBuffer();
+        // },()=>{
+        //     this._showHint('获取验证码失败');
+        // }).then((rd)=>{
+        //     let base64String ='data:image/png;base64,' + btoa(String.fromCharCode(...new Uint8Array(rd)));
+        //     this.setState({
+        //         codeUrl:base64String
+        //     });
+        // },(error)=>{
+        //     this._showHint('获取验证码失败');
+        // })
     };
 
     _goLogin = () => {
@@ -135,16 +160,16 @@ export default class LoginScene extends BaseComponent {
             username: this.userName,
             password: md5.hex_md5(this.userPwd),
             login_type: '2',
-            device_code:'dycd_dms_manage_android'
+            device_code: 'dycd_dms_manage_android'
         };
         if (this.state.isCheck == true) {
             params.img_code = this.userCheck;
             params.img_sid = this.imageCode;
         }
-        // if (IS_ANDROID === false) {
-        //     params.login_type = '5';
-        //     params.device_code = 'dycd_dms_manage_ios';
-        // }
+        if (IS_ANDROID === false) {
+            params.login_type = '5';
+            params.device_code = 'dycd_dms_manage_ios';
+        }
 
         let isOk;
         let body = '';
@@ -158,9 +183,9 @@ export default class LoginScene extends BaseComponent {
             body = body.substring(0, body.length - 1);
         }
 
-        fetch(AppUrls.USER_LOGIN, {
+        fetch(AppUrls.USER_LOGIN + '?' + body, {
             method: 'post',
-            body:body,
+            body: body,
         }).then((response) => {
             if (response.ok) {
                 isOk = true;
@@ -178,7 +203,7 @@ export default class LoginScene extends BaseComponent {
                         //登录成功
                         StorageUtil.mSetItem(StorageKeyNames.ISLOGIN, 'true');
                         StorageUtil.mSetItem(StorageKeyNames.TOKEN, rd.rettoken);
-                        StorageUtil.mSetItem(StorageKeyNames.USER_FUNCTION,JSON.stringify(rd.retdata));
+                        StorageUtil.mSetItem(StorageKeyNames.USER_FUNCTION, JSON.stringify(rd.retdata));
                         this.placePage('FunctionScene');
                     } else if (
                         rd.retcode == '4620001' || rd.retcode == '4610003'
@@ -187,7 +212,7 @@ export default class LoginScene extends BaseComponent {
                         //需要输入验证码
                         this._showHint("" + rd.retmsg);
                         this._getImageCode(rd.retdata.img_ver_code_key);
-                    }else{
+                    } else {
                         if (!this.isEmpty(rd.retmsg)) {
                             this._showHint("" + rd.retmsg);
                         } else {
@@ -200,7 +225,6 @@ export default class LoginScene extends BaseComponent {
             }
         ).catch((error) => {
             this._closeLoading();
-
             this._showHint('网络请求失败2');
         });
     };
@@ -208,7 +232,6 @@ export default class LoginScene extends BaseComponent {
     render() {
         return (
             <View style={styles.container}>
-                <AllNavigationView title={'第1车贷'}/>
                 <View style={styles.wrapContainer}>
                     <Image style={styles.logoContainer} source={require('../../images/login_logs.png')}/>
                     <View style={styles.nameContainer}>
@@ -250,15 +273,18 @@ export default class LoginScene extends BaseComponent {
                                 placeholder={'验证码'}
                                 onChangeText={this._onCheckChange}
                             />
-                            <Image style={styles.checkImg} source={{uri:this.state.codeUrl} }/>
+                            <Image style={styles.checkImg} source={{uri: this.state.codeUrl} }/>
                         </View>
                     }
                     <View style={{width: width}}>
-                        <TouchableOpacity style={styles.btnLogin} activeOpacity={0.6} onPress={()=>{this._onLoginPress()}}>
+                        <TouchableOpacity style={styles.btnLogin} activeOpacity={0.6} onPress={() => {
+                            this._onLoginPress()
+                        }}>
                             <Text style={styles.btnFont}>登 录</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
+                <AllNavigationView title={'第1车贷'}/>
             </View>
         )
     }
@@ -270,7 +296,7 @@ const styles = StyleSheet.create({
     },
     wrapContainer: {
         flex: 1,
-        marginTop: Pixel.getPixel(48),
+        marginTop: Pixel.getTitlePixel(68),
         backgroundColor: fontAndColor.all_background,
         alignItems: 'center'
     },

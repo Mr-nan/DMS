@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 
 import MyNavigator  from './component/MyNavigator';
-import ShowToast from "./component/toast/ShowToast";
+import ShowToast from './component/toast/ShowToast';
 
 export default class root extends Component {
 
@@ -26,19 +26,20 @@ export default class root extends Component {
                 <MyNavigator
                     screenProps={{
                         showToast: this.showToast,
-                        showModal: this.showModal
+                        showModal: this.showModal,
+                        showMenu:this.showMenu
                     }}/>
-                <ShowToast ref='toast' msg={''}></ShowToast>
+                <ShowToast ref={(toast)=>{this.toast = toast}} msg={''}></ShowToast>
             </View>
         );
     }
 
     showToast = (content) => {
-        this.refs.toast.changeType(ShowToast.TOAST, content);
+        this.toast.changeType(ShowToast.TOAST, content);
     };
 
     showModal = (value) => {
-        this.refs.toast.showModal(value);
-    }
+        this.toast.showModal(value);
+    };
 
 }

@@ -33,12 +33,19 @@ export  default class WebScene extends BaseComponent {
         };
     }
 
+    componentWillMount(){
+        this.props.screenProps.showModal(true);
+    }
+
     componentDidMount() {
+
         oldUrl = this.props.navigation.state.params.webUrl;
         BackHandler.addEventListener('hardwareBackPress', this.handleBack);
         InteractionManager.runAfterInteractions(() => {
             this.setState({renderPlaceholderOnly: false});
+
         });
+
     }
 
     handleBack = () => {
@@ -64,6 +71,7 @@ export  default class WebScene extends BaseComponent {
                     javaScriptEnabled={true}
                     domStorageEnabled={true}
                     scalesPageToFit={false}
+                    onLoadEnd={()=>{ this.props.screenProps.showModal(false);}}
                     onNavigationStateChange={this.onNavigationStateChange.bind(this)}
                 />
 
