@@ -15,7 +15,36 @@ const STATECODE ={
 const PAGECOLOR = {
 
     white:'white',
-    red:'red'
+    red:'red',
+    all_blue : "#08c5a7",
+    all_background :"#F0F0F0"
+}
+
+const easyRequest =(url,paramer)=>{
+
+
+    request(url, 'Post', paramer)
+        .then((response) => {
+
+                let tempJson=response.mjson.retdata;
+
+                return {stateCode:1,data:tempJson}
+
+            },
+            (error) => {
+
+                if(error.mycode!= -300||error.mycode!= -500){
+
+                    this.props.showToast(error.mjson.msg);
+                }else {
+
+                    this.props.showToast('服务器连接有问题')
+                }
+
+                return {stateCode:-6}
+            });
+
+
 }
 
 const {width, height} = Dimensions.get('window')
@@ -51,4 +80,16 @@ const fontadapeSize = (size)=> {
     return adapeSize(size) + 2;
 }
 
-export {STATECODE,PAGECOLOR,width,height,dateFormat,adapeSize,fontadapeSize,changeToMillion}
+const toutalPage =(toutal,rows)=>{
+
+    let toutalNum =Number(toutal);
+    let rowsNum =Number(rows);
+
+    let items=toutalNum/rowsNum;
+
+    return Number.isInteger(items)?items:Math.trunc(items+1);
+
+
+}
+
+export {STATECODE,PAGECOLOR,width,height,dateFormat,adapeSize,fontadapeSize,changeToMillion,toutalPage}

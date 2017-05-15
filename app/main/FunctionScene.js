@@ -69,6 +69,7 @@ export default class FunctionScene extends BaseComponent {
             case 1:
                 break;
             case 2:
+                this.toNextPage('CustomerList',{});
                 break;
             case 3:
                 break;

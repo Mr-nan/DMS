@@ -141,10 +141,10 @@ export default class LoginScene extends BaseComponent {
             params.img_code = this.userCheck;
             params.img_sid = this.imageCode;
         }
-        if (IS_ANDROID === false) {
-            params.login_type = '5';
-            params.device_code = 'dycd_dms_manage_ios';
-        }
+        // if (IS_ANDROID === false) {
+        //     params.login_type = '5';
+        //     params.device_code = 'dycd_dms_manage_ios';
+        // }
 
         let isOk;
         let body = '';
@@ -158,7 +158,7 @@ export default class LoginScene extends BaseComponent {
             body = body.substring(0, body.length - 1);
         }
 
-        fetch(AppUrls.USER_LOGIN + '?'+ body, {
+        fetch(AppUrls.USER_LOGIN, {
             method: 'post',
             body:body,
         }).then((response) => {
@@ -200,6 +200,7 @@ export default class LoginScene extends BaseComponent {
             }
         ).catch((error) => {
             this._closeLoading();
+
             this._showHint('网络请求失败2');
         });
     };
