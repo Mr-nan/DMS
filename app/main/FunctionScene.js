@@ -81,6 +81,7 @@ export default class FunctionScene extends BaseComponent {
             case 4:
                 break;
             case 5:
+                this.toNextPage('ReportCustomerList',{})
                 break;
             case 6:
                 this.toNextPage('ObdCustom', {});
