@@ -46625,7 +46625,7 @@ var _MyNavigator = require(418                      ); // 418 = ./component/MyNa
 
 var _MyNavigator2 = babelHelpers.interopRequireDefault(_MyNavigator);
 
-var _ShowToast = require(517                          ); // 517 = ./component/toast/ShowToast
+var _ShowToast = require(528                          ); // 528 = ./component/toast/ShowToast
 
 var _ShowToast2 = babelHelpers.interopRequireDefault(_ShowToast);
 
@@ -46702,11 +46702,46 @@ var _ObdCustom = require(513                  ); // 513 = ../obdReg/ObdCustom
 
 var _ObdCustom2 = babelHelpers.interopRequireDefault(_ObdCustom);
 
+var _ObdCheckoutRecordFragment = require(517                                  ); // 517 = ../obdReg/ObdCheckoutRecordFragment
+
+var _ObdCheckoutRecordFragment2 = babelHelpers.interopRequireDefault(_ObdCheckoutRecordFragment);
+
+var _ObdCarList = require(518                   ); // 518 = ../obdReg/ObdCarList
+
+var _ObdCarList2 = babelHelpers.interopRequireDefault(_ObdCarList);
+
+var _ObdCarDetail = require(520                     ); // 520 = ../obdReg/ObdCarDetail
+
+var _ObdCarDetail2 = babelHelpers.interopRequireDefault(_ObdCarDetail);
+
+var _WebScene = require(521                    ); // 521 = ../component/WebScene
+
+var _WebScene2 = babelHelpers.interopRequireDefault(_WebScene);
+
+var _ObdWarningExplain = require(522                          ); // 522 = ../obdReg/ObdWarningExplain
+
+var _ObdWarningExplain2 = babelHelpers.interopRequireDefault(_ObdWarningExplain);
+
+var _ObdChangeBind = require(523                      ); // 523 = ../obdReg/ObdChangeBind
+
+var _ObdChangeBind2 = babelHelpers.interopRequireDefault(_ObdChangeBind);
+
+var _CustomerList = require(531                             ); // 531 = ../collect&Report/CustomerList
+
+var _CustomerList2 = babelHelpers.interopRequireDefault(_CustomerList);
+
 exports.default = MyApp = (0, _reactNavigation.StackNavigator)({
     Root: { screen: _RootScene2.default },
     LoginScene: { screen: _LoginScene2.default },
     FunctionScene: { screen: _FunctionScene2.default },
-    ObdCustom: { screen: _ObdCustom2.default }
+    ObdCustom: { screen: _ObdCustom2.default },
+    ObdCheckoutRecordFragment: { screen: _ObdCheckoutRecordFragment2.default },
+    ObdCarList: { screen: _ObdCarList2.default },
+    ObdCarDetail: { screen: _ObdCarDetail2.default },
+    WebScene: { screen: _WebScene2.default },
+    ObdWarningExplain: { screen: _ObdWarningExplain2.default },
+    ObdChangeBind: { screen: _ObdChangeBind2.default },
+    CustomerList: { screen: _CustomerList2.default }
 }, {
     initialRouteName: 'Root',
     headerMode: 'none'
@@ -53846,7 +53881,15 @@ var RootScene = function (_BaseComponent) {
         }
 
         return _ret = (_temp = (_this = babelHelpers.possibleConstructorReturn(this, (_ref = RootScene.__proto__ || Object.getPrototypeOf(RootScene)).call.apply(_ref, [this].concat(args))), _this), _this.initFinish = function () {
-            _this.toNextPage('LoginScene', {});
+            _StorageUtil2.default.mGetItem(StorageKeyNames.ISLOGIN, function (data) {
+                if (data.code == 1) {
+                    if (!_this.isEmpty(data.result) && data.result == 'true') {
+                        _this.placePage('FunctionScene');
+                    } else {
+                        _this.toNextPage('LoginScene', {});
+                    }
+                }
+            });
         }, _this.toJump = function () {
             _StorageUtil2.default.mSetItem(KeyNames.NEED_GESTURE, 'true');
             var that = _this;
@@ -54583,16 +54626,42 @@ var LoginScene = function (_BaseComponent) {
 
         _this._getImageCode = function (code) {
             var url = AppUrls.USER_IMG_CODE + "?img_ver_code_key=" + code;
-            console.log('code=========>>>>');
-            console.log(url);
             _this.setState({
                 isCheck: true
             });
             fetch(url).then(function (response) {
+                var headers = response.headers;
+                for (var _iterator = Object.keys(headers.map), _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[typeof Symbol === 'function' ? typeof Symbol === 'function' ? Symbol.iterator : '@@iterator' : '@@iterator']();;) {
+                    var _ref;
+
+                    if (_isArray) {
+                        if (_i >= _iterator.length) break;
+                        _ref = _iterator[_i++];
+                    } else {
+                        _i = _iterator.next();
+                        if (_i.done) break;
+                        _ref = _i.value;
+                    }
+
+                    var key = _ref;
+
+                    if (key == 'auth' && !_this.isEmpty(headers.map[key][0])) {
+                        var auth = headers.map[key][0];
+                        var split = auth.split('=');
+                        _this.imageCode = split[1];
+                        break;
+                    }
+                }
                 return response.arrayBuffer();
+            }, function () {
+                _this._showHint('获取验证码失败');
             }).then(function (rd) {
-                console.log('9788888898');
-                console.log(JSON.stringify(rd.get));
+                var base64String = 'data:image/png;base64,' + btoa(String.fromCharCode.apply(String, babelHelpers.toConsumableArray(new Uint8Array(rd))));
+                _this.setState({
+                    codeUrl: base64String
+                });
+            }, function (error) {
+                _this._showHint('获取验证码失败');
             });
         };
 
@@ -54607,26 +54676,23 @@ var LoginScene = function (_BaseComponent) {
                 params.img_code = _this.userCheck;
                 params.img_sid = _this.imageCode;
             }
-            if (IS_ANDROID === false) {
-                params.login_type = '5';
-                params.device_code = 'dycd_dms_manage_ios';
-            }
+
 
             var isOk = void 0;
             var body = '';
-            for (var _iterator = Object.keys(params), _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[typeof Symbol === 'function' ? typeof Symbol === 'function' ? Symbol.iterator : '@@iterator' : '@@iterator']();;) {
-                var _ref;
+            for (var _iterator2 = Object.keys(params), _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[typeof Symbol === 'function' ? typeof Symbol === 'function' ? Symbol.iterator : '@@iterator' : '@@iterator']();;) {
+                var _ref2;
 
-                if (_isArray) {
-                    if (_i >= _iterator.length) break;
-                    _ref = _iterator[_i++];
+                if (_isArray2) {
+                    if (_i2 >= _iterator2.length) break;
+                    _ref2 = _iterator2[_i2++];
                 } else {
-                    _i = _iterator.next();
-                    if (_i.done) break;
-                    _ref = _i.value;
+                    _i2 = _iterator2.next();
+                    if (_i2.done) break;
+                    _ref2 = _i2.value;
                 }
 
-                var key = _ref;
+                var key = _ref2;
 
                 body += key;
                 body += '=';
@@ -54637,7 +54703,7 @@ var LoginScene = function (_BaseComponent) {
                 body = body.substring(0, body.length - 1);
             }
 
-            fetch(AppUrls.USER_LOGIN + '?' + body, {
+            fetch(AppUrls.USER_LOGIN, {
                 method: 'post',
                 body: body
             }).then(function (response) {
@@ -54660,8 +54726,6 @@ var LoginScene = function (_BaseComponent) {
                         _this.placePage('FunctionScene');
                     } else if (rd.retcode == '4620001' || rd.retcode == '4610003' || rd.retcode == '4620004' || rd.retcode == '-4620003' || rd.retcode == '-4620002') {
                         _this._showHint("" + rd.retmsg);
-                        console.log('55566666=====>>>>');
-                        console.log(rd.retdata.img_ver_code_key);
                         _this._getImageCode(rd.retdata.img_ver_code_key);
                     } else {
                         if (!_this.isEmpty(rd.retmsg)) {
@@ -54675,6 +54739,7 @@ var LoginScene = function (_BaseComponent) {
                 }
             }).catch(function (error) {
                 _this._closeLoading();
+
                 _this._showHint('网络请求失败2');
             });
         };
@@ -55387,6 +55452,7 @@ var FunctionScene = function (_BaseComponent) {
                 case 1:
                     break;
                 case 2:
+                    _this.toNextPage('CustomerList', {});
                     break;
                 case 3:
                     break;
@@ -55695,6 +55761,10 @@ var _PixelUtil = require(485                 ); // 485 = ../utils/PixelUtil
 
 var _PixelUtil2 = babelHelpers.interopRequireDefault(_PixelUtil);
 
+var _AllNavigationView = require(496                             ); // 496 = ../component/AllNavigationView
+
+var _AllNavigationView2 = babelHelpers.interopRequireDefault(_AllNavigationView);
+
 var Pixel = new _PixelUtil2.default();
 var page = 1;
 var allPage = 1;
@@ -55714,7 +55784,7 @@ var ObdCustom = function (_BaseComponent) {
                 r: 10
             };
             (0, _RequestUtil.request)(Urls.OBD_CUSTOMER_LIST, 'Post', maps).then(function (response) {
-                console.log('asdfk;alsdkf;lksd;fk;sd');
+                _this.props.screenProps.showModal(false);
                 if (page == 1 && response.mjson.retdata.list.length <= 0) {
                     _this.setState({ renderPlaceholderOnly: 'null' });
                 } else {
@@ -55732,6 +55802,7 @@ var ObdCustom = function (_BaseComponent) {
                     _this.setState({ renderPlaceholderOnly: 'success' });
                 }
             }, function (error) {
+                _this.props.screenProps.showModal(false);
                 _this.setState({ renderPlaceholderOnly: 'error', isRefreshing: false });
             });
         };
@@ -55763,36 +55834,21 @@ var ObdCustom = function (_BaseComponent) {
         _this.renderRow = function (rowData, sectionID, rowId) {
             return _react2.default.createElement(_ComponentBlob.ObdCustomItem, {
                 onPress: function onPress() {
-                    alert('safsdf');
+                    _this.toNextPage('ObdCarList', {
+                        merge_id: rowData.merge_id
+                    });
                 },
-                name: '刘勇（123）', carNum: 'OBD监管车辆:' + "4辆", status: '预警', warningTip: '预警说明：' + '风控待审核',
+                textStyle: rowData.threshold_warning_status == '1' ? { color: 'red' } : null,
+                checkStyle: rowData.merge_threshold_warn_record_id == '0' ? { display: 'none' } : null,
+                warningStyle: rowData.threshold_warning_status == '3' || rowData.threshold_warning_status == '5' ? { color: 'red' } : null,
+                name: rowData.name + '（' + rowData.companyname + '）', carNum: 'OBD监管车辆：' + rowData.obd_reg_num + "辆",
+                status: rowData.threshold_warning_status_text, warningTip: '预警说明：' + rowData.threshold_warning_audit_status_text,
                 onPressCheckResult: function onPressCheckResult() {
-                    alert('查看');
+                    _this.toNextPage('ObdCheckoutRecordFragment', {
+                        name: rowData.name,
+                        merge_threshold_warn_record_id: rowData.merge_threshold_warn_record_id
+                    });
                 }
-            });
-        };
-
-        _this._renderRow = function (rowData, sectionID, rowId) {
-            return _react2.default.createElement(_ComponentBlob.ObdCarItem, {
-                onPress: function onPress() {
-                    alert('safsdf');
-                },
-                textStyle: rowData === 'John' ? { color: 'red' } : null,
-                modelName: '东风雪铁龙', vin: '实车车架号:' + "12348973127489", businessType: '线下库融：' + '0',
-                obdNum: 'Obd设备号：' + '3274983727932', obdStatus: '正常',
-                noneSubmit: rowData === 'Joel' ? '未提交说明！' : '',
-                onPressCheckResult: function onPressCheckResult() {
-                    alert('查看');
-                }
-            });
-        };
-
-        _this._tableRenderRow = function (rowData, sectionID, rowId) {
-            return _react2.default.createElement(_ComponentBlob.ObdCarDetailTable, {
-                borderStyle: rowId == data.length - 1 ? { borderBottomWidth: 1 } : null,
-                warningStatus: '正常',
-                obdNum: '32749', time: '3478',
-                explains: 'jfadsjlioppioipip'
             });
         };
 
@@ -55807,16 +55863,25 @@ var ObdCustom = function (_BaseComponent) {
     babelHelpers.createClass(ObdCustom, [{
         key: 'initFinish',
         value: function initFinish() {
+            allSouce = [];
+            page = 1;
+            allPage = 1;
+            this.props.screenProps.showModal(true);
             this.getData();
         }
     }, {
         key: 'render',
         value: function render() {
+            var _this2 = this;
+
             if (this.state.renderPlaceholderOnly !== 'success') {
                 return _react2.default.createElement(
                     _reactNative.View,
                     { style: { backgroundColor: fontAndColor.COLORA3, flex: 1, paddingTop: Pixel.getPixel(15) } },
-                    this.loadView()
+                    this.loadView(),
+                    _react2.default.createElement(_AllNavigationView2.default, { title: '客户列表', backIconClick: function backIconClick() {
+                            _this2.backPage();
+                        }, rightFootClick: function rightFootClick() {} })
                 );
             } else {
 
@@ -55835,7 +55900,10 @@ var ObdCustom = function (_BaseComponent) {
                             tintColor: [fontAndColor.COLORB0],
                             colors: [fontAndColor.COLORB0]
                         })
-                    })
+                    }),
+                    _react2.default.createElement(_AllNavigationView2.default, { title: '客户列表', backIconClick: function backIconClick() {
+                            _this2.backPage();
+                        }, rightFootClick: function rightFootClick() {} })
                 );
             }
         }
@@ -55848,26 +55916,31 @@ exports.default = ObdCustom;
 
 var styles = _reactNative.StyleSheet.create({
     container: {
-
         flex: 1,
         marginTop: Pixel.getPixel(0),
         backgroundColor: fontAndColor.COLORA3
     },
     listStyle: {
-        marginTop: Pixel.getPixel(0)
+        marginTop: Pixel.getPixel(48)
     }
 });
 }, 513, null, "DMS/app/obdReg/ObdCustom.js");
 __d(/* DMS/app/obdReg/ComponentBlob.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.ObdCarDetailTable = exports.ObdCarItem = exports.ObdCustomItem = undefined;
+exports.ObdCheckoutRecordTable = exports.ObdCarDetailTable = exports.ObdCarItem = exports.ObdCustomItem = undefined;
 
 var _react = require(187    ); // 187 = react
 
 var _react2 = babelHelpers.interopRequireDefault(_react);
 
 var _reactNative = require(12            ); // 12 = react-native
+
+var _PixelUtil = require(485                 ); // 485 = ../utils/PixelUtil
+
+var _PixelUtil2 = babelHelpers.interopRequireDefault(_PixelUtil);
+
+var Pixel = new _PixelUtil2.default();
 
 var ObdCustomItem = exports.ObdCustomItem = function (_PureComponent) {
     babelHelpers.inherits(ObdCustomItem, _PureComponent);
@@ -55886,6 +55959,8 @@ var ObdCustomItem = exports.ObdCustomItem = function (_PureComponent) {
                 status = _props.status,
                 warningTip = _props.warningTip,
                 textStyle = _props.textStyle,
+                warningStyle = _props.warningStyle,
+                checkStyle = _props.checkStyle,
                 onPress = _props.onPress,
                 onPressCheckResult = _props.onPressCheckResult;
 
@@ -55928,12 +56003,12 @@ var ObdCustomItem = exports.ObdCustomItem = function (_PureComponent) {
                         { style: { marginTop: 10, flexDirection: 'row', alignItems: 'center' } },
                         _react2.default.createElement(
                             _reactNative.Text,
-                            { style: { textAlign: 'left', flex: 1 } },
+                            { style: [{ textAlign: 'left', flex: 1 }, warningStyle] },
                             warningTip
                         ),
                         _react2.default.createElement(
                             _reactNative.Text,
-                            { style: ObdCustomItemStyles.checkResult, onPress: onPressCheckResult },
+                            { style: [ObdCustomItemStyles.checkResult, checkStyle], onPress: onPressCheckResult },
                             '\u67E5\u770B\u5BA1\u6838\u7ED3\u679C'
                         )
                     )
@@ -55958,11 +56033,13 @@ var ObdCarItem = exports.ObdCarItem = function (_PureComponent2) {
             var _props2 = this.props,
                 modelName = _props2.modelName,
                 vin = _props2.vin,
+                auto_vin_from_obd = _props2.auto_vin_from_obd,
                 businessType = _props2.businessType,
                 obdNum = _props2.obdNum,
                 obdStatus = _props2.obdStatus,
                 noneSubmit = _props2.noneSubmit,
                 textStyle = _props2.textStyle,
+                vinTextStyle = _props2.vinTextStyle,
                 onPress = _props2.onPress;
 
             return _react2.default.createElement(
@@ -55980,6 +56057,20 @@ var ObdCarItem = exports.ObdCarItem = function (_PureComponent2) {
                         _reactNative.Text,
                         { style: { marginTop: 5 } },
                         vin
+                    ),
+                    _react2.default.createElement(
+                        _reactNative.View,
+                        { style: { flexDirection: 'row', marginTop: 5 } },
+                        _react2.default.createElement(
+                            _reactNative.Text,
+                            null,
+                            '\u8BC6\u522B\u8F66\u67B6\u53F7\uFF1A'
+                        ),
+                        _react2.default.createElement(
+                            _reactNative.Text,
+                            { style: vinTextStyle },
+                            auto_vin_from_obd
+                        )
                     ),
                     _react2.default.createElement(
                         _reactNative.Text,
@@ -56004,7 +56095,7 @@ var ObdCarItem = exports.ObdCarItem = function (_PureComponent2) {
                             ),
                             _react2.default.createElement(
                                 _reactNative.Text,
-                                { style: [{ color: 'black' }, textStyle] },
+                                { style: textStyle },
                                 obdStatus
                             )
                         ),
@@ -56044,13 +56135,13 @@ var ObdCarDetailTable = exports.ObdCarDetailTable = function (_PureComponent3) {
                 { style: [ObdCustomItemStyles.tableContain, borderStyle] },
                 _react2.default.createElement(
                     _reactNative.View,
-                    { style: [ObdCustomItemStyles.rightLine, { flex: 0.18 }] },
+                    { style: [ObdCustomItemStyles.rightLine, { flex: 0.16 }] },
                     _react2.default.createElement(
                         _reactNative.View,
                         { style: ObdCustomItemStyles.tableView },
                         _react2.default.createElement(
                             _reactNative.Text,
-                            null,
+                            { style: { fontSize: 11, paddingVertical: Pixel.getPixel(5) } },
                             warningStatus
                         )
                     )
@@ -56063,8 +56154,79 @@ var ObdCarDetailTable = exports.ObdCarDetailTable = function (_PureComponent3) {
                         { style: ObdCustomItemStyles.tableView },
                         _react2.default.createElement(
                             _reactNative.Text,
-                            null,
+                            { style: { fontSize: 10, paddingVertical: Pixel.getPixel(5) } },
                             time
+                        )
+                    )
+                ),
+                _react2.default.createElement(
+                    _reactNative.View,
+                    { style: [ObdCustomItemStyles.rightLine, { flex: 0.32 }] },
+                    _react2.default.createElement(
+                        _reactNative.View,
+                        { style: ObdCustomItemStyles.tableView },
+                        _react2.default.createElement(
+                            _reactNative.Text,
+                            { style: { fontSize: 10, paddingVertical: Pixel.getPixel(5) } },
+                            obdNum
+                        )
+                    )
+                ),
+                _react2.default.createElement(
+                    _reactNative.Text,
+                    { style: { flex: 0.28, textAlign: 'center', fontSize: 11, paddingVertical: Pixel.getPixel(5) } },
+                    explains
+                )
+            );
+        }
+    }]);
+    return ObdCarDetailTable;
+}(_react.PureComponent);
+
+var ObdCheckoutRecordTable = exports.ObdCheckoutRecordTable = function (_PureComponent4) {
+    babelHelpers.inherits(ObdCheckoutRecordTable, _PureComponent4);
+
+    function ObdCheckoutRecordTable() {
+        babelHelpers.classCallCheck(this, ObdCheckoutRecordTable);
+        return babelHelpers.possibleConstructorReturn(this, (ObdCheckoutRecordTable.__proto__ || Object.getPrototypeOf(ObdCheckoutRecordTable)).apply(this, arguments));
+    }
+
+    babelHelpers.createClass(ObdCheckoutRecordTable, [{
+        key: 'render',
+        value: function render() {
+            var _props4 = this.props,
+                userName = _props4.userName,
+                explains = _props4.explains,
+                time = _props4.time,
+                record = _props4.record,
+                borderStyle = _props4.borderStyle;
+
+            return _react2.default.createElement(
+                _reactNative.View,
+                { style: [ObdCustomItemStyles.tableContain, borderStyle] },
+                _react2.default.createElement(
+                    _reactNative.View,
+                    { style: [ObdCustomItemStyles.rightLine, { flex: 0.38 }] },
+                    _react2.default.createElement(
+                        _reactNative.View,
+                        { style: ObdCustomItemStyles.tableView },
+                        _react2.default.createElement(
+                            _reactNative.Text,
+                            { style: { fontSize: 11, paddingVertical: 5 } },
+                            time
+                        )
+                    )
+                ),
+                _react2.default.createElement(
+                    _reactNative.View,
+                    { style: [ObdCustomItemStyles.rightLine, { flex: 0.12 }] },
+                    _react2.default.createElement(
+                        _reactNative.View,
+                        { style: ObdCustomItemStyles.tableView },
+                        _react2.default.createElement(
+                            _reactNative.Text,
+                            { style: { fontSize: 11, paddingVertical: 5 } },
+                            userName
                         )
                     )
                 ),
@@ -56076,20 +56238,20 @@ var ObdCarDetailTable = exports.ObdCarDetailTable = function (_PureComponent3) {
                         { style: ObdCustomItemStyles.tableView },
                         _react2.default.createElement(
                             _reactNative.Text,
-                            null,
-                            obdNum
+                            { style: { fontSize: 11, paddingVertical: 5 } },
+                            record
                         )
                     )
                 ),
                 _react2.default.createElement(
                     _reactNative.Text,
-                    { style: { flex: 0.3, textAlign: 'center' } },
+                    { style: { flex: 0.3, textAlign: 'center', fontSize: 11, paddingVertical: 5 } },
                     explains
                 )
             );
         }
     }]);
-    return ObdCarDetailTable;
+    return ObdCheckoutRecordTable;
 }(_react.PureComponent);
 
 var ObdCustomItemStyles = _reactNative.StyleSheet.create({
@@ -56110,7 +56272,8 @@ var ObdCustomItemStyles = _reactNative.StyleSheet.create({
         padding: 2,
         backgroundColor: '#08c5a7',
         color: 'white',
-        textAlign: 'center'
+        textAlign: 'center',
+        borderRadius: 3
     },
     tableContain: {
         flex: 1,
@@ -56131,7 +56294,8 @@ var ObdCustomItemStyles = _reactNative.StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center'
-    }
+    },
+    warningText: {}
 });
 }, 514, null, "DMS/app/obdReg/ComponentBlob.js");
 __d(/* DMS/app/utils/RequestUtil.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
@@ -56294,6 +56458,1916 @@ var styles = _reactNative.StyleSheet.create({
 
 exports.default = LoadMoreFooter;
 }, 516, null, "DMS/app/component/LoadMoreFooter.js");
+__d(/* DMS/app/obdReg/ObdCheckoutRecordFragment.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = undefined;
+
+var _class, _temp, _initialiseProps;
+
+var _react = require(187    ); // 187 = react
+
+var _react2 = babelHelpers.interopRequireDefault(_react);
+
+var _reactNative = require(12            ); // 12 = react-native
+
+var _ComponentBlob = require(514              ); // 514 = ./ComponentBlob
+
+var _BaseComponent2 = require(484                         ); // 484 = ../component/BaseComponent
+
+var _BaseComponent3 = babelHelpers.interopRequireDefault(_BaseComponent2);
+
+var _RequestUtil = require(515                   ); // 515 = ../utils/RequestUtil
+
+var _appUrls = require(500                  ); // 500 = ../constant/appUrls
+
+var Urls = babelHelpers.interopRequireWildcard(_appUrls);
+
+var _fontAndColor = require(486                       ); // 486 = ../constant/fontAndColor
+
+var fontAndColor = babelHelpers.interopRequireWildcard(_fontAndColor);
+
+var _PixelUtil = require(485                 ); // 485 = ../utils/PixelUtil
+
+var _PixelUtil2 = babelHelpers.interopRequireDefault(_PixelUtil);
+
+var _AllNavigationView = require(496                             ); // 496 = ../component/AllNavigationView
+
+var _AllNavigationView2 = babelHelpers.interopRequireDefault(_AllNavigationView);
+
+var Pixel = new _PixelUtil2.default();
+var allSouce = [];
+
+var ObdCheckoutRecordFragment = (_temp = _class = function (_BaseComponent) {
+    babelHelpers.inherits(ObdCheckoutRecordFragment, _BaseComponent);
+
+    function ObdCheckoutRecordFragment(props) {
+        babelHelpers.classCallCheck(this, ObdCheckoutRecordFragment);
+
+        var _this = babelHelpers.possibleConstructorReturn(this, (ObdCheckoutRecordFragment.__proto__ || Object.getPrototypeOf(ObdCheckoutRecordFragment)).call(this, props));
+
+        _initialiseProps.call(_this);
+
+        var ds = new _reactNative.ListView.DataSource({ rowHasChanged: function rowHasChanged(r1, r2) {
+                return r1 !== r2;
+            } });
+        _this.state = {
+            dataSource: {},
+            renderPlaceholderOnly: 'blank',
+            isRefreshing: false
+        };
+        return _this;
+    }
+
+    babelHelpers.createClass(ObdCheckoutRecordFragment, [{
+        key: 'initFinish',
+        value: function initFinish() {
+            allSouce = [];
+            this.props.screenProps.showModal(true);
+            this.getData();
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var _this2 = this;
+
+            if (this.state.renderPlaceholderOnly !== 'success') {
+                return _react2.default.createElement(
+                    _reactNative.View,
+                    { style: { backgroundColor: fontAndColor.COLORA3, flex: 1, paddingTop: Pixel.getPixel(15) } },
+                    this.loadView(),
+                    _react2.default.createElement(_AllNavigationView2.default, { title: this.props.navigation.state.params.name, backIconClick: function backIconClick() {
+                            _this2.backPage();
+                        }, rightFootClick: function rightFootClick() {} })
+                );
+            } else {
+                return _react2.default.createElement(
+                    _reactNative.View,
+                    { style: styles.container },
+                    _react2.default.createElement(
+                        _reactNative.View,
+                        { style: { flex: 1 } },
+                        _react2.default.createElement(
+                            _reactNative.Text,
+                            { style: styles.textStyle },
+                            '\u5BA1\u6838\u8BB0\u5F55'
+                        ),
+                        _react2.default.createElement(_reactNative.ListView, {
+                            contentContainerStyle: styles.listStyle,
+                            dataSource: this.state.dataSource,
+                            renderRow: this.renderRow
+                        })
+                    ),
+                    _react2.default.createElement(_AllNavigationView2.default, { title: this.props.navigation.state.params.name, backIconClick: function backIconClick() {
+                            _this2.backPage();
+                        }, rightFootClick: function rightFootClick() {} })
+                );
+            }
+        }
+    }]);
+    return ObdCheckoutRecordFragment;
+}(_BaseComponent3.default), _initialiseProps = function _initialiseProps() {
+    var _this3 = this;
+
+    this.getData = function () {
+        var maps = {
+            merge_threshold_warn_record_id: '20'
+        };
+        (0, _RequestUtil.request)(Urls.OBD_CHECKOUT_RECORD, 'Post', maps).then(function (response) {
+            _this3.props.screenProps.showModal(false);
+            if (response.mjson.retdata == '' || response.mjson.retdata == null) {
+                return;
+            }
+            if (response.mjson.retdata.list.length <= 0) {
+                _this3.setState({ renderPlaceholderOnly: 'null' });
+            } else {
+                var _allSouce;
+
+                allSouce.push({
+                    audit_time: '审核时间',
+                    audit_user_name: '审核人',
+                    audit_status_text: '审核意见',
+                    audit_remark: '审核记录'
+                });
+                (_allSouce = allSouce).push.apply(_allSouce, babelHelpers.toConsumableArray(response.mjson.retdata.list));
+                var ds = new _reactNative.ListView.DataSource({ rowHasChanged: function rowHasChanged(r1, r2) {
+                        return r1 !== r2;
+                    } });
+                _this3.setState({
+                    dataSource: ds.cloneWithRows(allSouce),
+                    isRefreshing: false
+                });
+                _this3.setState({ renderPlaceholderOnly: 'success' });
+            }
+        }, function (error) {
+            _this3.props.screenProps.showModal(false);
+            _this3.setState({ renderPlaceholderOnly: 'error', isRefreshing: false });
+        });
+    };
+
+    this.renderRow = function (rowData, sectionID, rowId) {
+        return _react2.default.createElement(_ComponentBlob.ObdCheckoutRecordTable, {
+            borderStyle: rowId == _this3.state.dataSource.length - 1 ? { borderBottomWidth: 1 } : null,
+            time: rowData.audit_time,
+            userName: rowData.audit_user_name, record: rowData.audit_status_text,
+            explains: rowData.audit_remark
+        });
+    };
+}, _temp);
+exports.default = ObdCheckoutRecordFragment;
+
+var styles = _reactNative.StyleSheet.create({
+    container: {
+        flex: 1,
+        marginTop: Pixel.getPixel(0),
+        backgroundColor: fontAndColor.COLORA3
+    },
+    listStyle: {
+        marginTop: Pixel.getPixel(10)
+    },
+    textStyle: {
+        marginTop: Pixel.getPixel(58),
+        marginLeft: Pixel.getPixel(15)
+    }
+});
+}, 517, null, "DMS/app/obdReg/ObdCheckoutRecordFragment.js");
+__d(/* DMS/app/obdReg/ObdCarList.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = undefined;
+
+var _react = require(187    ); // 187 = react
+
+var _react2 = babelHelpers.interopRequireDefault(_react);
+
+var _reactNative = require(12            ); // 12 = react-native
+
+var _ComponentBlob = require(514              ); // 514 = ./ComponentBlob
+
+var _BaseComponent2 = require(484                         ); // 484 = ../component/BaseComponent
+
+var _BaseComponent3 = babelHelpers.interopRequireDefault(_BaseComponent2);
+
+var _RequestUtil = require(515                   ); // 515 = ../utils/RequestUtil
+
+var _appUrls = require(500                  ); // 500 = ../constant/appUrls
+
+var Urls = babelHelpers.interopRequireWildcard(_appUrls);
+
+var _LoadMoreFooter = require(516                          ); // 516 = ../component/LoadMoreFooter
+
+var _LoadMoreFooter2 = babelHelpers.interopRequireDefault(_LoadMoreFooter);
+
+var _fontAndColor = require(486                       ); // 486 = ../constant/fontAndColor
+
+var fontAndColor = babelHelpers.interopRequireWildcard(_fontAndColor);
+
+var _PixelUtil = require(485                 ); // 485 = ../utils/PixelUtil
+
+var _PixelUtil2 = babelHelpers.interopRequireDefault(_PixelUtil);
+
+var _AllNavigationView = require(496                             ); // 496 = ../component/AllNavigationView
+
+var _AllNavigationView2 = babelHelpers.interopRequireDefault(_AllNavigationView);
+
+var Pixel = new _PixelUtil2.default();
+var page = 1;
+var allPage = 1;
+var allSouce = [];
+var searchIcon = require(519                                        ); // 519 = ../../images/assessment_customer_find.png
+
+var ObdCarList = function (_BaseComponent) {
+    babelHelpers.inherits(ObdCarList, _BaseComponent);
+
+    function ObdCarList(props) {
+        babelHelpers.classCallCheck(this, ObdCarList);
+
+        var _this = babelHelpers.possibleConstructorReturn(this, (ObdCarList.__proto__ || Object.getPrototypeOf(ObdCarList)).call(this, props));
+
+        _this.getData = function () {
+            var maps = {
+                p: page,
+                r: 10,
+                merge_id: _this.props.navigation.state.params.merge_id,
+                keyword: _this.keyword
+            };
+            (0, _RequestUtil.request)(Urls.OBD_CAR_LIST, 'Post', maps).then(function (response) {
+                _this.props.screenProps.showModal(false);
+                if (page == 1 && response.mjson.retdata.list.length <= 0) {
+                    _this.setState({ renderPlaceholderOnly: 'null' });
+                } else {
+                    var _allSouce;
+
+                    allPage = response.mjson.retdata.total / 10;
+                    (_allSouce = allSouce).push.apply(_allSouce, babelHelpers.toConsumableArray(response.mjson.retdata.list));
+                    var ds = new _reactNative.ListView.DataSource({ rowHasChanged: function rowHasChanged(r1, r2) {
+                            return r1 !== r2;
+                        } });
+                    _this.setState({
+                        dataSource: ds.cloneWithRows(allSouce),
+                        isRefreshing: false
+                    });
+                    _this.setState({ renderPlaceholderOnly: 'success' });
+                }
+            }, function (error) {
+                _this.props.screenProps.showModal(false);
+                _this.setState({ renderPlaceholderOnly: 'error', isRefreshing: false });
+            });
+        };
+
+        _this.refreshingData = function () {
+            allSouce = [];
+            _this.setState({ isRefreshing: true });
+            page = 1;
+            _this.getData();
+        };
+
+        _this.toEnd = function () {
+            if (_this.state.isRefreshing) {} else {
+                if (page < allPage) {
+                    page++;
+                    _this.getData();
+                }
+            }
+        };
+
+        _this.renderListFooter = function () {
+            if (_this.state.isRefreshing) {
+                return null;
+            } else {
+                return _react2.default.createElement(_LoadMoreFooter2.default, { isLoadAll: page >= allPage ? true : false });
+            }
+        };
+
+        _this.textChange = function (text) {
+            _this.keyword = text;
+        };
+
+        _this.searchData = function () {
+            allSouce = [];
+            page = 1;
+            _this.props.screenProps.showModal(true);
+            _this.getData();
+        };
+
+        _this.renderRow = function (rowData, sectionID, rowId) {
+            return _react2.default.createElement(_ComponentBlob.ObdCarItem, {
+                onPress: function onPress() {
+                    _this.toNextPage('ObdCarDetail', {
+                        rid: _this.props.navigation.state.params.merge_id
+                    });
+                },
+                textStyle: rowData.is_explain == '1' ? { color: 'red' } : null,
+                modelName: rowData.model_name,
+                vin: '实车车架号：' + rowData.auto_vin,
+                vinTextStyle: rowData.auto_vin_from_obd == '' ? { color: 'red' } : null,
+                auto_vin_from_obd: rowData.auto_vin_from_obd == '' ? '未识别' : rowData.auto_vin_from_obd,
+                businessType: rowData.business_type + '：' + rowData.payment_number,
+                obdNum: 'Obd设备号：' + rowData.obd_number,
+                obdStatus: rowData.obd_status_text, noneSubmit: rowData.is_explain == '1' ? '未提交说明！' : ''
+            });
+        };
+
+        _this.keyword = '';
+        _this.state = {
+            dataSource: {},
+            renderPlaceholderOnly: 'blank',
+            isRefreshing: false
+        };
+        return _this;
+    }
+
+    babelHelpers.createClass(ObdCarList, [{
+        key: 'initFinish',
+        value: function initFinish() {
+            allSouce = [];
+            page = 1;
+            this.props.screenProps.showModal(true);
+            this.getData();
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var _this2 = this;
+
+            if (this.state.renderPlaceholderOnly !== 'success') {
+                return _react2.default.createElement(
+                    _reactNative.View,
+                    { style: { backgroundColor: fontAndColor.COLORA3, flex: 1, paddingTop: Pixel.getPixel(15) } },
+                    this.loadView(),
+                    _react2.default.createElement(_AllNavigationView2.default, { title: '车辆列表', backIconClick: function backIconClick() {
+                            _this2.backPage();
+                        }, rightFootClick: function rightFootClick() {} })
+                );
+            } else {
+
+                return _react2.default.createElement(
+                    _reactNative.View,
+                    { style: styles.container },
+                    _react2.default.createElement(
+                        _reactNative.View,
+                        { style: styles.searchStyle },
+                        _react2.default.createElement(_reactNative.TextInput, {
+                            multiline: true,
+                            style: { flex: 1, flexWrap: 'wrap' },
+                            placeholder: '车架号、OBD设备号、借款单号关键字',
+                            underlineColorAndroid: "#00000000",
+                            onChangeText: this.textChange
+                        }),
+                        _react2.default.createElement(
+                            _reactNative.TouchableOpacity,
+                            { activeOpacity: 0.8, onPress: this.searchData },
+                            _react2.default.createElement(_reactNative.Image, { style: styles.searchIcon, source: searchIcon })
+                        )
+                    ),
+                    _react2.default.createElement(_reactNative.ListView, {
+                        contentContainerStyle: styles.listStyle,
+                        dataSource: this.state.dataSource,
+                        renderRow: this.renderRow,
+                        renderFooter: this.renderListFooter,
+                        onEndReached: this.toEnd,
+                        refreshControl: _react2.default.createElement(_reactNative.RefreshControl, {
+                            refreshing: this.state.isRefreshing,
+                            onRefresh: this.refreshingData,
+                            tintColor: [fontAndColor.COLORB0],
+                            colors: [fontAndColor.COLORB0]
+                        })
+                    }),
+                    _react2.default.createElement(_AllNavigationView2.default, { title: '车辆列表', backIconClick: function backIconClick() {
+                            _this2.backPage();
+                        }, rightFootClick: function rightFootClick() {} })
+                );
+            }
+        }
+    }]);
+    return ObdCarList;
+}(_BaseComponent3.default);
+
+exports.default = ObdCarList;
+
+
+var styles = _reactNative.StyleSheet.create({
+    container: {
+        flex: 1,
+        marginTop: Pixel.getPixel(0),
+        backgroundColor: fontAndColor.COLORA3
+    },
+    listStyle: {
+        marginTop: Pixel.getPixel(10)
+    },
+    searchStyle: {
+        flexDirection: 'row',
+        marginHorizontal: 10,
+        paddingHorizontal: 10,
+        alignItems: 'center',
+        marginTop: Pixel.getPixel(58),
+        backgroundColor: 'white',
+        borderRadius: 92,
+        height: Pixel.getPixel(40)
+    },
+    searchIcon: {
+        width: Pixel.getPixel(28),
+        height: Pixel.getPixel(28),
+        margin: 3
+    }
+});
+}, 518, null, "DMS/app/obdReg/ObdCarList.js");
+__d(/* DMS/images/assessment_customer_find.png */function(global, require, module, exports) {module.exports = require(276                                         ).registerAsset({"__packager_asset":true,"httpServerLocation":"/assets/images","width":50,"height":44,"scales":[1],"hash":"769fc34902f7ff27502ef3451519079b","name":"assessment_customer_find","type":"png"}); // 276 = react-native/Libraries/Image/AssetRegistry
+}, 519, null, "DMS/images/assessment_customer_find.png");
+__d(/* DMS/app/obdReg/ObdCarDetail.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = undefined;
+
+var _class, _temp, _initialiseProps;
+
+var _react = require(187    ); // 187 = react
+
+var _react2 = babelHelpers.interopRequireDefault(_react);
+
+var _reactNative = require(12            ); // 12 = react-native
+
+var _ComponentBlob = require(514              ); // 514 = ./ComponentBlob
+
+var _BaseComponent2 = require(484                         ); // 484 = ../component/BaseComponent
+
+var _BaseComponent3 = babelHelpers.interopRequireDefault(_BaseComponent2);
+
+var _RequestUtil = require(515                   ); // 515 = ../utils/RequestUtil
+
+var _appUrls = require(500                  ); // 500 = ../constant/appUrls
+
+var Urls = babelHelpers.interopRequireWildcard(_appUrls);
+
+var _fontAndColor = require(486                       ); // 486 = ../constant/fontAndColor
+
+var fontAndColor = babelHelpers.interopRequireWildcard(_fontAndColor);
+
+var _PixelUtil = require(485                 ); // 485 = ../utils/PixelUtil
+
+var _PixelUtil2 = babelHelpers.interopRequireDefault(_PixelUtil);
+
+var _AllNavigationView = require(496                             ); // 496 = ../component/AllNavigationView
+
+var _AllNavigationView2 = babelHelpers.interopRequireDefault(_AllNavigationView);
+
+var Pixel = new _PixelUtil2.default();
+var allSouce = [];
+var tabSouce = [];
+var obd_info = null;
+var regulation_info = null;
+var auto_base_info = void 0;
+
+var ObdCarDetail = (_temp = _class = function (_BaseComponent) {
+    babelHelpers.inherits(ObdCarDetail, _BaseComponent);
+
+    function ObdCarDetail(props) {
+        babelHelpers.classCallCheck(this, ObdCarDetail);
+
+        var _this = babelHelpers.possibleConstructorReturn(this, (ObdCarDetail.__proto__ || Object.getPrototypeOf(ObdCarDetail)).call(this, props));
+
+        _initialiseProps.call(_this);
+
+        var ds = new _reactNative.ListView.DataSource({ rowHasChanged: function rowHasChanged(r1, r2) {
+                return r1 !== r2;
+            } });
+        _this.state = {
+            dataSource: {},
+            tabDataSource: {},
+            renderPlaceholderOnly: 'blank',
+            isRefreshing: false
+        };
+        return _this;
+    }
+
+    babelHelpers.createClass(ObdCarDetail, [{
+        key: 'initFinish',
+        value: function initFinish() {
+            allSouce = [];
+            this.props.screenProps.showModal(true);
+            this.getData();
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var _this2 = this;
+
+            if (this.state.renderPlaceholderOnly !== 'success' || auto_base_info == null) {
+                return _react2.default.createElement(
+                    _reactNative.View,
+                    { style: { backgroundColor: fontAndColor.COLORA3, flex: 1, paddingTop: Pixel.getPixel(15) } },
+                    this.loadView(),
+                    _react2.default.createElement(_AllNavigationView2.default, { title: this.props.navigation.state.params.name, backIconClick: function backIconClick() {
+                            _this2.backPage();
+                        }, rightFootClick: function rightFootClick() {} })
+                );
+            } else {
+                return _react2.default.createElement(
+                    _reactNative.View,
+                    { style: styles.container },
+                    _react2.default.createElement(
+                        _reactNative.ScrollView,
+                        { style: [styles.container, { marginBottom: Pixel.getPixel(10) }] },
+                        _react2.default.createElement(
+                            _reactNative.View,
+                            { style: styles.container },
+                            _react2.default.createElement(
+                                _reactNative.View,
+                                { style: { flex: 1 } },
+                                _react2.default.createElement(
+                                    _reactNative.Text,
+                                    { style: styles.textStyle },
+                                    '\u8F66\u8F86\u57FA\u672C\u4FE1\u606F'
+                                ),
+                                _react2.default.createElement(_reactNative.ListView, {
+                                    contentContainerStyle: styles.listStyle,
+                                    dataSource: this.state.dataSource,
+                                    renderRow: this.renderRow
+                                }),
+                                _react2.default.createElement(
+                                    _reactNative.Text,
+                                    { style: styles.typeText },
+                                    'OBD\u4F4D\u7F6E\u53CA\u62A4\u680F'
+                                ),
+                                _react2.default.createElement(
+                                    _reactNative.TouchableOpacity,
+                                    {
+                                        style: { flex: 1, flexDirection: 'row', justifyContent: 'center' },
+                                        onPress: function onPress() {
+                                            _this2.toNextPage('WebScene', {
+                                                title: 'OBD位置及护栏',
+                                                webUrl: obd_info.obd_track_url });
+                                        } },
+                                    _react2.default.createElement(
+                                        _reactNative.View,
+                                        null,
+                                        _react2.default.createElement(_reactNative.WebView, {
+                                            ref: 'www',
+                                            style: styles.webStyle,
+                                            source: { uri: obd_info.obd_track_url, method: 'GET' },
+                                            javaScriptEnabled: true,
+                                            domStorageEnabled: true,
+                                            scalesPageToFit: false
+                                        })
+                                    )
+                                ),
+                                _react2.default.createElement(
+                                    _reactNative.View,
+                                    { style: styles.obdStatus },
+                                    _react2.default.createElement(
+                                        _reactNative.View,
+                                        { style: { flexDirection: 'row', flex: 1 } },
+                                        _react2.default.createElement(
+                                            _reactNative.Text,
+                                            null,
+                                            'OBD\u72B6\u6001\uFF1A'
+                                        ),
+                                        _react2.default.createElement(
+                                            _reactNative.Text,
+                                            {
+                                                style: obd_info.is_explain == '1' ? { color: 'red' } : null },
+                                            obd_info.obd_status
+                                        )
+                                    ),
+                                    _react2.default.createElement(
+                                        _reactNative.TouchableOpacity,
+                                        { style: { marginRight: Pixel.getPixel(10) }, activeOpacity: 0.8,
+                                            onPress: function onPress() {
+                                                _this2.toNextPage('ObdWarningExplain', {
+                                                    warn_record_id: regulation_info.warn_record_id,
+                                                    freshDataClick: _this2.freshDataClick });
+                                            } },
+                                        _react2.default.createElement(
+                                            _reactNative.Text,
+                                            { style: [styles.explainButton, { width: Pixel.getPixel(50) }] },
+                                            '\u8BF4\u660E'
+                                        )
+                                    )
+                                ),
+                                _react2.default.createElement(
+                                    _reactNative.View,
+                                    { style: styles.obdStatus },
+                                    _react2.default.createElement(_reactNative.View, { style: { flex: 1 } }),
+                                    _react2.default.createElement(
+                                        _reactNative.TouchableOpacity,
+                                        { style: { marginRight: Pixel.getPixel(10) }, activeOpacity: 0.8,
+                                            onPress: function onPress() {
+                                                _this2.toNextPage('ObdChangeBind', {
+                                                    product_type_code: regulation_info.product_type_code,
+                                                    regulator_id: regulation_info.regulator_id,
+                                                    freshDataClick: _this2.freshDataClick });
+                                            } },
+                                        _react2.default.createElement(
+                                            _reactNative.Text,
+                                            { style: styles.explainButton },
+                                            '\u91CD\u65B0\u7ED1\u5B9A'
+                                        )
+                                    )
+                                ),
+                                _react2.default.createElement(
+                                    _reactNative.Text,
+                                    { style: [styles.typeText, { marginTop: Pixel.getPixel(20) }] },
+                                    'OBD\u62A5\u8B66\u8BB0\u5F55'
+                                ),
+                                _react2.default.createElement(_reactNative.ListView, {
+                                    contentContainerStyle: styles.listStyle,
+                                    dataSource: this.state.tabDataSource,
+                                    renderRow: this._tableRenderRow
+                                })
+                            )
+                        )
+                    ),
+                    _react2.default.createElement(_AllNavigationView2.default, { title: 'OBD监管详情', backIconClick: function backIconClick() {
+                            _this2.backPage();
+                        }, rightFootClick: function rightFootClick() {} })
+                );
+            }
+        }
+    }]);
+    return ObdCarDetail;
+}(_BaseComponent3.default), _initialiseProps = function _initialiseProps() {
+    var _this3 = this;
+
+    this.getData = function () {
+        auto_base_info = null;
+        regulation_info = null;
+        tabSouce = [];
+        var maps = {
+            rid: '39'
+        };
+        (0, _RequestUtil.request)(Urls.OBD_CAR_DETAIL, 'Post', maps).then(function (response) {
+            _this3.props.screenProps.showModal(false);
+            if (response.mjson.retdata == '' || response.mjson.retdata == null) {
+                return;
+            }
+            if (response.mjson.retdata.auto_base_info !== null) {
+                auto_base_info = response.mjson.retdata.auto_base_info;
+                allSouce.push([auto_base_info.auto_type.name + '：' + auto_base_info.auto_type.value, auto_base_info.certification.name + '：' + auto_base_info.certification.value]);
+                allSouce.push([auto_base_info.brand_name.name + '：' + auto_base_info.brand_name.value, auto_base_info.series_name.name + '：' + auto_base_info.series_name.value]);
+                allSouce.push([auto_base_info.model_name.name + '：' + auto_base_info.model_name.value, auto_base_info.frame_number.name + '：' + auto_base_info.frame_number.value]);
+                allSouce.push([auto_base_info.engine_number.name + '：' + auto_base_info.engine_number.value, auto_base_info.displacement.name + '：' + auto_base_info.displacement.value]);
+                allSouce.push([auto_base_info.init_reg.name + '：' + auto_base_info.init_reg.value, auto_base_info.manufacture.name + '：' + auto_base_info.manufacture.value]);
+                allSouce.push([auto_base_info.car_color.name + '：' + auto_base_info.car_color.value, auto_base_info.trim_color.name + '：' + auto_base_info.trim_color.value]);
+                allSouce.push([auto_base_info.nature_use.name + '：' + auto_base_info.nature_use.value, auto_base_info.transfer_count.name + '：' + auto_base_info.transfer_count.value]);
+                allSouce.push([auto_base_info.mileage.name + '：' + auto_base_info.mileage.value, auto_base_info.plate_number.name + '：' + auto_base_info.plate_number.value]);
+                allSouce.push([auto_base_info.inspection_end.name + '：' + auto_base_info.inspection_end.value, auto_base_info.insurance_end.name + '：' + auto_base_info.insurance_end.value]);
+                allSouce.push([auto_base_info.record_type.name + '：' + auto_base_info.record_type.value, auto_base_info.storage.name + '：' + auto_base_info.storage.value]);
+                var ds = new _reactNative.ListView.DataSource({ rowHasChanged: function rowHasChanged(r1, r2) {
+                        return r1 !== r2;
+                    } });
+                _this3.setState({
+                    dataSource: ds.cloneWithRows(allSouce),
+                    isRefreshing: false
+                });
+            }
+            if (response.mjson.retdata.regulation_info !== null) {
+                regulation_info = response.mjson.retdata.regulation_info;
+            }
+            if (response.mjson.retdata.obd_info !== null) {
+                obd_info = response.mjson.retdata.obd_info;
+            }
+            if (response.mjson.retdata.warn_record !== null) {
+                var _tabSouce;
+
+                console.log('1111111111111111111111');
+                tabSouce.push({
+                    alarm_type_text: '报警类型',
+                    alarm_time: '时间',
+                    obd_number: 'OBD设备号',
+                    alarm_explain: '说明'
+
+                });
+                (_tabSouce = tabSouce).push.apply(_tabSouce, babelHelpers.toConsumableArray(response.mjson.retdata.warn_record));
+                var ds1 = new _reactNative.ListView.DataSource({ rowHasChanged: function rowHasChanged(r1, r2) {
+                        return r1 !== r2;
+                    } });
+                _this3.setState({
+                    tabDataSource: ds1.cloneWithRows(tabSouce),
+                    isRefreshing: false
+                });
+            }
+            _this3.setState({ renderPlaceholderOnly: 'success' });
+        }, function (error) {
+            _this3.props.screenProps.showModal(false);
+            _this3.setState({ renderPlaceholderOnly: 'error', isRefreshing: false });
+        });
+    };
+
+    this.freshDataClick = function () {
+        allSouce = [];
+        _this3.props.screenProps.showModal(true);
+        _this3.getData();
+    };
+
+    this.renderRow = function (rowData, sectionID, rowId) {
+
+        return _react2.default.createElement(
+            _reactNative.View,
+            { style: styles.detailItem },
+            _react2.default.createElement(
+                _reactNative.Text,
+                { style: { flex: 1, fontSize: Pixel.getPixel(11) } },
+                rowData[0]
+            ),
+            _react2.default.createElement(
+                _reactNative.View,
+                { style: { flex: 1, paddingLeft: Pixel.getPixel(5) } },
+                _react2.default.createElement(
+                    _reactNative.Text,
+                    { style: { fontSize: Pixel.getPixel(11) } },
+                    rowData[1]
+                )
+            )
+        );
+    };
+
+    this._tableRenderRow = function (rowData, sectionID, rowId) {
+        return _react2.default.createElement(_ComponentBlob.ObdCarDetailTable, {
+            borderStyle: rowId == tabSouce.length - 1 ? { borderBottomWidth: 1 } : null,
+            warningStatus: rowData.alarm_type_text,
+            obdNum: rowData.obd_number, time: rowData.alarm_time,
+            explains: rowData.alarm_explain
+        });
+    };
+}, _temp);
+exports.default = ObdCarDetail;
+
+var styles = _reactNative.StyleSheet.create({
+    container: {
+        flex: 1,
+        marginTop: Pixel.getPixel(0),
+        backgroundColor: fontAndColor.COLORA3
+    },
+    listStyle: {
+        marginTop: Pixel.getPixel(10)
+    },
+    textStyle: {
+        marginTop: Pixel.getPixel(58),
+        marginLeft: Pixel.getPixel(10),
+        fontSize: Pixel.getPixel(15)
+    },
+    typeText: {
+        marginLeft: Pixel.getPixel(10),
+        fontSize: Pixel.getPixel(15),
+        marginVertical: Pixel.getPixel(10)
+    },
+    detailItem: {
+        flex: 1,
+        flexDirection: 'row',
+        marginTop: Pixel.getPixel(5),
+        marginLeft: Pixel.getPixel(20)
+    },
+    webStyle: {
+        width: Pixel.getPixel(200),
+        height: Pixel.getPixel(100),
+        backgroundColor: fontAndColor.COLORA3
+    },
+    obdStatus: {
+        marginLeft: Pixel.getPixel(10),
+        flexDirection: 'row',
+        flex: 1,
+        alignItems: 'center'
+    },
+    explainButton: {
+        color: 'white',
+        textAlign: 'center',
+        backgroundColor: '#08c5a7',
+        padding: Pixel.getPixel(3),
+        marginTop: Pixel.getPixel(10),
+        borderRadius: 3
+    }
+
+});
+}, 520, null, "DMS/app/obdReg/ObdCarDetail.js");
+__d(/* DMS/app/component/WebScene.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = undefined;
+
+var _react = require(187    ); // 187 = react
+
+var _react2 = babelHelpers.interopRequireDefault(_react);
+
+var _reactNative = require(12            ); // 12 = react-native
+
+var _PixelUtil = require(485                 ); // 485 = ../utils/PixelUtil
+
+var _PixelUtil2 = babelHelpers.interopRequireDefault(_PixelUtil);
+
+var _AllNavigationView = require(496                             ); // 496 = ../component/AllNavigationView
+
+var _AllNavigationView2 = babelHelpers.interopRequireDefault(_AllNavigationView);
+
+var _fontAndColor = require(486                       ); // 486 = ../constant/fontAndColor
+
+var fontAndColor = babelHelpers.interopRequireWildcard(_fontAndColor);
+
+var _BaseComponent2 = require(484                         ); // 484 = ../component/BaseComponent
+
+var _BaseComponent3 = babelHelpers.interopRequireDefault(_BaseComponent2);
+
+var _Dimensions$get = _reactNative.Dimensions.get('window'),
+    width = _Dimensions$get.width,
+    height = _Dimensions$get.height;
+
+var Pixel = new _PixelUtil2.default();
+
+var oldUrl = '';
+
+var WebScene = function (_BaseComponent) {
+    babelHelpers.inherits(WebScene, _BaseComponent);
+
+    function WebScene(props) {
+        babelHelpers.classCallCheck(this, WebScene);
+
+        var _this = babelHelpers.possibleConstructorReturn(this, (WebScene.__proto__ || Object.getPrototypeOf(WebScene)).call(this, props));
+
+        _this.handleBack = function () {
+            if (oldUrl == _this.props.navigation.state.params.webUrl) {
+                _this.backPage();
+            } else {
+                _this.refs.www.goBack();
+            }
+            return true;
+        };
+
+        _this.onNavigationStateChange = function (navState) {
+            oldUrl = navState.url;
+        };
+
+        _this.state = {
+            renderPlaceholderOnly: true
+        };
+        return _this;
+    }
+
+    babelHelpers.createClass(WebScene, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            var _this2 = this;
+
+            oldUrl = this.props.navigation.state.params.webUrl;
+            _reactNative.BackHandler.addEventListener('hardwareBackPress', this.handleBack);
+            _reactNative.InteractionManager.runAfterInteractions(function () {
+                _this2.setState({ renderPlaceholderOnly: false });
+            });
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var _this3 = this;
+
+            if (this.state.renderPlaceholderOnly) {
+                return this._renderPlaceholderView();
+            }
+            return _react2.default.createElement(
+                _reactNative.View,
+                { style: { backgroundColor: fontAndColor.COLORA3, flex: 1 } },
+                _react2.default.createElement(_reactNative.WebView, {
+                    ref: 'www',
+                    style: { width: width, height: height, backgroundColor: fontAndColor.COLORA3, marginTop: Pixel.getTitlePixel(64) },
+                    source: { uri: this.props.navigation.state.params.webUrl, method: 'GET' },
+                    javaScriptEnabled: true,
+                    domStorageEnabled: true,
+                    scalesPageToFit: false,
+                    onNavigationStateChange: this.onNavigationStateChange.bind(this)
+                }),
+                _react2.default.createElement(_AllNavigationView2.default, { title: this.props.navigation.state.params.title, backIconClick: function backIconClick() {
+                        _this3.backPage();
+                    }, rightFootClick: function rightFootClick() {} })
+            );
+        }
+    }, {
+        key: '_renderPlaceholderView',
+        value: function _renderPlaceholderView() {
+            var _this4 = this;
+
+            return _react2.default.createElement(
+                _reactNative.View,
+                { style: { width: width, height: height, backgroundColor: fontAndColor.COLORA3 } },
+                _react2.default.createElement(_AllNavigationView2.default, { title: this.props.navigation.state.params.title, backIconClick: function backIconClick() {
+                        _this4.backPage();
+                    }, rightFootClick: function rightFootClick() {} })
+            );
+        }
+    }]);
+    return WebScene;
+}(_BaseComponent3.default);
+
+exports.default = WebScene;
+
+var styles = _reactNative.StyleSheet.create({
+
+    image: {
+        width: 43,
+        height: 43
+    },
+    Separator: {
+        backgroundColor: fontAndColor.COLORA3,
+        height: Pixel.getPixel(10)
+
+    },
+    margin: {
+        marginRight: Pixel.getPixel(15),
+        marginLeft: Pixel.getPixel(15)
+
+    },
+    topViewStyle: { flex: 1, height: Pixel.getPixel(44), justifyContent: 'center' }
+});
+}, 521, null, "DMS/app/component/WebScene.js");
+__d(/* DMS/app/obdReg/ObdWarningExplain.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = undefined;
+
+var _react = require(187    ); // 187 = react
+
+var _react2 = babelHelpers.interopRequireDefault(_react);
+
+var _reactNative = require(12            ); // 12 = react-native
+
+var _BaseComponent2 = require(484                         ); // 484 = ../component/BaseComponent
+
+var _BaseComponent3 = babelHelpers.interopRequireDefault(_BaseComponent2);
+
+var _RequestUtil = require(515                   ); // 515 = ../utils/RequestUtil
+
+var _appUrls = require(500                  ); // 500 = ../constant/appUrls
+
+var Urls = babelHelpers.interopRequireWildcard(_appUrls);
+
+var _fontAndColor = require(486                       ); // 486 = ../constant/fontAndColor
+
+var fontAndColor = babelHelpers.interopRequireWildcard(_fontAndColor);
+
+var _PixelUtil = require(485                 ); // 485 = ../utils/PixelUtil
+
+var _PixelUtil2 = babelHelpers.interopRequireDefault(_PixelUtil);
+
+var _AllNavigationView = require(496                             ); // 496 = ../component/AllNavigationView
+
+var _AllNavigationView2 = babelHelpers.interopRequireDefault(_AllNavigationView);
+
+var shareIcon = require(501                          ); // 501 = ../../images/login_logs.png
+
+var Pixel = new _PixelUtil2.default();
+
+var ObdWarningExplain = function (_BaseComponent) {
+    babelHelpers.inherits(ObdWarningExplain, _BaseComponent);
+
+    function ObdWarningExplain(props) {
+        babelHelpers.classCallCheck(this, ObdWarningExplain);
+
+        var _this = babelHelpers.possibleConstructorReturn(this, (ObdWarningExplain.__proto__ || Object.getPrototypeOf(ObdWarningExplain)).call(this, props));
+
+        _this.takePhoto = function () {
+            alert('拍照');
+        };
+
+        _this.cancel = function () {
+            _this.backPage();
+        };
+
+        _this.save = function () {
+            _this.backPage();
+            _this.props.navigation.state.params.freshDataClick();
+        };
+
+        _this.state = { text: '' };
+
+        return _this;
+    }
+
+    babelHelpers.createClass(ObdWarningExplain, [{
+        key: 'onContentSizeChange',
+        value: function onContentSizeChange(event) {
+            this.setState({ height: event.nativeEvent.contentSize.height });
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var _this2 = this;
+
+            return _react2.default.createElement(
+                _reactNative.View,
+                { style: styles.contain },
+                _react2.default.createElement(
+                    _reactNative.View,
+                    { style: styles.wainingExplain },
+                    _react2.default.createElement(
+                        _reactNative.Text,
+                        { style: { marginRight: 3, marginLeft: 10, color: 'black' } },
+                        '\u5F02\u5E38\u8BF4\u660E:'
+                    ),
+                    _react2.default.createElement(_reactNative.TextInput, {
+                        multiline: true,
+                        style: { flex: 1, flexWrap: 'wrap', height: this.state.height },
+                        placeholder: '请输入异常类说明',
+                        onContentSizeChange: this.onContentSizeChange.bind(this),
+                        underlineColorAndroid: "#00000000",
+                        onChangeText: function onChangeText(text) {
+                            return _this2.setState({ text: text });
+                        },
+                        value: this.state.text
+                    })
+                ),
+                _react2.default.createElement(
+                    _reactNative.View,
+                    { style: styles.carPicture },
+                    _react2.default.createElement(
+                        _reactNative.View,
+                        { style: { flexDirection: 'row', alignItems: 'center' } },
+                        _react2.default.createElement(
+                            _reactNative.Text,
+                            { style: { color: 'red', marginRight: 3 } },
+                            '*'
+                        ),
+                        _react2.default.createElement(
+                            _reactNative.Text,
+                            { style: { flex: 1 } },
+                            '\u8F66\u8F86\u7167\u7247 \uFF08\u4F53\u73B0\u9632\u4F2A\u6807\u7B7E\u548C\u8F66\u67B6\u53F7\uFF09'
+                        ),
+                        _react2.default.createElement(
+                            _reactNative.TouchableOpacity,
+                            { style: styles.photoButton, onPress: this.takePhoto },
+                            _react2.default.createElement(
+                                _reactNative.Text,
+                                { style: { color: 'white' } },
+                                '\u62CD\u7167'
+                            )
+                        )
+                    ),
+                    _react2.default.createElement(_reactNative.Image, { style: styles.image, source: shareIcon })
+                ),
+                _react2.default.createElement(_reactNative.View, { style: { flex: 1 } }),
+                _react2.default.createElement(
+                    _reactNative.View,
+                    { style: { flexDirection: 'row', margin: 10 } },
+                    _react2.default.createElement(
+                        _reactNative.TouchableOpacity,
+                        { style: styles.cancelButton, onPress: this.cancel },
+                        _react2.default.createElement(
+                            _reactNative.Text,
+                            { style: { color: 'black', fontSize: 16 } },
+                            '\u53D6\u6D88'
+                        )
+                    ),
+                    _react2.default.createElement(_reactNative.View, { style: { flex: 1 } }),
+                    _react2.default.createElement(
+                        _reactNative.TouchableOpacity,
+                        { style: styles.saveButton, onPress: this.save },
+                        _react2.default.createElement(
+                            _reactNative.Text,
+                            { style: { color: 'white', fontSize: 16 } },
+                            '\u4FDD\u5B58'
+                        )
+                    )
+                ),
+                _react2.default.createElement(_AllNavigationView2.default, { title: 'OBD异常报警说明', backIconClick: function backIconClick() {
+                        _this2.backPage();
+                    }, rightFootClick: function rightFootClick() {} })
+            );
+        }
+    }]);
+    return ObdWarningExplain;
+}(_BaseComponent3.default);
+
+exports.default = ObdWarningExplain;
+
+
+var styles = _reactNative.StyleSheet.create({
+    contain: {
+        flex: 1,
+        backgroundColor: '#F0F0F0'
+    },
+    wainingExplain: {
+        backgroundColor: 'white',
+        flexDirection: 'row',
+        marginTop: Pixel.getPixel(60),
+        marginBottom: Pixel.getPixel(10),
+        alignItems: 'center',
+        paddingVertical: Pixel.getPixel(12)
+    },
+    image: {
+        height: Pixel.getPixel(90),
+        width: Pixel.getPixel(100),
+        marginTop: Pixel.getPixel(10),
+        marginLeft: Pixel.getPixel(20)
+    },
+    photoButton: {
+        backgroundColor: '#08c5a7',
+        borderRadius: 3,
+        width: Pixel.getPixel(65),
+        height: Pixel.getPixel(30),
+        marginRight: Pixel.getPixel(10),
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    cancelButton: {
+        backgroundColor: 'white',
+        borderRadius: 3,
+        width: Pixel.getPixel(75),
+        height: Pixel.getPixel(35),
+        marginRight: Pixel.getPixel(10),
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderColor: 'black',
+        borderWidth: 1
+    },
+    saveButton: {
+        backgroundColor: '#08c5a7',
+        borderRadius: 3,
+        width: Pixel.getPixel(75),
+        height: Pixel.getPixel(35),
+        marginLeft: Pixel.getPixel(10),
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    carPicture: {
+        backgroundColor: 'white',
+        padding: Pixel.getPixel(10)
+    }
+
+});
+}, 522, null, "DMS/app/obdReg/ObdWarningExplain.js");
+__d(/* DMS/app/obdReg/ObdChangeBind.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = undefined;
+
+var _react = require(187    ); // 187 = react
+
+var _react2 = babelHelpers.interopRequireDefault(_react);
+
+var _reactNative = require(12            ); // 12 = react-native
+
+var _reactNativeFlexiRadioButton = require(524                              ); // 524 = react-native-flexi-radio-button
+
+var _BaseComponent2 = require(484                         ); // 484 = ../component/BaseComponent
+
+var _BaseComponent3 = babelHelpers.interopRequireDefault(_BaseComponent2);
+
+var _RequestUtil = require(515                   ); // 515 = ../utils/RequestUtil
+
+var _appUrls = require(500                  ); // 500 = ../constant/appUrls
+
+var Urls = babelHelpers.interopRequireWildcard(_appUrls);
+
+var _fontAndColor = require(486                       ); // 486 = ../constant/fontAndColor
+
+var fontAndColor = babelHelpers.interopRequireWildcard(_fontAndColor);
+
+var _AllNavigationView = require(496                             ); // 496 = ../component/AllNavigationView
+
+var _AllNavigationView2 = babelHelpers.interopRequireDefault(_AllNavigationView);
+
+var _PixelUtil = require(485                 ); // 485 = ../utils/PixelUtil
+
+var _PixelUtil2 = babelHelpers.interopRequireDefault(_PixelUtil);
+
+var addIcon = require(527                   ); // 527 = ../../images/add.png
+var Pixel = new _PixelUtil2.default();
+
+var ObdChangeBind = function (_BaseComponent) {
+    babelHelpers.inherits(ObdChangeBind, _BaseComponent);
+
+    function ObdChangeBind() {
+        babelHelpers.classCallCheck(this, ObdChangeBind);
+
+        var _this = babelHelpers.possibleConstructorReturn(this, (ObdChangeBind.__proto__ || Object.getPrototypeOf(ObdChangeBind)).call(this));
+
+        _this.cancel = function () {
+            _this.backPage();
+        };
+
+        _this.save = function () {
+            _this.backPage();
+            _this.props.navigation.state.params.freshDataClick();
+        };
+
+        _this.takePhoto = function () {
+            alert('拍照');
+        };
+
+        _this.labelClick = function () {
+            if (_this.state.index == 0) {
+
+                alert('扫描标签');
+            } else {
+                alert('扫描OBD');
+            }
+        };
+
+        _this.state = {
+            index: 0,
+            labelText: '扫描标签'
+        };
+        _this.onSelect = _this.onSelect.bind(_this);
+        return _this;
+    }
+
+    babelHelpers.createClass(ObdChangeBind, [{
+        key: 'onSelect',
+        value: function onSelect(index) {
+            if (index == 0) {
+                this.setState({
+                    index: index,
+                    labelText: '扫描标签'
+                });
+            } else {
+                this.setState({
+                    index: index,
+                    labelText: '扫描OBD'
+                });
+            }
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var _this2 = this;
+
+            return _react2.default.createElement(
+                _reactNative.View,
+                { style: styles.container },
+                _react2.default.createElement(
+                    _reactNative.View,
+                    { style: styles.blueTooth },
+                    _react2.default.createElement(
+                        _reactNative.Text,
+                        { style: { flex: 1, textAlign: 'center' } },
+                        '\u8BBE\u5907\u672A\u8FDE\u63A5'
+                    )
+                ),
+                _react2.default.createElement(
+                    _reactNativeFlexiRadioButton.RadioGroup,
+                    {
+                        size: 18,
+                        thickness: 2,
+                        color: 'red',
+                        selectedIndex: 0,
+                        style: styles.radioGroup,
+                        onSelect: function onSelect(index) {
+                            return _this2.onSelect(index);
+                        }
+                    },
+                    _react2.default.createElement(
+                        _reactNativeFlexiRadioButton.RadioButton,
+                        null,
+                        _react2.default.createElement(
+                            _reactNative.Text,
+                            null,
+                            '\u626B\u63CF\u6807\u7B7E'
+                        )
+                    ),
+                    _react2.default.createElement(
+                        _reactNativeFlexiRadioButton.RadioButton,
+                        null,
+                        _react2.default.createElement(
+                            _reactNative.Text,
+                            null,
+                            '\u626B\u63CFOBD'
+                        )
+                    )
+                ),
+                _react2.default.createElement(
+                    _reactNative.View,
+                    { style: styles.scanLabel },
+                    _react2.default.createElement(
+                        _reactNative.View,
+                        { style: { flexDirection: 'row', alignItems: 'center' } },
+                        _react2.default.createElement(
+                            _reactNative.TouchableOpacity,
+                            { style: styles.scanButton, onPress: this.labelClick },
+                            _react2.default.createElement(
+                                _reactNative.Text,
+                                { style: { color: 'white', fontSize: Pixel.getPixel(13) } },
+                                this.state.labelText
+                            )
+                        ),
+                        _react2.default.createElement(_reactNative.View, { style: { flex: 1 } }),
+                        _react2.default.createElement(
+                            _reactNative.Text,
+                            null,
+                            this.state.labelText
+                        )
+                    )
+                ),
+                _react2.default.createElement(
+                    _reactNative.View,
+                    { style: [styles.scanLabel, this.state.index == 0 ? null : { display: 'none' }] },
+                    _react2.default.createElement(
+                        _reactNative.View,
+                        { style: { flexDirection: 'row', alignItems: 'center' } },
+                        _react2.default.createElement(
+                            _reactNative.TouchableOpacity,
+                            { style: styles.photoButton, onPress: this.takePhoto },
+                            _react2.default.createElement(
+                                _reactNative.Text,
+                                { style: { color: 'white' } },
+                                '\u62CD\u7167'
+                            )
+                        ),
+                        _react2.default.createElement(_reactNative.View, { style: { flex: 1 } }),
+                        _react2.default.createElement(_reactNative.Image, { style: styles.addIcon, source: addIcon })
+                    )
+                ),
+                _react2.default.createElement(_reactNative.View, { style: { flex: 1 } }),
+                _react2.default.createElement(
+                    _reactNative.View,
+                    { style: { flexDirection: 'row', margin: 10 } },
+                    _react2.default.createElement(
+                        _reactNative.TouchableOpacity,
+                        { style: styles.cancelButton, onPress: this.cancel },
+                        _react2.default.createElement(
+                            _reactNative.Text,
+                            { style: { color: 'black', fontSize: 16 } },
+                            '\u53D6\u6D88'
+                        )
+                    ),
+                    _react2.default.createElement(_reactNative.View, { style: { flex: 1 } }),
+                    _react2.default.createElement(
+                        _reactNative.TouchableOpacity,
+                        { style: styles.saveButton, onPress: this.save },
+                        _react2.default.createElement(
+                            _reactNative.Text,
+                            { style: { color: 'white', fontSize: 16 } },
+                            '\u4FDD\u5B58'
+                        )
+                    )
+                ),
+                _react2.default.createElement(_AllNavigationView2.default, { title: 'OBD异常报警说明', backIconClick: function backIconClick() {
+                        _this2.backPage();
+                    }, rightFootClick: function rightFootClick() {} })
+            );
+        }
+    }]);
+    return ObdChangeBind;
+}(_BaseComponent3.default);
+
+exports.default = ObdChangeBind;
+
+
+var styles = _reactNative.StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#F0F0F0'
+    },
+    text: {
+        padding: 10,
+        fontSize: 16
+    },
+    blueTooth: {
+        flexDirection: 'row',
+        backgroundColor: '#F6F693',
+        paddingVertical: 5,
+        marginTop: Pixel.getPixel(48)
+    },
+    radioGroup: {
+        flexDirection: 'row',
+        backgroundColor: 'white',
+        paddingVertical: 6,
+        justifyContent: 'space-around'
+    },
+    cancelButton: {
+        backgroundColor: 'white',
+        borderRadius: 3,
+        width: Pixel.getPixel(75),
+        height: Pixel.getPixel(35),
+        marginRight: Pixel.getPixel(10),
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderColor: 'black',
+        borderWidth: 1
+    },
+    saveButton: {
+        backgroundColor: '#08c5a7',
+        borderRadius: 3,
+        width: Pixel.getPixel(75),
+        height: Pixel.getPixel(35),
+        marginLeft: Pixel.getPixel(10),
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    scanLabel: {
+        backgroundColor: 'white',
+        padding: Pixel.getPixel(15),
+        marginTop: Pixel.getPixel(10)
+    },
+    addIcon: {
+        width: Pixel.getPixel(80),
+        height: Pixel.getPixel(80)
+    },
+    photoButton: {
+        backgroundColor: '#08c5a7',
+        borderRadius: 3,
+        width: Pixel.getPixel(65),
+        height: Pixel.getPixel(30),
+        marginRight: Pixel.getPixel(10),
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    scanButton: {
+        backgroundColor: '#08c5a7',
+        borderRadius: 3,
+        height: Pixel.getPixel(30),
+        marginRight: Pixel.getPixel(10),
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: Pixel.getPixel(3)
+    }
+});
+}, 523, null, "DMS/app/obdReg/ObdChangeBind.js");
+__d(/* react-native-flexi-radio-button/lib/index.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.RadioButton = exports.RadioGroup = undefined;
+
+var _radioGroup = require(525           ); // 525 = ./radioGroup
+
+var _radioGroup2 = babelHelpers.interopRequireDefault(_radioGroup);
+
+var _radioButton = require(526            ); // 526 = ./radioButton
+
+var _radioButton2 = babelHelpers.interopRequireDefault(_radioButton);
+
+exports.RadioGroup = _radioGroup2.default;
+exports.RadioButton = _radioButton2.default;
+}, 524, null, "react-native-flexi-radio-button/lib/index.js");
+__d(/* react-native-flexi-radio-button/lib/radioGroup.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = undefined;
+
+var _react = require(187    ); // 187 = react
+
+var _react2 = babelHelpers.interopRequireDefault(_react);
+
+var _reactNative = require(12            ); // 12 = react-native
+
+var _radioButton = require(526            ); // 526 = ./radioButton
+
+var _radioButton2 = babelHelpers.interopRequireDefault(_radioButton);
+
+var defaultSize = 20;
+var defaultThickness = 1;
+var defaultColor = '#007AFF';
+
+var RadioGroup = function (_Component) {
+    babelHelpers.inherits(RadioGroup, _Component);
+
+    function RadioGroup(props, context) {
+        babelHelpers.classCallCheck(this, RadioGroup);
+
+        var _this = babelHelpers.possibleConstructorReturn(this, (RadioGroup.__proto__ || Object.getPrototypeOf(RadioGroup)).call(this, props, context));
+
+        _this.state = {
+            selectedIndex: _this.props.selectedIndex
+        };
+
+        _this.onSelect = _this.onSelect.bind(_this);
+        return _this;
+    }
+
+    babelHelpers.createClass(RadioGroup, [{
+        key: 'getChildContext',
+        value: function getChildContext() {
+            return {
+                onSelect: this.onSelect,
+                size: this.props.size,
+                thickness: this.props.thickness,
+                color: this.props.color,
+                highlightColor: this.props.highlightColor
+            };
+        }
+    }, {
+        key: 'onSelect',
+        value: function onSelect(index, value) {
+            this.setState({
+                selectedIndex: index
+            });
+            if (this.props.onSelect) this.props.onSelect(index, value);
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var _this2 = this;
+
+            var radioButtons = _react2.default.Children.map(this.props.children, function (radioButton, index) {
+                var isSelected = _this2.state.selectedIndex == index;
+                var color = isSelected && _this2.props.activeColor ? _this2.props.activeColor : _this2.props.color;
+                return _react2.default.createElement(
+                    _radioButton2.default,
+                    babelHelpers.extends({
+                        color: color,
+                        activeColor: _this2.props.activeColor
+                    }, radioButton.props, {
+                        index: index,
+                        isSelected: isSelected
+                    }),
+                    radioButton.props.children
+                );
+            });
+
+            return _react2.default.createElement(
+                _reactNative.View,
+                { style: this.props.style },
+                radioButtons
+            );
+        }
+    }]);
+    return RadioGroup;
+}(_react.Component);
+
+exports.default = RadioGroup;
+
+
+RadioGroup.childContextTypes = {
+    onSelect: _react2.default.PropTypes.func.isRequired,
+    size: _react2.default.PropTypes.number.isRequired,
+    thickness: _react2.default.PropTypes.number.isRequired,
+    color: _react2.default.PropTypes.string.isRequired,
+    activeColor: _react2.default.PropTypes.string,
+    highlightColor: _react2.default.PropTypes.string
+};
+
+RadioGroup.defaultProps = {
+    size: defaultSize,
+    thickness: defaultThickness,
+    color: defaultColor,
+    highlightColor: null
+};
+}, 525, null, "react-native-flexi-radio-button/lib/radioGroup.js");
+__d(/* react-native-flexi-radio-button/lib/radioButton.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = undefined;
+
+var _react = require(187    ); // 187 = react
+
+var _react2 = babelHelpers.interopRequireDefault(_react);
+
+var _reactNative = require(12            ); // 12 = react-native
+
+var RadioButton = function (_Component) {
+    babelHelpers.inherits(RadioButton, _Component);
+
+    function RadioButton(props, context) {
+        babelHelpers.classCallCheck(this, RadioButton);
+        return babelHelpers.possibleConstructorReturn(this, (RadioButton.__proto__ || Object.getPrototypeOf(RadioButton)).call(this, props, context));
+    }
+
+    babelHelpers.createClass(RadioButton, [{
+        key: 'componentWillReceiveProps',
+        value: function componentWillReceiveProps(nextProps) {
+            this.setState({
+                selectedIndex: nextProps.selectedIndex
+            });
+        }
+    }, {
+        key: 'getRadioStyle',
+        value: function getRadioStyle() {
+            return {
+                height: this.context.size,
+                width: this.context.size,
+                borderRadius: this.context.size / 2,
+                borderWidth: this.context.thickness,
+                borderColor: this.props.isSelected && this.props.activeColor ? this.props.activeColor : this.context.color
+            };
+        }
+    }, {
+        key: 'getRadioDotStyle',
+        value: function getRadioDotStyle() {
+            return {
+                height: this.context.size / 2,
+                width: this.context.size / 2,
+                borderRadius: this.context.size / 4,
+                backgroundColor: this.props.color || this.props.activeColor
+            };
+        }
+    }, {
+        key: 'isSelected',
+        value: function isSelected() {
+            if (this.props.isSelected) return _react2.default.createElement(_reactNative.View, { style: this.getRadioDotStyle() });
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var _this2 = this;
+
+            var children = this.props.children;
+
+            return _react2.default.createElement(
+                _reactNative.View,
+                { style: { opacity: this.props.disabled ? 0.4 : 1 } },
+                _react2.default.createElement(
+                    _reactNative.TouchableWithoutFeedback,
+                    {
+                        disabled: this.props.disabled,
+                        onPress: function onPress() {
+                            return _this2.context.onSelect(_this2.props.index, _this2.props.value);
+                        }
+                    },
+                    _react2.default.createElement(
+                        _reactNative.View,
+                        { style: [styles.container, this.props.style, this.props.isSelected ? { backgroundColor: this.context.highlightColor } : null] },
+                        _react2.default.createElement(
+                            _reactNative.View,
+                            { style: [styles.radio, this.getRadioStyle()] },
+                            this.isSelected()
+                        ),
+                        _react2.default.createElement(
+                            _reactNative.View,
+                            { style: styles.item },
+                            children
+                        )
+                    )
+                )
+            );
+        }
+    }]);
+    return RadioButton;
+}(_react.Component);
+
+exports.default = RadioButton;
+
+
+RadioButton.contextTypes = {
+    onSelect: _react2.default.PropTypes.func.isRequired,
+    size: _react2.default.PropTypes.number.isRequired,
+    thickness: _react2.default.PropTypes.number.isRequired,
+    color: _react2.default.PropTypes.string.isRequired,
+    highlightColor: _react2.default.PropTypes.string
+};
+
+var styles = _reactNative.StyleSheet.create({
+    container: {
+        flexGrow: 1,
+        flexDirection: 'row',
+        padding: 10
+    },
+    radio: {
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    item: {
+        marginLeft: 5,
+        alignItems: 'center',
+        justifyContent: 'center'
+    }
+});
+}, 526, null, "react-native-flexi-radio-button/lib/radioButton.js");
+__d(/* DMS/images/add.png */function(global, require, module, exports) {module.exports = require(276                                         ).registerAsset({"__packager_asset":true,"httpServerLocation":"/assets/images","width":124,"height":124,"scales":[1],"hash":"833dfc5db2f580e8a037c941a9102e31","name":"add","type":"png"}); // 276 = react-native/Libraries/Image/AssetRegistry
+}, 527, null, "DMS/images/add.png");
+__d(/* DMS/app/collect&Report/CustomerList.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = undefined;
+
+var _react = require(187    ); // 187 = react
+
+var _react2 = babelHelpers.interopRequireDefault(_react);
+
+var _reactNative = require(12            ); // 12 = react-native
+
+var _BaseComponent2 = require(484                         ); // 484 = ../component/BaseComponent
+
+var _BaseComponent3 = babelHelpers.interopRequireDefault(_BaseComponent2);
+
+var _SearchBarBlobs = require(532                         ); // 532 = ./Component/SearchBarBlobs
+
+var _appUrls = require(500                  ); // 500 = ../constant/appUrls
+
+var apis = babelHelpers.interopRequireWildcard(_appUrls);
+
+var _RequestUtil = require(515                   ); // 515 = ../utils/RequestUtil
+
+var currentPage = 1;
+
+var CustomerList = function (_BaseComponent) {
+    babelHelpers.inherits(CustomerList, _BaseComponent);
+
+    function CustomerList() {
+        var _ref;
+
+        var _temp, _this, _ret;
+
+        babelHelpers.classCallCheck(this, CustomerList);
+
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
+
+        return _ret = (_temp = (_this = babelHelpers.possibleConstructorReturn(this, (_ref = CustomerList.__proto__ || Object.getPrototypeOf(CustomerList)).call.apply(_ref, [this].concat(args))), _this), _this._getCustonList = function () {
+            var maps = {
+                p: currentPage
+
+            };
+            (0, _RequestUtil.request)(apis.CARREVGETUSERLIST, 'Post', maps).then(function (response) {
+
+                console.log(response);
+            }, function (error) {});
+        }, _temp), babelHelpers.possibleConstructorReturn(_this, _ret);
+    }
+
+    babelHelpers.createClass(CustomerList, [{
+        key: 'initFinish',
+        value: function initFinish() {
+
+            this._getCustonList();
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+
+            return _react2.default.createElement(
+                _reactNative.View,
+                { style: { marginTop: 100, backgroundColor: 'white', flex: 1 } },
+                _react2.default.createElement(_SearchBarBlobs.CustomListSearch, null)
+            );
+        }
+    }]);
+    return CustomerList;
+}(_BaseComponent3.default);
+
+exports.default = CustomerList;
+}, 531, null, "DMS/app/collect&Report/CustomerList.js");
+__d(/* DMS/app/collect&Report/Component/SearchBarBlobs.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.CustomListSearch = undefined;
+
+var _react = require(187    ); // 187 = react
+
+var _react2 = babelHelpers.interopRequireDefault(_react);
+
+var _reactNative = require(12            ); // 12 = react-native
+
+var _MethodComponet = require(533               ); // 533 = ./MethodComponet
+
+var _DecoratorBlobs = require(534               ); // 534 = ./DecoratorBlobs
+
+var tempValue = {
+
+    ccLsTempValue: ''
+
+};
+
+var CustomListSearch = function (_PureComponent) {
+    babelHelpers.inherits(CustomListSearch, _PureComponent);
+
+    function CustomListSearch() {
+        var _ref;
+
+        var _temp, _this, _ret;
+
+        babelHelpers.classCallCheck(this, CustomListSearch);
+
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
+
+        return _ret = (_temp = (_this = babelHelpers.possibleConstructorReturn(this, (_ref = CustomListSearch.__proto__ || Object.getPrototypeOf(CustomListSearch)).call.apply(_ref, [this].concat(args))), _this), _this._onTextChange = function (text) {
+
+            tempValue.ccLsTempValue = text;
+        }, _this._onSearchBarClick = function () {
+            var onClick = _this.props.onClick;
+
+
+            tempValue.ccLsTempValue && onClick(tempValue.ccLsTempValue);
+        }, _temp), babelHelpers.possibleConstructorReturn(_this, _ret);
+    }
+
+    babelHelpers.createClass(CustomListSearch, [{
+        key: 'componentWillMount',
+        value: function componentWillMount() {
+            tempValue.ccLsTempValue = '';
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+
+            return _react2.default.createElement(
+                _reactNative.View,
+                { style: styles.cListSarchWarp },
+                _react2.default.createElement(_reactNative.TextInput, { style: styles.ccInptList, placeholder: '客户姓名关键字', onchangetext: this._onTextChange }),
+                _react2.default.createElement(
+                    _reactNative.TouchableOpacity,
+                    { style: styles.ccSearchButton, onPress: this._onSearchBarClick },
+                    _react2.default.createElement(_reactNative.Image, { style: { width: (0, _MethodComponet.adapeSize)(20), height: (0, _MethodComponet.adapeSize)(20) }, source: require(519                                           ) }) // 519 = ../../../images/assessment_customer_find.png
+                )
+            );
+        }
+    }]);
+    return CustomListSearch;
+}(_react.PureComponent);
+
+exports.CustomListSearch = CustomListSearch;
+
+
+var styles = _reactNative.StyleSheet.create({
+
+    cListSarchWarp: {
+
+        backgroundColor: _MethodComponet.PAGECOLOR.all_background,
+        width: _MethodComponet.width,
+        height: (0, _MethodComponet.adapeSize)(60),
+        flexDirection: 'row',
+        alignItems: 'flex-start'
+
+    },
+    ccInptList: {
+
+        borderWidth: 1,
+        borderColor: _MethodComponet.PAGECOLOR.all_background,
+        borderRadius: (0, _MethodComponet.adapeSize)(20),
+        backgroundColor: _MethodComponet.PAGECOLOR.white,
+        marginLeft: (0, _MethodComponet.adapeSize)(14),
+        marginRight: (0, _MethodComponet.adapeSize)(14),
+        paddingLeft: (0, _MethodComponet.adapeSize)(15),
+        flex: 1,
+        marginTop: (0, _MethodComponet.adapeSize)(10),
+        marginBottom: (0, _MethodComponet.adapeSize)(10)
+    },
+    ccSearchButton: {
+
+        width: (0, _MethodComponet.adapeSize)(20),
+        height: (0, _MethodComponet.adapeSize)(20),
+        right: (0, _MethodComponet.adapeSize)(30),
+        top: (0, _MethodComponet.adapeSize)(20),
+        position: 'absolute'
+
+    }
+
+});
+}, 532, null, "DMS/app/collect&Report/Component/SearchBarBlobs.js");
+__d(/* DMS/app/collect&Report/Component/MethodComponet.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.changeToMillion = exports.fontadapeSize = exports.adapeSize = exports.dateFormat = exports.height = exports.width = exports.PAGECOLOR = exports.STATECODE = undefined;
+
+var _reactNative = require(12            ); // 12 = react-native
+
+var STATECODE = {
+
+    loading: 'blank',
+    loadSuccess: 'success',
+    loadError: 'error',
+    empty: 'empty'
+
+};
+var PAGECOLOR = {
+
+    white: 'white',
+    red: 'red',
+    all_blue: "#08c5a7",
+    all_background: "#F0F0F0"
+};
+
+var _Dimensions$get = _reactNative.Dimensions.get('window'),
+    width = _Dimensions$get.width,
+    height = _Dimensions$get.height;
+
+var changeToMillion = function changeToMillion(number) {
+
+    var temp = Number.parseFloat(number);
+
+    return Math.floor(temp / 10000 * 10000) / 10000;
+};
+var dateFormat = function dateFormat(date, fmt) {
+    var o = {
+        "M+": date.getMonth() + 1,
+        "d+": date.getDate(),
+        "h+": date.getHours(),
+        "m+": date.getMinutes(),
+        "s+": date.getSeconds(),
+        "q+": Math.floor((date.getMonth() + 3) / 3),
+        "S": date.getMilliseconds() };
+    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o) {
+        if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
+    }return fmt;
+};
+
+var adapeSize = function adapeSize(size) {
+
+    return size / 375.0 * width;
+};
+var fontadapeSize = function fontadapeSize(size) {
+
+    return adapeSize(size) + 2;
+};
+
+exports.STATECODE = STATECODE;
+exports.PAGECOLOR = PAGECOLOR;
+exports.width = width;
+exports.height = height;
+exports.dateFormat = dateFormat;
+exports.adapeSize = adapeSize;
+exports.fontadapeSize = fontadapeSize;
+exports.changeToMillion = changeToMillion;
+}, 533, null, "DMS/app/collect&Report/Component/MethodComponet.js");
+__d(/* DMS/app/collect&Report/Component/DecoratorBlobs.js */function(global, require, module, exports) {
+}, 534, null, "DMS/app/collect&Report/Component/DecoratorBlobs.js");
 __d(/* DMS/app/component/toast/ShowToast.js */function(global, require, module, exports) {Object.defineProperty(exports, "__esModule", {
     value: true
 });
@@ -56307,11 +58381,11 @@ var _react2 = babelHelpers.interopRequireDefault(_react);
 
 var _reactNative = require(12            ); // 12 = react-native
 
-var _Toast = require(518      ); // 518 = ./Toast
+var _Toast = require(529      ); // 529 = ./Toast
 
 var _Toast2 = babelHelpers.interopRequireDefault(_Toast);
 
-var _Confirm = require(519        ); // 519 = ./Confirm
+var _Confirm = require(530        ); // 530 = ./Confirm
 
 var _Confirm2 = babelHelpers.interopRequireDefault(_Confirm);
 
@@ -56370,7 +58444,7 @@ var ShowToast = (_temp = _class = function (_PureComponent) {
     return ShowToast;
 }(_react.PureComponent), _class.TOAST = "1", _class.CONFIRM = "2", _temp);
 exports.default = ShowToast;
-}, 517, null, "DMS/app/component/toast/ShowToast.js");
+}, 528, null, "DMS/app/component/toast/ShowToast.js");
 __d(/* DMS/app/component/toast/Toast.js */function(global, require, module, exports) {
 'use strict';
 
@@ -56521,7 +58595,7 @@ var styles = _reactNative.StyleSheet.create({
 });
 
 exports.default = Toast;
-}, 518, null, "DMS/app/component/toast/Toast.js");
+}, 529, null, "DMS/app/component/toast/Toast.js");
 __d(/* DMS/app/component/toast/Confirm.js */function(global, require, module, exports) {'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -56743,7 +58817,7 @@ var styles = _reactNative.StyleSheet.create({
 });
 
 exports.default = Confirm;
-}, 519, null, "DMS/app/component/toast/Confirm.js");
+}, 530, null, "DMS/app/component/toast/Confirm.js");
 ;require(126);
 ;require(0);
 //# sourceMappingURL=index.ios.map

@@ -16,8 +16,8 @@ class CollectCustomerListItem extends PureComponent{
 
     _onclick=(componeyId)=>{
 
-        const {customListItemClick}=this.props;
-        customListItemClick(componeyId);
+        const {customListItemClick,merge_id}=this.props;
+        customListItemClick(merge_id);
     }
     render(){
 
@@ -89,33 +89,74 @@ class ReportCustomerListItem extends PureComponent{
 
 class ListHeadComponent extends PureComponent{
 
+    render(){
+
+        return (
+            <View style={{width:width,height:adapeSize(10)}}>
+
+            </View>
+        )
+
+    }
 }
 class SeparatorComponent extends PureComponent{
 
+    render(){
+
+        return (
+            <View style={{width:width,height:adapeSize(4),backgroundColor:PAGECOLOR.all_background}}>
+
+            </View>
+        )
+
+    }
+}
+
+class ListFootComponentMore extends PureComponent{
+
+    render(){
+            return (
+                <View style={styles.listFootWarp}>
+                    <Text style={styles.listFootText}>{'加载更多。。。'}</Text>
+                </View>
+            )
+        }
+
+}
+class ListFootComponentNorMore extends PureComponent{
+
+    render(){
+
+        return (
+            <View style={styles.listFootWarp}>
+                <Text style={styles.listFootText}>{'没有更多的数据'}</Text>
+            </View>
+        )
+    }
 
 }
 
-export {CollectCustomerListItem,CollectCarListItem,ReportCustomerListItem,ListHeadComponent,SeparatorComponent}
+export {CollectCustomerListItem,CollectCarListItem,ReportCustomerListItem,ListHeadComponent,SeparatorComponent,ListFootComponentMore,ListFootComponentNorMore}
 
 
 const styles=StyleSheet.create({
 
     ccListWarp:{
         backgroundColor:PAGECOLOR.white,
+        padding:adapeSize(8),
+        marginTop:adapeSize(10),
         marginLeft:adapeSize(10),
-        marginBottom:adapeSize(10),
-        paddingLeft:adapeSize(5),
-        paddingRight:adapeSize(5),
+        marginRight:adapeSize(10)
     },
     ccListComponey:{
 
-        fontsize:fontadapeSize(16),
+        fontSize:fontadapeSize(16),
 
     },
     ccListCarWarp:{
         flexDirection:'row',
-        marginTop:adapeSize(10),
-        marginBottom:adapeSize(10),
+        marginTop:adapeSize(16),
+        marginBottom:adapeSize(4),
     },
     ccListCarWait:{
 
@@ -127,7 +168,7 @@ const styles=StyleSheet.create({
         color:'red'
     },
     cccCarType:{
-       fontsize:adapeSize(16)
+       fontSize:adapeSize(16)
     },
     cccCardetailType:{
 
@@ -137,6 +178,20 @@ const styles=StyleSheet.create({
     cccCarInfo:{
         fontSize:adapeSize(12),
         color:'gray',
+    },
+    listFootWarp:{
+
+        flexDirection:'row',
+        alignItems:'center',
+        justifyContent:'center'
+
+    },
+    listFootText:{
+
+        paddingTop:adapeSize(10),
+        paddingBottom:adapeSize(10),
+
     }
+
 
 })

@@ -42,7 +42,7 @@ export  default class ObdCustom extends BaseComponent {
             .then((response) => {
                     this.props.screenProps.showModal(false);
                     if (page == 1 && response.mjson.retdata.list.length <= 0) {
-                        this.setState({renderPlaceholderOnly: 'null'});
+                        this.props.screenProps.showToast('数据为空！');
                     } else {
                         allPage = response.mjson.retdata.total / 10;
                         allSouce.push(...response.mjson.retdata.list);
@@ -56,7 +56,7 @@ export  default class ObdCustom extends BaseComponent {
                 },
                 (error) => {
                     this.props.screenProps.showModal(false);
-                    this.setState({renderPlaceholderOnly: 'error', isRefreshing: false});
+                    this.props.screenProps.showToast(error.mjson.retmsg);
                 });
     }
 
@@ -90,7 +90,6 @@ export  default class ObdCustom extends BaseComponent {
     render() {
         if (this.state.renderPlaceholderOnly !== 'success') {
             return (<View style={{backgroundColor: fontAndColor.COLORA3, flex: 1, paddingTop: Pixel.getPixel(15)}}>
-                {this.loadView()}
                 <AllNavigationView title={'客户列表'} backIconClick={() => {
                     this.backPage();
                 }} parentNavigation={this}/>

@@ -9,7 +9,7 @@ import {
     TouchableOpacity,
     InteractionManager,
     WebView,
-    BackAndroid
+
 } from 'react-native';
 import {ObdCarDetailTable} from '../component/ComponentBlob'
 import BaseComponent from '../component/BaseComponent';

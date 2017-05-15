@@ -13,7 +13,7 @@ import {
     ListView,
     InteractionManager,
     WebView,
-    BackAndroid
+    BackHandler
 } from 'react-native';
 //图片加文字
 const {width, height} = Dimensions.get('window');
@@ -40,7 +40,7 @@ export  default class WebScene extends BaseComponent {
     componentDidMount() {
 
         oldUrl = this.props.navigation.state.params.webUrl;
-        BackAndroid.addEventListener('hardwareBackPress', this.handleBack);
+        BackHandler.addEventListener('hardwareBackPress', this.handleBack);
         InteractionManager.runAfterInteractions(() => {
             this.setState({renderPlaceholderOnly: false});
 

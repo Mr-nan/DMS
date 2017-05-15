@@ -15,7 +15,7 @@ const request = (url, method, params,backToLogin) => {
             if (Platform.OS === 'android') {
                 params.device_code = 'dycd_dms_manage_android';
             } else {
-                params.device_code = 'dycd_dms_manage_ios';
+                params.device_code = 'dycd_dms_manage_android';
             }
 
             let isOk;
@@ -48,7 +48,7 @@ const request = (url, method, params,backToLogin) => {
                         for (let key of Object.keys(params)) {
                             console.log(key+"===" + params[key]);
                         }
-                        console.log("success----------" + JSON.stringify(responseData));
+                        // console.log("success----------" + JSON.stringify(responseData));
                         if (responseData.retcode == 1) {
                             resolve({mjson: responseData, mycode: 1});
                         } else {

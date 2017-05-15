@@ -15,7 +15,7 @@ export  default class CarCheckWarning extends BaseComponent {
     constructor(props) {
         super(props);
         this.state = {
-            text: '',
+            text: '标签损坏',
             warningStyle: '标签损坏',
             dataSource: {},
             photoStyle:{}
@@ -90,7 +90,6 @@ export  default class CarCheckWarning extends BaseComponent {
                     <TextInput
                         multiline={true}
                         style={{flex:1, flexWrap: 'wrap', height:this.state.height,textAlign: 'right',marginRight:10}}
-                        placeholder={'请输入异常类说明'}
                         onContentSizeChange={this.onContentSizeChange.bind(this)}
                         underlineColorAndroid={"#00000000"}
                         onChangeText={(text) => this.setState({text})}
@@ -109,7 +108,7 @@ export  default class CarCheckWarning extends BaseComponent {
                 </View>
                 <View style={{flex:1}}></View>
                 <TouchableOpacity style={styles.bottomButton} activeOpacity={0.8} onPress={()=>{
-
+                    this.save;
                 }}>
                     <Text style={styles.buttonText}>提交</Text>
                 </TouchableOpacity>
@@ -141,9 +140,6 @@ export  default class CarCheckWarning extends BaseComponent {
 
     takePhoto = () => {
         alert('拍照');
-    }
-    cancel = () => {
-        this.backPage();
     }
     save = () => {
         this.backPage();
