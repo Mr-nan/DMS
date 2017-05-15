@@ -15,6 +15,7 @@ import CarCheckCustomer from '../makingInventory/CarCheckCustomer';
 import CarCheckWifiSelect from '../makingInventory/CarCheckWifiSelect';
 import CarCheckNoWifiList from '../makingInventory/CarCheckNoWifiList';
 import CarCheckWarning from '../makingInventory/CarCheckWarning';
+import AssessCustomerScene from '../assess/AssessCustomerScene';
 
 export default MyApp = StackNavigator({
         Root: {screen: RootScene},
@@ -31,6 +32,7 @@ export default MyApp = StackNavigator({
         CarCheckWifiSelect:{screen:CarCheckWifiSelect},
         CarCheckNoWifiList:{screen:CarCheckNoWifiList},
         CarCheckWarning:{screen:CarCheckWarning},
+        AssessCustomerScene:{screen:AssessCustomerScene}
     },
     {
         initialRouteName: 'Root',

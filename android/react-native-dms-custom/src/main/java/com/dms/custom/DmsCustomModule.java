@@ -10,7 +10,9 @@ import com.dms.custom.bluetooths.BluetoothControl;
 import com.dms.custom.bluetooths.IBluetoothCallBack;
 import com.dms.custom.bluetooths.ItemBluetoothDevice;
 import com.dms.custom.qr.scan.ScanCaptureAct;
+import com.dms.custom.utils.IUpLoadImageResult;
 import com.dms.custom.utils.SoundUtil;
+import com.dms.custom.utils.UpLoadFile;
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
@@ -116,6 +118,35 @@ public class DmsCustomModule extends ReactContextBaseJavaModule implements Activ
     public String getName() {
         return "DmsCustom";
     }
+
+
+    /********************************************
+     * 文件上传
+     *******************************************/
+    @ReactMethod
+    public void uploadFile(String url, String token, String filePath,
+                           final Callback up_s_ck, final Callback up_e_ck){
+
+        UpLoadFile.upload(url, token, filePath, new IUpLoadImageResult() {
+            @Override
+            public void success(String response) {
+                up_s_ck.invoke(response);
+            }
+
+            @Override
+            public void error(int arg0, String arg2) {
+                up_e_ck.invoke(arg2);
+            }
+
+            @Override
+            public void progress(int count) {
+                WritableMap map = Arguments.createMap();
+                map.putString("progress",count + "");
+                sendEvent("onProgress",map);
+            }
+        });
+    }
+
 
     /********************************************
      * 扫描声音

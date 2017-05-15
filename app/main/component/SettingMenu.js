@@ -75,10 +75,8 @@ export default class SettingMenu extends Component{
 
 const styles =StyleSheet.create({
     container:{
-        marginTop:Pixel.getTitlePixel(20),
         flex:1,
         backgroundColor:'transparent'
-
     },
     wrapContainer:{
         marginTop:Pixel.getTitlePixel(68),
