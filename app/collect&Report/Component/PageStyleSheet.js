@@ -16,7 +16,7 @@ const  commenStyle =StyleSheet.create({
     testUI:{
         flex:1,
         backgroundColor:PAGECOLOR.all_background,
-        marginTop:44
+        marginTop:68
     }
 
 })

@@ -13,12 +13,13 @@ import ObdWarningExplain from '../obdReg/ObdWarningExplain';
 import ObdChangeBind from '../obdReg/ObdChangeBind';
 
 import CustomerList from '../collect&Report/CustomerList'
+import CustomerItemCarList from '../collect&Report/CustomerItemCarList'
+import ReportCustomerList from '../collect&Report/ReportCustomerList'
 
 import CarCheckCustomer from '../makingInventory/CarCheckCustomer';
 import CarCheckWifiSelect from '../makingInventory/CarCheckWifiSelect';
 import CarCheckNoWifiList from '../makingInventory/CarCheckNoWifiList';
 import CarCheckWarning from '../makingInventory/CarCheckWarning';
-
 
 export default MyApp = StackNavigator({
         Root: {screen: RootScene},
@@ -31,13 +32,13 @@ export default MyApp = StackNavigator({
         WebScene:{screen:WebScene},
         ObdWarningExplain:{screen:ObdWarningExplain},
         ObdChangeBind:{screen:ObdChangeBind},
-
         CustomerList:{screen:CustomerList},
-
         CarCheckCustomer:{screen:CarCheckCustomer},
         CarCheckWifiSelect:{screen:CarCheckWifiSelect},
         CarCheckNoWifiList:{screen:CarCheckNoWifiList},
         CarCheckWarning:{screen:CarCheckWarning},
+        CustomerItemCarList:{screen:CustomerItemCarList},
+        ReportCustomerList:{screen:ReportCustomerList}
     },
     {
         initialRouteName: 'Root',
