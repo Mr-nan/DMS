@@ -6,6 +6,7 @@ import {
     View,
     Image,
     TouchableOpacity,
+    NativeModules
 } from 'react-native';
 
 import {RadioGroup, RadioButton} from 'react-native-flexi-radio-button';
@@ -24,7 +25,9 @@ export  default class ObdChangeBind extends BaseComponent {
         super()
         this.state = {
             index: 0,
-            labelText: '扫描标签'
+            labelText: '扫描标签',
+            scanObdText: '扫描OBD',
+            scanLabel:'扫描标签'
         }
         this.onSelect = this.onSelect.bind(this)
     }
@@ -74,7 +77,10 @@ export  default class ObdChangeBind extends BaseComponent {
                             <Text style={{color:'white',fontSize: Pixel.getPixel(13)}}>{this.state.labelText}</Text>
                         </TouchableOpacity>
                         <View style={{flex:1}}></View>
-                        <Text >{this.state.labelText}</Text>
+                        {
+                            this.state.index==0 ?  <Text >{this.state.labelText}</Text> : <Text >{this.state.scanObdText}</Text>
+                        }
+
                     </View>
                 </View>
                 <View style={[styles.scanLabel, this.state.index == 0 ? null: {display: 'none'}]}>
@@ -108,9 +114,36 @@ export  default class ObdChangeBind extends BaseComponent {
         this.backPage();
     }
     save = () => {
-        this.backPage();
-        this.props.navigation.state.params.freshDataClick();
+        if(this.state.index==1){
+            this.saveObd();
+        }
     }
+
+    saveObd=()=>{
+
+        if(this.state.scanObdText=='扫描OBD'){
+            this.props.screenProps.showToast('请扫描OBD');
+            return;
+        }
+        let maps = {
+            obd_number: this.state.scanObdText,
+            product_type_code: this.props.navigation.state.params.product_type_code,
+            regulator_id: this.props.navigation.state.params.regulator_id,
+        };
+        request(Urls.REGRFIDTOOBD, 'Post', maps)
+
+            .then((response) => {
+                    this.props.screenProps.showModal(false);
+                    this.props.screenProps.showToast('保存成功');
+                    this.backPage();
+                    this.props.navigation.state.params.freshDataClick();
+                },
+                (error) => {
+                    this.props.screenProps.showToast(error.mjson.retmsg);
+                    this.props.screenProps.showModal(false);
+                });
+    }
+
     takePhoto = () => {
         alert('拍照')
     }
@@ -119,7 +152,13 @@ export  default class ObdChangeBind extends BaseComponent {
 
             alert('扫描标签')
         }else{
-            alert('扫描OBD')
+                NativeModules.DmsCustom.qrScan((success)=>{
+                    console.log('success',success)
+                    this.setState({
+                        scanObdText: success.scan_result
+                    });
+
+                },(error)=>{console.log('error',error)});
         }
     }
 }
