@@ -14,6 +14,8 @@ import PixelUtil from '../utils/PixelUtil';
 const Pixel = new PixelUtil();
 import * as FontAndColor from '../constant/fontAndColor';
 import SearchTitleView from '../component/SearchTitleView';
+import * as Net from '../utils/RequestUtil';
+import * as appUrls from '../constant/appUrls';
 
 import CustomerItem from './component/CustomerItem';
 
@@ -21,9 +23,18 @@ export default class AssessCustomerScene extends BaseComponent{
 
     constructor(props){
         super(props);
-        this.funcs=[2,2,4,4,5,5,6,7,7,8,9,99];
+        this.customers=[];
+        this.page = 1;
+        this.total = 0;
+        this.name = '';
+        this.state={
+            loading:false
+        }
     }
 
+    initFinish = ()=>{
+        this._getData();
+    };
 
     _onSearchClick=(searchValue)=>{
 
@@ -35,15 +46,47 @@ export default class AssessCustomerScene extends BaseComponent{
 
     _keyExtractor = (item, index) => index;
 
+    _onRefresh = ()=>{
+        console.log('下拉刷新');
+        this.setState({
+            loading:true
+        });
+    };
+
+    _getData = ()=>{
+        console.log('请求数据');
+        let maps = {
+            p:this.page,
+            name:this.name
+        };
+
+        Net.request(appUrls.USERCUSTOMERLIST,'post',maps).then(
+            (response)=>{
+                let rep = response.mjson.retdata;
+                this.total = Math.ceil(Number.parseInt(rep.total)/Number.parseInt(rep.listRows));
+
+                console.log('response data',{rep});
+                console.log('response total',this.total);
+            },
+            (error)=>{
+
+            });
+
+    };
+
     render(){
+        console.log('++++1111111111');
         return(
             <View style={styles.container}>
                 <View style={styles.wrapContainer}>
                     <SearchTitleView hint={'客户姓名关键字'} onSearchClick={()=>{}}/>
                     <FlatList
+                        ref={(flat)=>{this.flatList = flat}}
                         data={this.funcs}
                         renderItem={this._renderItem}
                         keyExtractor={this._keyExtractor}
+                        refreshing={this.state.loading}
+                        onRefresh={this._onRefresh}
                     />
                 </View>
                 <AllNavigationView title={'第1车贷'} backIconClick={() => {
