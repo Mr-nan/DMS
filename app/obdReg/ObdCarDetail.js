@@ -55,6 +55,7 @@ export  default class ObdCarDetail extends BaseComponent {
         request(Urls.OBD_CAR_DETAIL, 'Post', maps)
 
             .then((response) => {
+            console.log(response);
                     this.props.screenProps.showModal(false);
                     if (response.mjson.retdata == '' || response.mjson.retdata == null) {
                         return;
@@ -110,7 +111,6 @@ export  default class ObdCarDetail extends BaseComponent {
     render() {
         if (this.state.renderPlaceholderOnly !== 'success' || auto_base_info == null) {
             return (<View style={{backgroundColor: fontAndColor.COLORA3, flex: 1, paddingTop: Pixel.getPixel(15)}}>
-                {this.loadView()}
                 <AllNavigationView title={this.props.navigation.state.params.name} backIconClick={() => {
                     this.backPage();
                 }} rightFootClick={()=>{}}/>

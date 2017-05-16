@@ -68,8 +68,8 @@ export  default class CarCheckCustomer extends BaseComponent {
                     }
                 },
                 (error) => {
-                    this.props.screenProps.showToast(error.mjson.retmsg);
                     this.props.screenProps.showModal(false);
+                    this.props.screenProps.showToast(error.mjson.retmsg);
                 });
     }
 
