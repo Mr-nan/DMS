@@ -40,7 +40,7 @@ const request = (url, method, params,backToLogin) => {
                     } else {
                         isOk = false;
                     }
-                    console.log(response);
+                    // console.log(response);
                     return response.json();
                 })
                 .then((responseData) => {
@@ -48,7 +48,7 @@ const request = (url, method, params,backToLogin) => {
                         for (let key of Object.keys(params)) {
                             console.log(key+"===" + params[key]);
                         }
-                        // console.log("success----------" + JSON.stringify(responseData));
+                        console.log("success----------" + JSON.stringify(responseData));
                         if (responseData.retcode == 1) {
                             resolve({mjson: responseData, mycode: 1});
                         } else {

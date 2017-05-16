@@ -363,3 +363,8 @@ export const ALARM_EXPLAIN = BASEURL +
  */
 export const REGOBDTORFID = BASEURL +
     "CarRev/regObdToRfid";
+
+/**
+ * 标签该OBD监管
+ */
+export const CARREVREGRFIDTOOBD = BASEURL + "CarRev/regRfidToObd";

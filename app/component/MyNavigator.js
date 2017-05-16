@@ -22,6 +22,7 @@ import CarCheckWifiSelect from '../makingInventory/CarCheckWifiSelect';
 import CarCheckNoWifiList from '../makingInventory/CarCheckNoWifiList';
 import CarCheckWarning from '../makingInventory/CarCheckWarning';
 import AssessCustomerScene from '../assess/AssessCustomerScene';
+import SelectMaskComponent from '../makingInventory/SelectMaskComponent';
 
 export default MyApp = StackNavigator({
         Root: {screen: RootScene},
@@ -44,7 +45,8 @@ export default MyApp = StackNavigator({
         ReportCustomerList:{screen:ReportCustomerList},
 
         AssessCustomerScene:{screen:AssessCustomerScene},
-        VersionInfo:{screen:VersionInfo}
+        VersionInfo:{screen:VersionInfo},
+        SelectMaskComponent:{screen:SelectMaskComponent}
     },
     {
         initialRouteName: 'Root',

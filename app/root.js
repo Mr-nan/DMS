@@ -25,8 +25,8 @@ export default class root extends Component {
             <View style={{flex: 1}}>
                 <MyNavigator
                     screenProps={{
-                        showToast: this.showToast,
                         showModal: this.showModal,
+                        showToast: this.showToast,
                         showMenu:this.showMenu
                     }}/>
                 <ShowToast ref={(toast)=>{this.toast = toast}} msg={''}></ShowToast>
