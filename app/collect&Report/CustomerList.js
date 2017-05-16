@@ -24,6 +24,7 @@ export default  class CustomerList extends BaseComponent{
    state = {
        data:[],
        loadMoreState:'0',
+       refreshing:false,
        renderPlaceholderOnly:STATECODE.loading
    };
 
@@ -46,7 +47,8 @@ export default  class CustomerList extends BaseComponent{
                 this.setState({
                     data:tempJson.list,
                     loadMoreState:sourceControl.total==sourceControl.currentPage?'1':'0',
-                    renderPlaceholderOnly:STATECODE.loadSuccess
+                    renderPlaceholderOnly:STATECODE.loadSuccess,
+                    refreshing:false
                 })
                     console.log('加载完成');
                 },
@@ -58,7 +60,7 @@ export default  class CustomerList extends BaseComponent{
     _onEndReached=()=> {
         console.log('触发了触底')
         if(sourceControl.currentPage==sourceControl.total){
-            this.props.screenProps.showToast('全部数据已加载');
+            // this.props.screenProps.showToast('全部数据已加载');
         }
         else {
           sourceControl.currentPage=sourceControl.currentPage + 1;
@@ -85,6 +87,9 @@ export default  class CustomerList extends BaseComponent{
 
     _onRefresh=()=>{
 
+        this.setState({
+            refreshing:true
+        })
         sourceControl.currentPage=1;
 
         this._getCustonList();
@@ -136,7 +141,7 @@ export default  class CustomerList extends BaseComponent{
                         keyExtractor={this._keyExtractor}
                         onEndReached={this._onEndReached}
                         onEndReachedThreshold={0}
-                        refreshing={false}
+                        refreshing={this.state.refreshing}
                         onRefresh={this._onRefresh}
                         ListFooterComponent={this.state.loadMoreState=='0'?ListFootComponentMore:ListFootComponentNorMore}
                     />

@@ -24,6 +24,7 @@ export  default class CustomerItemCarList extends BaseComponent{
     state = {
         data:[],
         loadMoreState:'0',
+        refreshing:false,
         renderPlaceholderOnly:STATECODE.loading
     };
 
