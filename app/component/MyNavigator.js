@@ -15,6 +15,7 @@ import ObdChangeBind from '../obdReg/ObdChangeBind';
 import CustomerList from '../collect&Report/CustomerList'
 import CustomerItemCarList from '../collect&Report/CustomerItemCarList'
 import ReportCustomerList from '../collect&Report/ReportCustomerList'
+import VersionInfo from '../collect&Report/VersionInfo'
 
 import CarCheckCustomer from '../makingInventory/CarCheckCustomer';
 import CarCheckWifiSelect from '../makingInventory/CarCheckWifiSelect';
@@ -42,8 +43,8 @@ export default MyApp = StackNavigator({
         CustomerItemCarList:{screen:CustomerItemCarList},
         ReportCustomerList:{screen:ReportCustomerList},
 
-        AssessCustomerScene:{screen:AssessCustomerScene}
-
+        AssessCustomerScene:{screen:AssessCustomerScene},
+        VersionInfo:{screen:VersionInfo}
     },
     {
         initialRouteName: 'Root',
