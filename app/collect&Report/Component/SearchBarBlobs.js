@@ -39,10 +39,11 @@ class CustomListSearch extends PureComponent{
 
     render(){
 
+        const {placehoder,wLineStyle}=this.props;
         return (
 
-            <View style={styles.cListSarchWarp}>
-                <TextInput style={styles.ccInptList} placeholder={'客户姓名关键字'} onChangeText={this._onTextChange}/>
+            <View style={[styles.cListSarchWarp,wLineStyle]}>
+                <TextInput style={styles.ccInptList} placeholder={placehoder} onChangeText={this._onTextChange}/>
                 <TouchableOpacity style={styles.ccSearchButton} onPress={this._onSearchBarClick}>
                     <Image style={{width:adapeSize(20),height:adapeSize(20)}} source={require('../../../images/assessment_customer_find.png')} />
                 </TouchableOpacity>
@@ -53,7 +54,58 @@ class CustomListSearch extends PureComponent{
     }
 
 }
-export {CustomListSearch}
+
+class RepListSearch extends PureComponent{
+
+    componentWillMount() {
+        tempValue.ccLsTempValue='';
+    }
+    _onTextChange=(text)=>{
+
+        tempValue.ccLsTempValue=text;
+    }
+    _onSearchBarClick=()=>{
+
+        const {onPress} =this.props;
+
+        tempValue.ccLsTempValue&&onPress(tempValue.ccLsTempValue);
+    }
+    _timeButtonClick=()=>{
+
+        const {timeButtonClick} =this.props;
+        timeButtonClick&&timeButtonClick();
+
+    }
+
+
+
+    render(){
+        const {placehoder}=this.props;
+        return(
+            <View style={styles.reporSearchWap}>
+                <View style={styles.reporSarchInputWarp}>
+                    <TextInput style={styles.reporInput} placeholder={'客户姓名关键字'} onChangeText={this._onTextChange}/>
+                    <TouchableOpacity style={styles.ccSearchButton} onPress={this._onSearchBarClick}>
+                        <Image style={{width:adapeSize(20),height:adapeSize(20)}} source={require('../../../images/assessment_customer_find.png')} />
+                    </TouchableOpacity>
+                </View>
+
+                <TouchableOpacity style={styles.reporButtonWarp} onPress={this._timeButtonClick}>
+                    <Text style={{marginLeft:adapeSize(10),marginRight:adapeSize(10), fontSize:fontadapeSize(12)}}>{'时间'}</Text>
+                </TouchableOpacity>
+            </View>
+        )
+
+
+    }
+
+
+
+}
+
+
+
+export {CustomListSearch,RepListSearch}
 
 const  styles =StyleSheet.create({
 
@@ -88,7 +140,45 @@ const  styles =StyleSheet.create({
         top:adapeSize(20),
         position:'absolute'
 
+    },
+
+    reporSearchWap:{
+
+        flexDirection:'row',
+    },
+    reporSarchInputWarp:{
+
+        width:width-adapeSize(80),
+        height:adapeSize(60),
+        backgroundColor:PAGECOLOR.all_background,
+
+    },
+    reporButtonWarp:{
+
+        backgroundColor:'red',
+        justifyContent:'center',
+        alignItems:'center',
+        marginTop:adapeSize(18),
+        marginBottom:adapeSize(18),
+        paddingLeft:adapeSize(5),
+        paddingLeft:adapeSize(5),
+        backgroundColor:PAGECOLOR.esc_button,
+    },
+
+    reporInput:{
+
+        borderWidth:1,
+        borderColor:PAGECOLOR.all_background,
+        borderRadius:adapeSize(20),
+        backgroundColor:PAGECOLOR.white,
+        marginLeft:adapeSize(14),
+        marginRight:adapeSize(14),
+        paddingLeft:adapeSize(15),
+        flex:1,
+        marginTop:adapeSize(10),
+        marginBottom:adapeSize(10),
     }
+
 
 
 

@@ -38,21 +38,28 @@ class CollectCustomerListItem extends PureComponent{
 }
 class CollectCarListItem extends PureComponent{
 
-    _onclick=(carId)=>{
+    _onclick=()=>{
 
-        const {carListItemClick}=this.props;
-        carListItemClick(carId);
+        const {carListItemClick,carID}=this.props;
+        carListItemClick(carID);
     }
 
     render(){
 
-        const {carType,carDetailType,carFrameNumber,place} =this.props;
+        const {carType,carDetailType,carFrameNumber,place,type} =this.props;
 
         return (
             <TouchableOpacity style={styles.ccListWarp} onPress={this._onclick}>
                 <Text style={styles.cccCarType}>{carType}</Text>
                 <Text style={styles.cccCardetailType}>{carDetailType}</Text>
-                <Text style={styles.cccCarInfo}>{carFrameNumber}</Text>
+                <View style={styles.carStateWarp}>
+                    <Text style={styles.cccCarInfo}>{carFrameNumber}</Text>
+                    <View style={[styles.carStateTextWarp,type==4?null:{width:0}]}>
+                        <Text style={styles.carStateText}>{'补充车辆资料'}</Text>
+                    </View>
+
+                </View>
+
                 <Text style={styles.cccCarInfo}>{place}</Text>
             </TouchableOpacity>
         )
@@ -75,8 +82,8 @@ class ReportCustomerListItem extends PureComponent{
                 <Text style={styles.ccListComponey}>{companyName}</Text>
                 <View style={styles.ccListCarWarp}>
                     <Text style={styles.cccCarInfo}>{money}</Text>
-                    <View>
-                        <Text style={styles.cccCarInfo}>{'状态'}</Text>
+                    <View style={{flexDirection:'row',marginBottom:adapeSize(8),marginLeft:adapeSize(20)}}>
+                        <Text style={styles.cccCarInfo}>{'状态 ：'}</Text>
                         <Text style={styles.ccListCarNum}>{state}</Text>
                     </View>
                 </View>
@@ -168,16 +175,20 @@ const styles=StyleSheet.create({
         color:'red'
     },
     cccCarType:{
-       fontSize:adapeSize(16)
+       fontSize:adapeSize(16),
+       marginTop:adapeSize(10),
+       marginBottom:adapeSize(10),
     },
     cccCardetailType:{
 
         fontSize:adapeSize(16),
-        color:'red',
+        color:PAGECOLOR.all_blue,
+        marginBottom:adapeSize(8)
     },
     cccCarInfo:{
         fontSize:adapeSize(12),
         color:'gray',
+        marginBottom:adapeSize(8),
     },
     listFootWarp:{
 
@@ -191,7 +202,23 @@ const styles=StyleSheet.create({
         paddingTop:adapeSize(10),
         paddingBottom:adapeSize(10),
 
+    },
+    carStateWarp:{
+
+        flexDirection:'row',
+        justifyContent:'space-between'
+    },
+    carStateTextWarp:{
+        backgroundColor:PAGECOLOR.all_blue,
+        borderRadius:adapeSize(5)
+    },
+    carStateText:{
+        margin:adapeSize(5),
+        color:'white',
+
     }
+
+
 
 
 })

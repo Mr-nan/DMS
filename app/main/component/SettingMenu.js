@@ -40,7 +40,9 @@ export default class SettingMenu extends Component{
     };
 
     _aboutVersion = ()=>{
-
+        this.setState({
+            modalVisible: false
+        },()=>{this.props.parentNav.toNextPage('VersionInfo',{})});
     };
 
     _backLogin = ()=>{
