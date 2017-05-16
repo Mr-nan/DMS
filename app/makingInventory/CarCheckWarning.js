@@ -64,8 +64,8 @@ export  default class CarCheckWarning extends BaseComponent {
                     this.props.screenProps.showModal(false);
                 },
                 (error) => {
-                    this.props.screenProps.showToast(error.mjson.retmsg);
                     this.props.screenProps.showModal(false);
+                    this.props.screenProps.showToast(error.mjson.retmsg);
                 });
     }
 
