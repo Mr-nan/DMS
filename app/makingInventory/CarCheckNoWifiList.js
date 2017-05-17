@@ -110,7 +110,7 @@ export  default class CarCheckNoWifiList extends BaseComponent {
     refreshingData = () => {
         allSouce = [];
         this.setState({isRefreshing: true});
-        this.getData();
+        this.getData(index);
     };
 
     textChange = (text) => {

@@ -36,7 +36,9 @@ export default class SettingMenu extends Component{
     };
 
     _blueConnect = ()=>{
-
+        this.setState({
+            modalVisible: false
+        },()=>{this.props.parentNav.toNextPage('BluetoothScene',{})});
     };
 
     _aboutVersion = ()=>{

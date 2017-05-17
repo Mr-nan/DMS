@@ -24,15 +24,23 @@ export default class CustomerItem extends Component {
     render() {
 
         let {item,onItemClick} = this.props;
-        let wait_evaluate_price = '待评估车辆金额：';
-        let one_car_price = '单车融资金额：';
+
+        let wait_evaluate_price = '待评估车辆金额：' + item.wait_evaluate_price;
+        let one_car_price = '单车融资金额：' + item.one_car_price;
+        let customerName = item.name;
+        let companyName = item.companyname;
+        if(companyName !== '' && companyName !== null){
+            companyName = '(' + companyName + ')'
+        }else{
+            companyName = '(无)'
+        }
 
         return (
             <View style={{width: width}}>
-                <TouchableOpacity onPress={onItemClick} style={styles.container}>
+                <TouchableOpacity activeOpacity={0.3} onPress={()=>{onItemClick(item.name,item.merge_id)}} style={styles.container}>
                     <View style={styles.firstWrap}>
-                        <Text style={styles.firstFont}>{item}</Text>
-                        <Text style={styles.firstFont}>{'(' + item + ')'}</Text>
+                        <Text style={styles.firstFont}>{customerName}</Text>
+                        <Text style={styles.firstFont}>{companyName}</Text>
                     </View>
                     <View style={styles.secondWrap}>
                         <Text style={styles.secondFont}>{wait_evaluate_price}</Text>
@@ -42,8 +50,6 @@ export default class CustomerItem extends Component {
             </View>
         );
     }
-
-
 }
 
 const styles = StyleSheet.create({

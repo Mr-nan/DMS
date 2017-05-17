@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import {AppRegistry, Text, View, Image, TextInput, StyleSheet, TouchableOpacity} from 'react-native';
-const shareIcon = require('../../images/login_logs.png');
+import {AppRegistry, Text, View, Image, TextInput, StyleSheet, TouchableOpacity,NativeModules} from 'react-native';
+const login_logs = require('../../images/login_logs.png');
 import BaseComponent from '../component/BaseComponent';
 import {request} from '../utils/RequestUtil';
 import * as Urls from '../constant/appUrls';
@@ -8,12 +8,36 @@ import * as fontAndColor from '../constant/fontAndColor';
 import  PixelUtil from '../utils/PixelUtil'
 var Pixel = new PixelUtil();
 import AllNavigationView from '../component/AllNavigationView';
+import ImagePicker from "react-native-image-picker";
+import StorageUtil from '../utils/StorageUtil';
+import * as StorageKeyNames from '../constant/storageKeyNames';
+let imageData;
+
+const options = {
+    //弹出框选项
+    title: '请选择',
+    cancelButtonTitle: '取消',
+    takePhotoButtonTitle: '拍照',
+    chooseFromLibraryButtonTitle: '选择相册',
+    allowsEditing: true,
+    noData: true,
+    quality: 1.0,
+    maxWidth: 480,
+    maxHeight: 800,
+    storageOptions: {
+        skipBackup: true,
+        path: 'images',
+    }
+};
 
 export  default class ObdWarningExplain extends BaseComponent {
     // 初始化模拟数据
     constructor(props) {
         super(props);
-        this.state = {text: ''};
+        this.state = {
+            text: '',
+            imageSource: login_logs
+        };
 
     }
 
@@ -44,7 +68,7 @@ export  default class ObdWarningExplain extends BaseComponent {
                             <Text style={{color:'white'}}>拍照</Text>
                         </TouchableOpacity>
                     </View>
-                    <Image style={styles.image} source={shareIcon}/>
+                    <Image style={styles.image} source={this.state.imageSource}/>
                 </View>
                 <View style={{flex:1}}></View>
                 <View style={{flexDirection:'row', margin:10}}>
@@ -64,15 +88,61 @@ export  default class ObdWarningExplain extends BaseComponent {
     }
 
     takePhoto = () => {
-        alert('拍照');
+        ImagePicker.launchCamera(options, (response) => {
+            if (response.didCancel) {
+            }
+            else if (response.error) {
+            }
+            else if (response.customButton) {
+            }
+            else {
+                console.log('take camera', response);
+                StorageUtil.mGetItem(StorageKeyNames.TOKEN, (data) => {
+                    if (data.code == 1) {
+                        let token = data.result;
+
+                        NativeModules.DmsCustom.uploadFile(Urls.FILEUPLOAD,token,response.path,
+                            (rep)=>{console.log('success',JSON.parse(rep).retdata)
+                                imageData=JSON.parse(rep).retdata[0];
+                            console.log(imageData);
+                                if(JSON.parse(rep).retcode!=='1'){
+                                    this.setState({
+                                        imageSource: {uri: imageData.file_url}
+                                    });
+                                }
+                        },(error)=>{console.log(error)});
+                    }
+                });
+
+
+            }
+        });
     }
     cancel = () => {
         this.backPage();
     }
     save = () => {
-        this.backPage();
-        this.props.navigation.state.params.freshDataClick();
-    }
+        if(this.state.text==''){
+            this.props.screenProps.showToast('请输入异常类说明！');
+        }
+            let maps = {
+                alarm_explain: this.state.text,
+                alarm_explain_img_id: imageData.file_id,
+                warn_record_id: this.props.navigation.state.params.warn_record_id,
+            };
+            request(Urls.ALARM_EXPLAIN, 'Post', maps)
+
+                .then((response) => {
+                        this.props.screenProps.showModal(false);
+                        this.props.screenProps.showToast('保存成功！');
+                        this.backPage();
+                        this.props.navigation.state.params.freshDataClick();
+                    },
+                    (error) => {
+                        this.props.screenProps.showModal(false);
+                        this.props.screenProps.showToast(error.mjson.retmsg);
+                    });
+        }
 
 }
 

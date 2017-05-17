@@ -10,7 +10,8 @@ import{
     StyleSheet,
     Dimensions,
     FlatList,
-    NativeModules
+    NativeModules,
+    NativeAppEventEmitter
 } from 'react-native';
 
 import BaseComponent from '../component/BaseComponent';
@@ -79,6 +80,8 @@ export default class FunctionScene extends BaseComponent {
                 this.toNextPage('CarCheckCustomer', {});
                 break;
             case 4:
+                NativeAppEventEmitter
+                .addListener('onReadData', this._onReadData);
                 break;
             case 5:
                 this.toNextPage('ReportCustomerList',{})
@@ -87,6 +90,10 @@ export default class FunctionScene extends BaseComponent {
                 this.toNextPage('ObdCustom', {});
                 break;
         }
+    };
+
+    _onReadData = (data)=>{
+        console.log('blue data',data.result);
     };
 
     _renderItem = (data) => {
