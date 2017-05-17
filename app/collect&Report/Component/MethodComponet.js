@@ -18,7 +18,8 @@ const PAGECOLOR = {
     red:'red',
     all_blue : "#08c5a7",
     all_background :"#F0F0F0",
-    esc_button :"#999999"
+    esc_button :"#999999",
+    deapGray:"#666666"
 }
 
 const easyRequest =(url,paramer)=>{

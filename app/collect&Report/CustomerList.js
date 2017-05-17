@@ -12,7 +12,7 @@ import  {CustomListSearch} from './Component/SearchBarBlobs'
 import * as apis from '../constant/appUrls'
 import  {request} from '../utils/RequestUtil'
 import {toutalPage,STATECODE} from './Component/MethodComponet'
-import {CollectCustomerListItem,SeparatorComponent,ListFootComponentNorMore,ListFootComponentMore} from './Component/ListItemComponent'
+import {CollectCustomerListItem,ListFootComponent,ListFootComponentNorMore,ListFootComponentMore} from './Component/ListItemComponent'
 import {commenStyle} from './Component/PageStyleSheet'
 import AllNavigationView from '../component/AllNavigationView';
 const  sourceControl ={
@@ -35,7 +35,6 @@ export default  class CustomerList extends BaseComponent{
         sourceControl.total=0;
     }
     _getCustonList=()=>{
-
         let maps = { p:sourceControl.currentPage};
         request(apis.CARREVGETUSERLIST, 'Post', maps)
             .then((response) => {
@@ -50,7 +49,6 @@ export default  class CustomerList extends BaseComponent{
                     renderPlaceholderOnly:STATECODE.loadSuccess,
                     refreshing:false
                 })
-                    console.log('加载完成');
                 },
                 (error) => {
 
@@ -58,7 +56,7 @@ export default  class CustomerList extends BaseComponent{
 
     }
     _onEndReached=()=> {
-        console.log('触发了触底')
+
         if(sourceControl.currentPage==sourceControl.total){
             // this.props.screenProps.showToast('全部数据已加载');
         }
@@ -86,21 +84,22 @@ export default  class CustomerList extends BaseComponent{
     }
 
     _onRefresh=()=>{
-
         this.setState({
             refreshing:true
         })
         sourceControl.currentPage=1;
-
         this._getCustonList();
-
-
     }
 
 
-    _customListItemClick=(itemId)=>{
+    _customListItemClick=(itemId,itemName,carNum)=>{
 
-        this.toNextPage('CustomerItemCarList',{merge_id:itemId})
+        let tempCarNUm =Number.parseInt(carNum);
+        if(tempCarNUm>0){
+            this.toNextPage('CustomerItemCarList',{merge_id:itemId,title:itemName})
+        }else {
+            this.props.screenProps.showToast('没有待处理车辆');
+        }
     }
 
     _onSearchBarClick=(searchValue)=>{
@@ -119,16 +118,30 @@ export default  class CustomerList extends BaseComponent{
             />
         )
     }
+    _renderFootComponent=()=>{
+
+         if(this.state.renderPlaceholderOnly==STATECODE.loading){
+
+             return (<ListFootComponent info="正在加载..."/>)
+         }
+         if (this.state.loadMoreState=='0'){
+
+             return (<ListFootComponent info='加载更多...'/>)
+         }
+         return (<ListFootComponent info='已加载全部数据'/>)
+    }
+
+
 
     _keyExtractor = (item, index) => item.merge_id;
     render(){
-        if(this.state.renderPlaceholderOnly!==STATECODE.loadSuccess){
-            return( <View style={commenStyle.commenPage}>
-                <AllNavigationView title={'客户列表'} backIconClick={() => {
-                    this.backPage();
-                }} parentNavigation={this}/>
-            </View>);
-        }
+        // if(this.state.renderPlaceholderOnly!==STATECODE.loadSuccess){
+        //     return( <View style={commenStyle.commenPage}>
+        //         <AllNavigationView title={'客户列表'} backIconClick={() => {
+        //             this.backPage();
+        //         }} parentNavigation={this}/>
+        //     </View>);
+        // }
         return(
 
             <View style={commenStyle.commenPage}>
@@ -136,14 +149,15 @@ export default  class CustomerList extends BaseComponent{
                 <View style={commenStyle.testUI}>
                     <CustomListSearch onPress={this._onSearchBarClick} placehoder='客户姓名关键字'/>
                     <FlatList
+                        style={{flex:1}}
                         data={this.state.data}
                         renderItem={this._renderItem}
                         keyExtractor={this._keyExtractor}
                         onEndReached={this._onEndReached}
-                        onEndReachedThreshold={0}
+                        onEndReachedThreshold={0.5}
                         refreshing={this.state.refreshing}
                         onRefresh={this._onRefresh}
-                        ListFooterComponent={this.state.loadMoreState=='0'?ListFootComponentMore:ListFootComponentNorMore}
+                        ListFooterComponent={this._renderFootComponent}
                     />
                 </View>
 

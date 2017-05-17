@@ -43,7 +43,7 @@ class CustomListSearch extends PureComponent{
         return (
 
             <View style={[styles.cListSarchWarp,wLineStyle]}>
-                <TextInput style={styles.ccInptList} placeholder={placehoder} onChangeText={this._onTextChange}/>
+                <TextInput style={styles.ccInptList} placeholder={placehoder} onChangeText={this._onTextChange} underlineColorAndroid='transparent'/>
                 <TouchableOpacity style={styles.ccSearchButton} onPress={this._onSearchBarClick}>
                     <Image style={{width:adapeSize(20),height:adapeSize(20)}} source={require('../../../images/assessment_customer_find.png')} />
                 </TouchableOpacity>
@@ -56,6 +56,11 @@ class CustomListSearch extends PureComponent{
 }
 
 class RepListSearch extends PureComponent{
+
+    state={
+
+        buttonText:'时间'
+    }
 
     componentWillMount() {
         tempValue.ccLsTempValue='';
@@ -76,7 +81,13 @@ class RepListSearch extends PureComponent{
         timeButtonClick&&timeButtonClick();
 
     }
+    _setTimeValue=(time)=>{
 
+       this.setState({
+           buttonText:time
+       })
+
+    }
 
 
     render(){
@@ -84,14 +95,14 @@ class RepListSearch extends PureComponent{
         return(
             <View style={styles.reporSearchWap}>
                 <View style={styles.reporSarchInputWarp}>
-                    <TextInput style={styles.reporInput} placeholder={'客户姓名关键字'} onChangeText={this._onTextChange}/>
+                    <TextInput underlineColorAndroid='transparent' style={styles.reporInput} placeholder={'客户姓名关键字'} onChangeText={this._onTextChange}/>
                     <TouchableOpacity style={styles.ccSearchButton} onPress={this._onSearchBarClick}>
                         <Image style={{width:adapeSize(20),height:adapeSize(20)}} source={require('../../../images/assessment_customer_find.png')} />
                     </TouchableOpacity>
                 </View>
 
                 <TouchableOpacity style={styles.reporButtonWarp} onPress={this._timeButtonClick}>
-                    <Text style={{marginLeft:adapeSize(10),marginRight:adapeSize(10), fontSize:fontadapeSize(12)}}>{'时间'}</Text>
+                    <Text ref={(text)=>{this.buttonText=text}} style={{marginLeft:adapeSize(5),marginRight:adapeSize(5), fontSize:fontadapeSize(11)}}>{this.state.buttonText}</Text>
                 </TouchableOpacity>
             </View>
         )
@@ -148,7 +159,7 @@ const  styles =StyleSheet.create({
     },
     reporSarchInputWarp:{
 
-        width:width-adapeSize(80),
+        width:width-adapeSize(90),
         height:adapeSize(60),
         backgroundColor:PAGECOLOR.all_background,
 
