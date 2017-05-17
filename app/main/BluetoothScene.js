@@ -39,6 +39,9 @@ export default class BluetoothScene extends BaseComponent{
 
         NativeAppEventEmitter
             .addListener('onBleConnection', this._onBleConnection);
+
+        NativeAppEventEmitter
+            .addListener('onReadData', this.props.navigation.state.params.onReadData);
     }
 
     _findBluetooth = (data)=>{

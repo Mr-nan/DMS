@@ -21,7 +21,8 @@ import CarCheckCustomer from '../makingInventory/CarCheckCustomer';
 import CarCheckWifiSelect from '../makingInventory/CarCheckWifiSelect';
 import CarCheckNoWifiList from '../makingInventory/CarCheckNoWifiList';
 import CarCheckWarning from '../makingInventory/CarCheckWarning';
-import AssessCustomerScene from '../assess/AssessCustomerScene';
+import AssessCustomerScene from '../assess/AssessmentCustomerScene';
+import AssessmentSelectScene from '../assess/AssessmentSelectScene';
 
 import BluetoothScene from '../main/BluetoothScene';
 
@@ -48,6 +49,7 @@ export default MyApp = StackNavigator({
         ReportCustomerList:{screen:ReportCustomerList},
 
         AssessCustomerScene:{screen:AssessCustomerScene},
+        AssessmentSelectScene:{screen:AssessmentSelectScene},
         VersionInfo:{screen:VersionInfo},
 
         BluetoothScene:{screen:BluetoothScene},
