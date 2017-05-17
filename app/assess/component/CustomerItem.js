@@ -32,7 +32,7 @@ export default class CustomerItem extends Component {
         if(companyName !== '' && companyName !== null){
             companyName = '(' + companyName + ')'
         }else{
-            companyName = '(无)'
+            companyName = '(空)'
         }
 
         return (
