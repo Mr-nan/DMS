@@ -12,7 +12,7 @@ import  {CustomListSearch} from './Component/SearchBarBlobs'
 import * as apis from '../constant/appUrls'
 import  {request} from '../utils/RequestUtil'
 import {toutalPage,STATECODE} from './Component/MethodComponet'
-import {CollectCustomerListItem,SeparatorComponent,ListFootComponentNorMore,ListFootComponentMore} from './Component/ListItemComponent'
+import {CollectCustomerListItem,ListFootComponent,ListFootComponentNorMore,ListFootComponentMore} from './Component/ListItemComponent'
 import {commenStyle} from './Component/PageStyleSheet'
 import AllNavigationView from '../component/AllNavigationView';
 const  sourceControl ={
@@ -35,7 +35,6 @@ export default  class CustomerList extends BaseComponent{
         sourceControl.total=0;
     }
     _getCustonList=()=>{
-
         let maps = { p:sourceControl.currentPage};
         request(apis.CARREVGETUSERLIST, 'Post', maps)
             .then((response) => {
@@ -85,16 +84,11 @@ export default  class CustomerList extends BaseComponent{
     }
 
     _onRefresh=()=>{
-
-        console.log('刷新')
         this.setState({
             refreshing:true
         })
         sourceControl.currentPage=1;
-
         this._getCustonList();
-
-
     }
 
 
@@ -124,16 +118,30 @@ export default  class CustomerList extends BaseComponent{
             />
         )
     }
+    _renderFootComponent=()=>{
+
+         if(this.state.renderPlaceholderOnly==STATECODE.loading){
+
+             return (<ListFootComponent info="正在加载..."/>)
+         }
+         if (this.state.loadMoreState=='0'){
+
+             return (<ListFootComponent info='加载更多...'/>)
+         }
+         return (<ListFootComponent info='已加载全部数据'/>)
+    }
+
+
 
     _keyExtractor = (item, index) => item.merge_id;
     render(){
-        if(this.state.renderPlaceholderOnly!==STATECODE.loadSuccess){
-            return( <View style={commenStyle.commenPage}>
-                <AllNavigationView title={'客户列表'} backIconClick={() => {
-                    this.backPage();
-                }} parentNavigation={this}/>
-            </View>);
-        }
+        // if(this.state.renderPlaceholderOnly!==STATECODE.loadSuccess){
+        //     return( <View style={commenStyle.commenPage}>
+        //         <AllNavigationView title={'客户列表'} backIconClick={() => {
+        //             this.backPage();
+        //         }} parentNavigation={this}/>
+        //     </View>);
+        // }
         return(
 
             <View style={commenStyle.commenPage}>
@@ -149,7 +157,7 @@ export default  class CustomerList extends BaseComponent{
                         onEndReachedThreshold={0.5}
                         refreshing={this.state.refreshing}
                         onRefresh={this._onRefresh}
-                        ListFooterComponent={this.state.loadMoreState=='0'?ListFootComponentMore:ListFootComponentNorMore}
+                        ListFooterComponent={this._renderFootComponent}
                     />
                 </View>
 

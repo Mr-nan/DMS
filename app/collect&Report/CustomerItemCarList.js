@@ -11,7 +11,7 @@ import  {CustomListSearch} from './Component/SearchBarBlobs'
 import * as apis from '../constant/appUrls'
 import  {request} from '../utils/RequestUtil'
 import {toutalPage,STATECODE} from './Component/MethodComponet'
-import {CollectCarListItem,SeparatorComponent,ListFootComponentNorMore,ListFootComponentMore} from './Component/ListItemComponent'
+import {CollectCarListItem,ListFootComponentNorMore,ListFootComponentMore} from './Component/ListItemComponent'
 import {commenStyle} from './Component/PageStyleSheet'
 import AllNavigationView from '../component/AllNavigationView';
 

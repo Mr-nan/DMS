@@ -22,4 +22,14 @@ const  commenStyle =StyleSheet.create({
 
 })
 
-export {commenStyle}
+const repStyles=StyleSheet.create({
+
+    radioGroup:{
+        marginLeft:adapeSize(10),
+        marginTop:adapeSize(5)
+    }
+
+})
+
+
+export {commenStyle,repStyles}

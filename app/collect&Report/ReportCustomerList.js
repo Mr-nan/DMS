@@ -127,9 +127,9 @@ export  default class ReportCustomerList extends BaseComponent{
 
     }
 
-    __itemClick=(itemID)=>{
+    _repCustomItemClick=(merge_id,companyName,money)=>{
 
-        alert(itemID)
+        this.toNextPage('ReportInfoManage',{merge_id:merge_id,title:companyName,money:money,month:pageControl.month})
     }
 
     _onRefresh=()=>{
@@ -147,14 +147,24 @@ export  default class ReportCustomerList extends BaseComponent{
             money={'未结清借款 ：'+data.item.loanBalance+'万元'}
             merge_id={data.item.merge_id}
             state={this._getOrderState(data.item.reportStstus)}
-            repCustomItemClick={this._itemClick}
+            repCustomItemClick={this._repCustomItemClick}
         />)
+
+    }
+    _getFootHeader=(state)=>{
+        if (state=='0'){
+
+            return ListFootComponentMore
+        }
+        return ListFootComponentNorMore;
 
     }
 
 
+
     render(){
 
+        let foot =this._getFootHeader(this.state.loadMoreState);
         return (
 
         <View style={commenStyle.commenPage}>
@@ -168,7 +178,7 @@ export  default class ReportCustomerList extends BaseComponent{
                     onEndReachedThreshold={0.5}
                     refreshing={this.state.refreshing}
                     onRefresh={this._onRefresh}
-                    ListFooterComponent={this.state.loadMoreState=='0'?ListFootComponentMore:ListFootComponentNorMore}
+                    ListFooterComponent={foot}
                 />
 
             </View>
