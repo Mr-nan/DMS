@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     },
     secondFont: {
         fontSize: Pixel.getFontPixel(13),
-        color: 'rgba(0,0,0,0.7)',
+        color: FontAndColor.txt_gray,
         flex:1
     },
 

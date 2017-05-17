@@ -64,28 +64,28 @@ export default class AssessmentSelectScene extends BaseComponent{
                                             showLoading={this._showLoadingModal}
                                             merge_id={this.merge_id} tabLabel='线下库容' />);
                 this.tabFlag = false;
+                if(rep.single !== '0'){
+                    tabs.push(<OneCarOrderScene key={'1'}
+                                                showHint={this._showHint}
+                                                closeLoading={this._closeLoadingModal}
+                                                showLoading={this._showLoadingModal}
+                                                merge_id={this.merge_id} tabLabel='单车融资' />);
+                    this.tabFlag = true;
+                }
                 if(rep.inventory !== '0'){
-                    tabs.push(<StockTopOrderScene key={'1'}
+                    tabs.push(<StockTopOrderScene key={'2'}
                                                   showHint={this._showHint}
                                                   closeLoading={this._closeLoadingModal}
                                                   showLoading={this._showLoadingModal}
                                                   merge_id={this.merge_id} tabLabel='线上库容' />);
                     this.tabFlag = true;
                 }
-                if(rep.single !== '0'){
-                    tabs.push(<OneCarOrderScene key={'2'}
-                                                showHint={this._showHint}
-                                                closeLoading={this._closeLoadingModal}
-                                                showLoading={this._showLoadingModal}
-                                                merge_id={this.merge_id} tabLabel='单车' />);
-                    this.tabFlag = true;
-                }
-                if(rep.single !== '0'){
+                if(rep.purcha !== '0'){
                     tabs.push(<PurchaseOrderScene key={'3'}
                                                   showHint={this._showHint}
                                                   closeLoading={this._closeLoadingModal}
                                                   showLoading={this._showLoadingModal}
-                                                  merge_id={this.merge_id} tabLabel='采购贷' />);
+                                                  merge_id={this.merge_id} tabLabel='采购融资' />);
                     this.tabFlag = true;
                 }
                 this.setState({
