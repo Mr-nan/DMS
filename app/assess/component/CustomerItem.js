@@ -37,7 +37,7 @@ export default class CustomerItem extends Component {
 
         return (
             <View style={{width: width}}>
-                <TouchableOpacity activeOpacity={0.3} onPress={()=>{onItemClick(item.name,item.merge_id)}} style={styles.container}>
+                <TouchableOpacity activeOpacity={0.6} onPress={()=>{onItemClick(item.name,item.merge_id)}} style={styles.container}>
                     <View style={styles.firstWrap}>
                         <Text style={styles.firstFont}>{customerName}</Text>
                         <Text style={styles.firstFont}>{companyName}</Text>

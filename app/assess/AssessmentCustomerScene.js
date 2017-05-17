@@ -65,7 +65,11 @@ export default class AssessCustomerScene extends BaseComponent{
     };
 
     _renderItem = (item)=>{
-        return(<CustomerItem item={item} />)
+        return(<CustomerItem item={item} onItemClick={this._onItemClick}/>)
+    };
+
+    _onItemClick = (name,merge_id)=>{
+        this.toNextPage('AssessmentSelectScene',{name:name,merge_id:merge_id})
     };
 
     _onRefresh = ()=>{
@@ -150,7 +154,7 @@ export default class AssessCustomerScene extends BaseComponent{
                         }
                     />
                 </View>
-                <AllNavigationView title={'第1车贷'} backIconClick={() => {
+                <AllNavigationView title={'客户列表'} backIconClick={() => {
                     this.backPage();
                 }} parentNavigation={this}/>
             </View>

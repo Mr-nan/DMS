@@ -229,5 +229,11 @@ public class DmsCustomModule extends ReactContextBaseJavaModule implements Activ
         }
     }
 
+    //已连接的设备名称
+    @ReactMethod
+    public void getConnectionDevice(Callback callback){
+        callback.invoke(mBluetoothControl.getConnectionDevice());
+    }
+
 
 }
