@@ -6,14 +6,13 @@ import React, {Component} from 'react';
 import {
     View,
     FlatList,
-    StyleSheet
+    StyleSheet,
+    Text
 } from 'react-native';
 import BaseComponent from '../component/BaseComponent'
-import  {CustomListSearch} from './Component/SearchBarBlobs'
 import * as apis from '../constant/appUrls'
 import  {request} from '../utils/RequestUtil'
-import {toutalPage,STATECODE} from './Component/MethodComponet'
-import {CollectCustomerListItem,SeparatorComponent,ListFootComponentNorMore,ListFootComponentMore} from './Component/ListItemComponent'
+import {STATECODE} from './Component/MethodComponet'
 import {commenStyle} from './Component/PageStyleSheet'
 import AllNavigationView from '../component/AllNavigationView';
 
@@ -25,9 +24,21 @@ export default class VersionInfo extends BaseComponent{
         renderPlaceholderOnly:STATECODE.loading
     };
 
+
+    _dateReversal=(time)=>{
+
+        let date = new Date();
+        date.setTime(time);
+        Y = date.getFullYear() + '-';
+        M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+        D = date.getDate() + ' ';
+        return (Y+M+D);
+
+    };
     _genData=(data)=>{
-
-
+   return [{title:'当前版本:',value:data.versionName},
+       {title:'创建时间:',value:this._dateReversal(data.create_time*1000)},
+       {title:'新增版本内容',value:data.updateLog}]
     }
 
 
@@ -39,13 +50,12 @@ export default class VersionInfo extends BaseComponent{
             .then((response) => {
 
                     let tempJson=response.mjson.retdata;
-                    sourceControl.total=toutalPage(tempJson.total,10);
-                    this.setState({
-                        data:tempJson.list,
 
-                        refreshing:false
+                    this.setState({
+                        data:this._genData(tempJson),
+                        renderPlaceholderOnly:STATECODE.loadSuccess
                     })
-                    console.log('加载完成');
+
                 },
                 (error) => {
 
@@ -57,9 +67,9 @@ export default class VersionInfo extends BaseComponent{
     _renderItem=(data)=>{
 
         return (
-            <View>
-                <Text>{data.item.title}</Text>
-                <Text>{data.item.value}</Text>
+            <View style={data.index==2?styles.versionInfo2:styles.versionInfo1}>
+                <Text >{data.item.title}</Text>
+                <Text style={[styles.textColor,data.index==2?{marginTop:10}:null]}>{data.item.value}</Text>
             </View>
         )
 
@@ -73,7 +83,7 @@ export default class VersionInfo extends BaseComponent{
                     <FlatList
                         data={this.state.data}
                         renderItem={this._renderItem}
-                        keyExtractor={(item, index) =>index}
+                        keyExtractor={(item, index) => index}
                     />
 
                 </View>
@@ -84,9 +94,29 @@ export default class VersionInfo extends BaseComponent{
             </View>
         )
     }
-
-
-
-
-
 }
+const styles =StyleSheet.create({
+
+    versionInfo1:{
+        flexDirection:'row',
+        justifyContent:'space-between',
+        backgroundColor:'white',
+        marginBottom:10,
+        padding:10,
+        marginTop:10
+    },
+    versionInfo2:{
+        backgroundColor:'white',
+        padding:10,
+        paddingBottom:4,
+    },
+    textColor:{
+        color:'gray'
+    }
+
+
+
+})
+
+
+

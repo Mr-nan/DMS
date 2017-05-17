@@ -16,8 +16,8 @@ class CollectCustomerListItem extends PureComponent{
 
     _onclick=(componeyId)=>{
 
-        const {customListItemClick,merge_id}=this.props;
-        customListItemClick(merge_id);
+        const {customListItemClick,merge_id,legalcompany,carNum}=this.props;
+        customListItemClick(merge_id,legalcompany,carNum);
     }
     render(){
 
@@ -92,6 +92,24 @@ class ReportCustomerListItem extends PureComponent{
     }
 
 
+}
+
+class RepDetailListHeader extends PureComponent{
+
+    render(){
+        const {people,money,date,target}=this.props;
+
+        return (
+            <View style={styles.repHeadWarp}>
+                <Text style={styles.repPeopleInf}>{people}</Text>
+                <View style={styles.repInfoWap}>
+                    <Text style={styles.money}>{money}</Text>
+                    <Text style={styles.dateF}>{date}</Text>
+                </View>
+                <Text>{target}</Text>
+        </View>
+        )
+    }
 }
 
 class ListHeadComponent extends PureComponent{
@@ -216,7 +234,28 @@ const styles=StyleSheet.create({
         margin:adapeSize(5),
         color:'white',
 
-    }
+    },
+    repHeadWarp:{
+        backgroundColor:PAGECOLOR.white,
+        paddingLeft:adapeSize(10),
+        paddingRight:adapeSize(10),
+    },
+    repPeopleInf:{
+
+        fontSize:fontadapeSize(13),
+    },
+    repInfoWap:{
+
+        flexDirection:'row',
+        justifyContent:'space-betWeen',
+    },
+    money:{
+
+        textColor:'gary'
+
+    },
+    dateF:{},
+
 
 
 

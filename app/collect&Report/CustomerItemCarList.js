@@ -27,6 +27,10 @@ export  default class CustomerItemCarList extends BaseComponent{
         refreshing:false,
         renderPlaceholderOnly:STATECODE.loading
     };
+    componentWillUnmount() {
+        pageControl.currentPage=1;
+        pageControl.total=0;
+    }
 
     initFinish(){this._getCarList()}
 
@@ -46,7 +50,8 @@ export  default class CustomerItemCarList extends BaseComponent{
                     this.setState({
                         data:tempJson.list,
                         loadMoreState:pageControl.total==pageControl.currentPage?'1':'0',
-                        renderPlaceholderOnly:STATECODE.loadSuccess
+                        renderPlaceholderOnly:STATECODE.loadSuccess,
+                        refreshing:false,
                     })
                 },
                 (error) => {
@@ -59,9 +64,42 @@ export  default class CustomerItemCarList extends BaseComponent{
 
 
     }
+    _onEndReached=()=>{
+
+        if(pageControl.currentPage==pageControl.total){
+
+        }
+        else {
+            pageControl.currentPage=pageControl.currentPage + 1;
+
+            let maps = {p: pageControl.currentPage };
+
+            request(apis.CARREVGETREVLIST, 'Post', maps)
+                .then((response) => {
+
+                        let tempJson=response.mjson.retdata;
+
+                        this.setState({
+                            data:this.state.data.concat(tempJson.list),
+                            loadMoreState:sourceControl.total==sourceControl.currentPage?'1':'0'
+                        })
+                    },
+                    (error) => {
+
+                    });
+        }
+    }
+    _onRefresh=()=>{
+        this.setState({
+            refreshing:true
+        })
+        pageControl.currentPage=1;
+
+        this._getCarList();
+
+    }
 
     _renderItem =(data)=>{
-        //carType,carDetailType,carFrameNumber,place
         return(
             <CollectCarListItem
                 carFrameNumber={'车架号 ：'+data.item.vin}
@@ -77,24 +115,31 @@ export  default class CustomerItemCarList extends BaseComponent{
 
 
     render(){
-
+        if(this.state.renderPlaceholderOnly!==STATECODE.loadSuccess){
+            return( <View style={commenStyle.commenPage}>
+                <AllNavigationView title={this.props.navigation.state.params.title} backIconClick={() => {
+                    this.backPage();
+                }} parentNavigation={this}/>
+            </View>)
+        };
     return(
         <View style={commenStyle.commenPage}>
            <View style={commenStyle.testUI}>
             <CustomListSearch placehoder="车架号后6位"/>
                <FlatList
+                   style={{flex:1}}
                    data={this.state.data}
                    renderItem={this._renderItem}
                    keyExtractor={(item, index) => item.vin}
-                   // onEndReached={this._onEndReached}
-                   // onEndReachedThreshold={0}
-                   // refreshing={false}
-                   // onRefresh={this._onRefresh}
+                   onEndReached={this._onEndReached}
+                   onEndReachedThreshold={0.5}
+                   refreshing={this.state.refreshing}
+                    onRefresh={this._onRefresh}
                    ListFooterComponent={this.state.loadMoreState=='0'?ListFootComponentMore:ListFootComponentNorMore}
                />
 
            </View>
-            <AllNavigationView title={'客户列表'} backIconClick={() => {
+            <AllNavigationView title={this.props.navigation.state.params.title} backIconClick={() => {
                 this.backPage();
             }} parentNavigation={this}/>
         </View>

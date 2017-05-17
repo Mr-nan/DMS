@@ -4,6 +4,7 @@
 import React, {Component} from 'react';
 import {
     StyleSheet,
+    Platform,
 } from 'react-native';
 import  {PAGECOLOR,width,height,adapeSize,fontadapeSize} from './MethodComponet'
 const  commenStyle =StyleSheet.create({
@@ -16,7 +17,7 @@ const  commenStyle =StyleSheet.create({
     testUI:{
         flex:1,
         backgroundColor:PAGECOLOR.all_background,
-        marginTop:68
+        marginTop:Platform.OS === 'android'?48:68,
     }
 
 })

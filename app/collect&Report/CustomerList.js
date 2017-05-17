@@ -50,7 +50,6 @@ export default  class CustomerList extends BaseComponent{
                     renderPlaceholderOnly:STATECODE.loadSuccess,
                     refreshing:false
                 })
-                    console.log('加载完成');
                 },
                 (error) => {
 
@@ -58,7 +57,7 @@ export default  class CustomerList extends BaseComponent{
 
     }
     _onEndReached=()=> {
-        console.log('触发了触底')
+
         if(sourceControl.currentPage==sourceControl.total){
             // this.props.screenProps.showToast('全部数据已加载');
         }
@@ -87,6 +86,7 @@ export default  class CustomerList extends BaseComponent{
 
     _onRefresh=()=>{
 
+        console.log('刷新')
         this.setState({
             refreshing:true
         })
@@ -98,9 +98,14 @@ export default  class CustomerList extends BaseComponent{
     }
 
 
-    _customListItemClick=(itemId)=>{
+    _customListItemClick=(itemId,itemName,carNum)=>{
 
-        this.toNextPage('CustomerItemCarList',{merge_id:itemId})
+        let tempCarNUm =Number.parseInt(carNum);
+        if(tempCarNUm>0){
+            this.toNextPage('CustomerItemCarList',{merge_id:itemId,title:itemName})
+        }else {
+            this.props.screenProps.showToast('没有待处理车辆');
+        }
     }
 
     _onSearchBarClick=(searchValue)=>{
@@ -136,11 +141,12 @@ export default  class CustomerList extends BaseComponent{
                 <View style={commenStyle.testUI}>
                     <CustomListSearch onPress={this._onSearchBarClick} placehoder='客户姓名关键字'/>
                     <FlatList
+                        style={{flex:1}}
                         data={this.state.data}
                         renderItem={this._renderItem}
                         keyExtractor={this._keyExtractor}
                         onEndReached={this._onEndReached}
-                        onEndReachedThreshold={0}
+                        onEndReachedThreshold={0.5}
                         refreshing={this.state.refreshing}
                         onRefresh={this._onRefresh}
                         ListFooterComponent={this.state.loadMoreState=='0'?ListFootComponentMore:ListFootComponentNorMore}
