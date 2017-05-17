@@ -7,7 +7,6 @@ import {
     FlatList,
     StyleSheet,
     Text,
-    TextInput,
     TouchableOpacity,
     KeyboardAvoidingView
 } from 'react-native';
@@ -148,8 +147,6 @@ export default class ReportInfoManage extends BaseComponent{
             )
 
         }
-
-
         let tempBlob =[];
         tempData.map((item, index) => {
 

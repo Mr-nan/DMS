@@ -221,7 +221,7 @@ class RepRateInput extends PureComponent{
         return (
             <View style={repStyles.rateInputWarp}>
                 <Text style={{color:'gray'}}>{typeName}</Text>
-                <TextInput keyboardType={'decimal-pad'} style={repStyles.rateinputstyle}/>
+                <TextInput underlineColorAndroid='transparent' keyboardType={'decimal-pad'} style={repStyles.rateinputstyle}/>
                 <Text style={{color:'gray'}}>{'%'}</Text>
             </View>
 
@@ -236,7 +236,7 @@ class RepBordeInput extends PureComponent{
 
         const {width}=this.props;
         return(
-            <TextInput style={[repStyles.rateinputstyle,{width:width,marginLeft:adapeSize(10),marginBottom:adapeSize(10)}]}/>
+            <TextInput underlineColorAndroid='transparent' style={[repStyles.rateinputstyle,{width:width,marginLeft:adapeSize(10),marginBottom:adapeSize(10)}]}/>
         )
 
 
