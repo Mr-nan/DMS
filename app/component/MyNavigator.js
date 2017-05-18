@@ -25,6 +25,7 @@ import CarCheckNoWifiList from '../makingInventory/CarCheckNoWifiList';
 import CarCheckWarning from '../makingInventory/CarCheckWarning';
 import AssessCustomerScene from '../assess/AssessmentCustomerScene';
 import AssessmentSelectScene from '../assess/AssessmentSelectScene';
+import OneCarListScene from '../assess/OneCarListScene';
 
 import BluetoothScene from '../main/BluetoothScene';
 
@@ -34,31 +35,32 @@ export default MyApp = StackNavigator({
         Root: {screen: RootScene},
         LoginScene: {screen: LoginScene},
         FunctionScene: {screen: FunctionScene},
-        ObdCustom:{screen:ObdCustom},
-        ObdCheckoutRecordFragment:{screen:ObdCheckoutRecordFragment},
-        ObdCarList:{screen:ObdCarList},
-        ObdCarDetail:{screen:ObdCarDetail},
-        WebScene:{screen:WebScene},
-        ObdWarningExplain:{screen:ObdWarningExplain},
-        ObdChangeBind:{screen:ObdChangeBind},
-        CustomerList:{screen:CustomerList},
-        CarCheckCustomer:{screen:CarCheckCustomer},
-        CarCheckWifiSelect:{screen:CarCheckWifiSelect},
-        CarCheckNoWifiList:{screen:CarCheckNoWifiList},
-        CarCheckWarning:{screen:CarCheckWarning},
+        ObdCustom: {screen: ObdCustom},
+        ObdCheckoutRecordFragment: {screen: ObdCheckoutRecordFragment},
+        ObdCarList: {screen: ObdCarList},
+        ObdCarDetail: {screen: ObdCarDetail},
+        WebScene: {screen: WebScene},
+        ObdWarningExplain: {screen: ObdWarningExplain},
+        ObdChangeBind: {screen: ObdChangeBind},
+        CustomerList: {screen: CustomerList},
+        CarCheckCustomer: {screen: CarCheckCustomer},
+        CarCheckWifiSelect: {screen: CarCheckWifiSelect},
+        CarCheckNoWifiList: {screen: CarCheckNoWifiList},
+        CarCheckWarning: {screen: CarCheckWarning},
 
-        CustomerItemCarList:{screen:CustomerItemCarList},
-        ReportCustomerList:{screen:ReportCustomerList},
+        CustomerItemCarList: {screen: CustomerItemCarList},
+        ReportCustomerList: {screen: ReportCustomerList},
 
-        AssessCustomerScene:{screen:AssessCustomerScene},
-        AssessmentSelectScene:{screen:AssessmentSelectScene},
-        VersionInfo:{screen:VersionInfo},
+        AssessCustomerScene: {screen: AssessCustomerScene},
+        AssessmentSelectScene: {screen: AssessmentSelectScene},
+        OneCarListScene: {screen: OneCarListScene},
+        VersionInfo: {screen: VersionInfo},
 
-        BluetoothScene:{screen:BluetoothScene},
-        SelectMaskComponent:{screen:SelectMaskComponent},
-        ReportInfoManage:{screen:ReportInfoManage},
-        ReporInfoPeople:{screen:ReporInfoPeople},
-        ReporInfoFkong:{screen:ReporInfoFkong}
+        BluetoothScene: {screen: BluetoothScene},
+        SelectMaskComponent: {screen: SelectMaskComponent},
+        ReportInfoManage: {screen: ReportInfoManage},
+        ReporInfoPeople: {screen: ReporInfoPeople},
+        ReporInfoFkong: {screen: ReporInfoFkong}
     },
     {
         initialRouteName: 'Root',

@@ -43,7 +43,7 @@ export default class OrderItem extends Component {
             <View style={styles.container}>
                 <TouchableOpacity
                     activeOpacity={0.6}
-                    onPress={()=>{onItemClick(item.name,item.merge_id)}}
+                    onPress={()=>{onItemClick(item)}}
                     style={styles.subContainer}>
                     <Text style={styles.titleWrap}>{payment_number}</Text>
                     <View style={styles.contentWrap}>

@@ -18,16 +18,19 @@ import * as FontAndColor from '../../constant/fontAndColor';
 export default class AddNewCarBottom extends Component{
 
     render(){
-        const {waitPrice,onAddClick} = this.props;
+        const {waitPrice,onAddClick,addEnable} = this.props;
         return(
             <View style={styles.container}>
                 <Text style={styles.firstFont}>{waitPrice}</Text>
-                <TouchableOpacity
-                    style={styles.btnWrap}
-                    activeOpacity={0.6}
-                    onPress = {onAddClick}>
-                    <Text style={styles.btnFont}>添加车辆</Text>
-                </TouchableOpacity>
+                {
+                    addEnable &&
+                    <TouchableOpacity
+                        style={styles.btnWrap}
+                        activeOpacity={0.6}
+                        onPress = {onAddClick}>
+                        <Text style={styles.btnFont}>添加车辆</Text>
+                    </TouchableOpacity>
+                }
             </View>
         )
     }

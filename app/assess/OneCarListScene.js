@@ -10,6 +10,7 @@ import {
 }from 'react-native';
 
 import BaseComponent from '../component/BaseComponent';
+import AllNavigationView from '../component/AllNavigationView';
 import PixelUtil from '../utils/PixelUtil';
 const Pixel = new PixelUtil();
 import * as FontAndColor from '../constant/fontAndColor';
@@ -20,23 +21,26 @@ import * as appUrls from '../constant/appUrls';
 import BottomStockItem from './component/BottomStockItem'
 
 import AddNewCarBottom from './component/AddNewCarBottom';
+import OrderTitleItem from './component/OrderTitleItem';
 
 
-export default class StockBottomScene extends BaseComponent{
+export default class OneCarListScene extends BaseComponent{
 
     constructor(props){
         super(props);
 
-        this.merge_id = this.props.merge_id;
+        this.payment_id = this.props.navigation.state.params.payment_id;
+        this.cName = this.props.navigation.state.params.name;
         this.page = 1;
         this.total = 0;
-        this.frame = '';
+        this.frame_number = '';
         this.allSource = [];
         this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state= {
             loading: false,
             dataSource: this.ds.cloneWithRows(this.allSource),
-            waitPrice:'待评估车辆金额：'
+            waitPrice:'单车待评估车辆金额：',
+            addEnable:false
         };
     }
 
@@ -46,15 +50,15 @@ export default class StockBottomScene extends BaseComponent{
     };
 
     _showLoadingModal = ()=>{
-        this.props.showLoading();
+        this.props.screenProps.showModal(true);
     };
 
     _closeLoadingModal = ()=>{
-        this.props.closeLoading();
+        this.props.screenProps.showModal(false);
     };
 
     _showHint = (hint) =>{
-        this.props.showHint(hint);
+        this.props.screenProps.showToast(hint);
     };
 
     _renderItem = (item)=>{
@@ -93,22 +97,34 @@ export default class StockBottomScene extends BaseComponent{
         console.log('请求数据');
         let maps = {
             p:this.page,
-            frame:this.frame,
-            merge_id:this.merge_id
+            frame_number:this.frame_number,
+            payment_id:this.payment_id
         };
 
-        Net.request(appUrls.INVENTORYFINANCINGGETAUTOLIST,'post',maps).then(
+        Net.request(appUrls.ONECARGETAUTOLIST,'post',maps).then(
             (response)=>{
                 this._closeLoadingModal();
 
                 let rep = response.mjson.retdata;
                 this.total = Math.ceil(Number.parseInt(rep.total)/Number.parseInt(rep.listRows));
+                let sum = 0;
+                try {
+                    sum = Number.parseFloat(rep.loan_mny_sum);
+                } catch (error) {
+                    sum = 0;
+                }
+                let money = Number.parseFloat(this.props.navigation.state.params.loanmny);
+                let addE = true;
+                if(sum >= money){
+                    addE = false;
+                }
 
                 this.allSource.push(...rep.list);
                 this.setState({
                     dataSource:this.ds.cloneWithRows(this.allSource),
                     loading:false,
-                    waitPrice:'待评估车辆金额：' + rep.wait_mny_str
+                    waitPrice:'单车待评估车辆金额：' + rep.wait_mny_str,
+                    addEnable:addE
                 });
 
                 console.log('response data',{rep});
@@ -127,7 +143,7 @@ export default class StockBottomScene extends BaseComponent{
         console.log('搜索');
         this.page = 1;
         this.total = 0;
-        this.frame = searchValue;
+        this.frame_number = searchValue;
         this.allSource = [];
         this._showLoadingModal();
         this._getData();
@@ -136,34 +152,50 @@ export default class StockBottomScene extends BaseComponent{
     render(){
         return(
             <View style={styles.container}>
-                <SearchTitleView hint={'车架号后六位'} onSearchClick={this._onSearchClick}/>
-                <View style={styles.fillSpace}>
-                    <ListView
-                        dataSource={this.state.dataSource}
-                        renderRow={this._renderItem}
-                        onEndReached={this._onEndReached}
-                        onEndReachedThreshold={1}
-                        enableEmptySections={true}
-                        refreshControl={
-                            <RefreshControl
-                                refreshing={this.state.loading}
-                                onRefresh={this._onRefresh}
-                                tintColor={[FontAndColor.COLORB0]}
-                                colors={[FontAndColor.COLORB0]}
-                            />
-                        }
+                <View style={styles.wrapContainer}>
+                    <OrderTitleItem
+                        payment_number={this.props.navigation.state.params.payment_number}
+                        jkje={this.props.navigation.state.params.loanmnystr}
+                        yksj={this.props.navigation.state.params.makedatestr}
+                        zjqd={this.props.navigation.state.params.fund_channel}
                     />
+                    <SearchTitleView hint={'车架号后六位'} onSearchClick={this._onSearchClick}/>
+                    <View style={styles.fillSpace}>
+                        <ListView
+                            dataSource={this.state.dataSource}
+                            renderRow={this._renderItem}
+                            onEndReached={this._onEndReached}
+                            onEndReachedThreshold={1}
+                            enableEmptySections={true}
+                            refreshControl={
+                                <RefreshControl
+                                    refreshing={this.state.loading}
+                                    onRefresh={this._onRefresh}
+                                    tintColor={[FontAndColor.COLORB0]}
+                                    colors={[FontAndColor.COLORB0]}
+                                />
+                            }
+                        />
+                    </View>
+                    <AddNewCarBottom waitPrice={this.state.waitPrice}
+                                     onAddClick={()=>{}} addEnable={this.state.addEnable}/>
                 </View>
-                <AddNewCarBottom waitPrice={this.state.waitPrice} onAddClick={()=>{}} addEnable={true}/>
+                <AllNavigationView title={this.cName} backIconClick={() => {
+                    this.backPage();
+                }} parentNavigation={this}/>
             </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
-    container:{
-        flex:1,
-        backgroundColor:FontAndColor.all_background,
+    container: {
+        flex: 1
+    },
+    wrapContainer: {
+        flex: 1,
+        marginTop: Pixel.getTitlePixel(68),
+        backgroundColor: FontAndColor.all_background
     },
     fillSpace:{
         flex:1

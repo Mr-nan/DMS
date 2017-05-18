@@ -49,6 +49,10 @@ export default class AssessmentSelectScene extends BaseComponent{
         this.props.screenProps.showToast(hint);
     };
 
+    _toNextPage = (sceneName,sceneParam)=>{
+        this.toNextPage(sceneName,sceneParam);
+    };
+
     _getData = ()=> {
         let maps = {
             merge_id:this.merge_id,
@@ -62,29 +66,36 @@ export default class AssessmentSelectScene extends BaseComponent{
                                             showHint={this._showHint}
                                             closeLoading={this._closeLoadingModal}
                                             showLoading={this._showLoadingModal}
+                                            toNextPage={this._toNextPage}
                                             merge_id={this.merge_id} tabLabel='线下库容' />);
                 this.tabFlag = false;
                 if(rep.single !== '0'){
                     tabs.push(<OneCarOrderScene key={'1'}
+                                                name={this.cName}
                                                 showHint={this._showHint}
                                                 closeLoading={this._closeLoadingModal}
                                                 showLoading={this._showLoadingModal}
+                                                toNextPage={this._toNextPage}
                                                 merge_id={this.merge_id} tabLabel='单车融资' />);
                     this.tabFlag = true;
                 }
                 if(rep.inventory !== '0'){
                     tabs.push(<StockTopOrderScene key={'2'}
+                                                  name={this.cName}
                                                   showHint={this._showHint}
                                                   closeLoading={this._closeLoadingModal}
                                                   showLoading={this._showLoadingModal}
+                                                  toNextPage={this._toNextPage}
                                                   merge_id={this.merge_id} tabLabel='线上库容' />);
                     this.tabFlag = true;
                 }
                 if(rep.purcha !== '0'){
                     tabs.push(<PurchaseOrderScene key={'3'}
+                                                  name={this.cName}
                                                   showHint={this._showHint}
                                                   closeLoading={this._closeLoadingModal}
                                                   showLoading={this._showLoadingModal}
+                                                  toNextPage={this._toNextPage}
                                                   merge_id={this.merge_id} tabLabel='采购融资' />);
                     this.tabFlag = true;
                 }
