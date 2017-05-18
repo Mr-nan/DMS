@@ -24,7 +24,7 @@ import AddNewCarBottom from './component/AddNewCarBottom';
 import OrderTitleItem from './component/OrderTitleItem';
 
 
-export default class OneCarListScene extends BaseComponent{
+export default class StockTopCarScene extends BaseComponent{
 
     constructor(props){
         super(props);
@@ -39,8 +39,7 @@ export default class OneCarListScene extends BaseComponent{
         this.state= {
             loading: false,
             dataSource: this.ds.cloneWithRows(this.allSource),
-            waitPrice:'单车待评估车辆金额：',
-            addEnable:false
+            waitPrice:'库容待评估车辆金额：'
         };
     }
 
@@ -101,30 +100,18 @@ export default class OneCarListScene extends BaseComponent{
             payment_id:this.payment_id
         };
 
-        Net.request(appUrls.ONECARGETAUTOLIST,'post',maps).then(
+        Net.request(appUrls.INVENTORYFINANCINGLOANAUTOLIST,'post',maps).then(
             (response)=>{
                 this._closeLoadingModal();
 
                 let rep = response.mjson.retdata;
                 this.total = Math.ceil(Number.parseInt(rep.total)/Number.parseInt(rep.listRows));
-                let sum = 0;
-                try {
-                    sum = Number.parseFloat(rep.loan_mny_sum);
-                } catch (error) {
-                    sum = 0;
-                }
-                let money = Number.parseFloat(this.props.navigation.state.params.loanmny);
-                let addE = true;
-                if(sum >= money){
-                    addE = false;
-                }
 
                 this.allSource.push(...rep.list);
                 this.setState({
                     dataSource:this.ds.cloneWithRows(this.allSource),
                     loading:false,
-                    waitPrice:'单车待评估车辆金额：' + rep.wait_mny_str,
-                    addEnable:addE
+                    waitPrice:'库容待评估车辆金额：' + rep.wait_mny_str
                 });
 
                 console.log('response data',{rep});
@@ -178,7 +165,7 @@ export default class OneCarListScene extends BaseComponent{
                         />
                     </View>
                     <AddNewCarBottom waitPrice={this.state.waitPrice}
-                                     onAddClick={()=>{}} addEnable={this.state.addEnable}/>
+                                     onAddClick={()=>{}} addEnable={true}/>
                 </View>
                 <AllNavigationView title={this.cName} backIconClick={() => {
                     this.backPage();
