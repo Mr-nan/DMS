@@ -46,10 +46,9 @@ export default class PurchaseCarItem extends Component {
                 dq = false;
             }
         }else{
-            console.log('222222222',item.can_assess);
             dq = false;
         }
-        
+
         return(
             <View style={styles.container}>
                 <View style={styles.subContainer}>

@@ -28,6 +28,7 @@ import AssessmentSelectScene from '../assess/AssessmentSelectScene';
 import OneCarListScene from '../assess/OneCarListScene';
 import StockTopCarScene from '../assess/StockTopCarScene';
 import PurchaseCarScene from '../assess/PurchaseCarScene';
+import CarInfoScene from '../assess/CarInfoScene';
 
 import BluetoothScene from '../main/BluetoothScene';
 
@@ -58,6 +59,7 @@ export default MyApp = StackNavigator({
         OneCarListScene: {screen: OneCarListScene},
         StockTopCarScene: {screen: StockTopCarScene},
         PurchaseCarScene: {screen: PurchaseCarScene},
+        CarInfoScene: {screen: CarInfoScene},
         VersionInfo: {screen: VersionInfo},
 
         BluetoothScene: {screen: BluetoothScene},

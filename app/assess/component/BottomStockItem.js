@@ -34,7 +34,7 @@ export default class BottomStockItem extends Component {
                <TouchableOpacity
                    style={styles.wrapContainer}
                    activeOpacity={0.6}
-                   onPress={()=>{onItemClick()}}>
+                   onPress={()=>{onItemClick(item)}}>
                    <View style={styles.leftWrap}>
                        <Text style={styles.carName}>{title}</Text>
                        <View style={styles.leftSubWrap}>

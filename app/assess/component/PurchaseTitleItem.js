@@ -69,6 +69,6 @@ const styles = StyleSheet.create({
     },
     bottomBorder: {
         borderBottomWidth:1,
-        borderBottomColor:FontAndColor.txt_gray
+        borderBottomColor:FontAndColor.line_gray
     }
 });

@@ -58,7 +58,17 @@ export default class StockBottomScene extends BaseComponent{
     };
 
     _renderItem = (item)=>{
-        return(<BottomStockItem item={item} />)
+        return(<BottomStockItem item={item} onItemClick={this._onItemClick}/>)
+    };
+
+    _onItemClick = (item)=>{
+        this.props.toNextPage('CarInfoScene',{
+            from_name:'StockBottomScene',
+            auto_id:item.auto_id,
+            is_time_out:item.is_time_out,
+            payment_id:'',
+            merge_id:this.merge_id
+        })
     };
 
     _onEndReached = ()=>{
