@@ -50,13 +50,21 @@ export  default class ObdChangeBind extends BaseComponent {
             labelText: '扫描标签',
             scanObdText: '请扫描OBD',
             scanLabel: '请扫描标签',
-            imageSource: addIcon
+            imageSource: addIcon,
+            blueToothText:'设备未连接'
         }
         this.onSelect = this.onSelect.bind(this)
         that = this;
     }
 
     initFinish(){
+        NativeModules.DmsCustom.isConnection((data)=>{
+            if(data==1){
+                that.setState({
+                    blueToothText: '设备已连接'
+                });
+            }
+        })
         NativeAppEventEmitter
             .addListener('onReadData', this.onReadData);
     }
@@ -79,7 +87,7 @@ export  default class ObdChangeBind extends BaseComponent {
         return (
             <View style={styles.container}>
                 <View style={styles.blueTooth}>
-                    <Text style={{flex: 1, textAlign:'center'}}>设备未连接</Text>
+                    <Text style={{flex: 1, textAlign:'center'}}>{this.state.blueToothText}</Text>
                 </View>
 
                 <RadioGroup
@@ -140,6 +148,12 @@ export  default class ObdChangeBind extends BaseComponent {
         )
     }
 
+    onBlueConnection(){
+        that.setState({
+            blueToothText: '设备已连接'
+        });
+    }
+
     cancel = () => {
         this.backPage();
     }
@@ -192,6 +206,7 @@ export  default class ObdChangeBind extends BaseComponent {
             this.props.screenProps.showToast('请拍照！');
             return;
         }
+
         files = {
             file_id: imageData.file_id,
             syscodedata_id: 'reqfile1'

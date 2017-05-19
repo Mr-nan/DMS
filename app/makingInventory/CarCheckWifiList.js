@@ -26,7 +26,7 @@ const searchIcon = require('../../images/assessment_customer_find.png');
 let name = '';
 let merge_id = '';
 let index1 = 0;
-
+let that=null;
 export  default class CarCheckNoWifiList extends BaseComponent {
     // 初始化模拟数据
     constructor(props) {
@@ -42,6 +42,7 @@ export  default class CarCheckNoWifiList extends BaseComponent {
             blueToothText: '设备未连接'
         };
         this.onSelect = this.onSelect.bind(this)
+        that=this;
     }
 
     onSelect(index) {
@@ -60,18 +61,19 @@ export  default class CarCheckNoWifiList extends BaseComponent {
         this.getData(index1);
     }
 
-    onReadData(data) {
-        alert(data.result);
-    }
-
     onBlueConnection(){
-        this.setState({
+        that.setState({
             blueToothText: '设备已连接'
         });
     }
 
     initFinish() {
-        NativeModules.DmsCustom.isConnection((data) => {
+        NativeModules.DmsCustom.isConnection((data)=>{
+            if(data==1){
+                that.setState({
+                    blueToothText: '设备已连接'
+                });
+            }
         })
 
         index1 = 0;
@@ -146,7 +148,7 @@ export  default class CarCheckNoWifiList extends BaseComponent {
             return (
                 <View style={styles.container}>
                     <View style={styles.topStyle}>
-                        <Text style={{flex: 1, textAlign:'center'}}>设备未连接</Text>
+                        <Text style={{flex: 1, textAlign:'center'}}>{this.state.blueToothText}</Text>
                     </View>
                     <View style={styles.searchStyle}>
                         <View style={{flex:1, }}>

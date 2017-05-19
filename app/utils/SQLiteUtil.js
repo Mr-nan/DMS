@@ -34,21 +34,22 @@ const SQLite = React.createClass({
         if (!db) {
             this.open();
         }
-        // //创建收藏表
-        // db.transaction((tx) => {
-        //     tx.executeSql('CREATE TABLE IF NOT EXISTS ' + Collection_TABLE_NAME + '(' +
-        //         'name VARCHAR'
-        //         + ');'
-        //         , [], () => {
-        //             this._successCB('executeSql');
-        //         }, (err) => {
-        //             this._errorCB('executeSql', err);
-        //         });
-        // }, (err) => {
-        //     this._errorCB('transaction', err);
-        // }, () => {
-        //     this._successCB('transaction');
-        // })
+        //盘库
+        db.transaction((tx) => {
+            tx.executeSql('CREATE TABLE IF NOT EXISTS ' + "carcheckchoose" + '('
+                + 'busno VARCHAR(20) default "",'
+                +'type VARCHAR(20) default "",'
+                +'newrfid VARCHAR(20) default "");'
+                , [], () => {
+                    this._successCB('executeSql');
+                }, (err) => {
+                    this._errorCB('executeSql', err);
+                });
+        }, (err) => {
+            this._errorCB('transaction', err);
+        }, () => {
+            this._successCB('transaction');
+        })
 
         //盘库
         db.transaction((tx) => {

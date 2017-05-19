@@ -36,31 +36,6 @@ export default MyApp = StackNavigator({
         Root: {screen: RootScene},
         LoginScene: {screen: LoginScene},
         FunctionScene: {screen: FunctionScene},
-<<<<<<< HEAD
-        ObdCustom:{screen:ObdCustom},
-        ObdCheckoutRecordFragment:{screen:ObdCheckoutRecordFragment},
-        ObdCarList:{screen:ObdCarList},
-        ObdCarDetail:{screen:ObdCarDetail},
-        WebScene:{screen:WebScene},
-        ObdWarningExplain:{screen:ObdWarningExplain},
-        ObdChangeBind:{screen:ObdChangeBind},
-        CustomerList:{screen:CustomerList},
-        CarCheckCustomer:{screen:CarCheckCustomer},
-        CarCheckWifiSelect:{screen:CarCheckWifiSelect},
-        CarCheckNoWifiList:{screen:CarCheckNoWifiList},
-        CarCheckWifiList:{screen:CarCheckWifiList},
-        CarCheckWarning:{screen:CarCheckWarning},
-
-        CustomerItemCarList:{screen:CustomerItemCarList},
-        ReportCustomerList:{screen:ReportCustomerList},
-
-        AssessCustomerScene:{screen:AssessCustomerScene},
-        AssessmentSelectScene:{screen:AssessmentSelectScene},
-        VersionInfo:{screen:VersionInfo},
-
-        BluetoothScene:{screen:BluetoothScene},
-        SelectMaskComponent:{screen:SelectMaskComponent}
-=======
         ObdCustom: {screen: ObdCustom},
         ObdCheckoutRecordFragment: {screen: ObdCheckoutRecordFragment},
         ObdCarList: {screen: ObdCarList},
@@ -71,6 +46,7 @@ export default MyApp = StackNavigator({
         CustomerList: {screen: CustomerList},
         CarCheckCustomer: {screen: CarCheckCustomer},
         CarCheckWifiSelect: {screen: CarCheckWifiSelect},
+        CarCheckWifiList:{screen:CarCheckWifiList},
         CarCheckNoWifiList: {screen: CarCheckNoWifiList},
         CarCheckWarning: {screen: CarCheckWarning},
 
@@ -81,7 +57,6 @@ export default MyApp = StackNavigator({
         AssessmentSelectScene: {screen: AssessmentSelectScene},
         OneCarListScene: {screen: OneCarListScene},
         VersionInfo: {screen: VersionInfo},
->>>>>>> dff94eed72d836d1e9c94a4f7c08dc3855af6d5d
 
         BluetoothScene: {screen: BluetoothScene},
         SelectMaskComponent: {screen: SelectMaskComponent},

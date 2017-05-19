@@ -18,6 +18,8 @@ const wifiText2 = '若同一商户同一次盘库先进行了无网盘库但未�
 const noWifiText = '无网环境盘库，需手动批量提交，易出现数据丢失，建议在确实无网时再慎重使用。';
 let name = '';
 let merge_id = '';
+import SQLiteUtil from '../utils/SQLiteUtil';
+const SQLite = new SQLiteUtil();
 
 export  default class CarCheckWifiSelect extends BaseComponent {
     // 初始化模拟数据
@@ -30,15 +32,20 @@ export  default class CarCheckWifiSelect extends BaseComponent {
 
         }
         this.onSelect = this.onSelect.bind(this)
-        StorageUtil.mGetItem(StorageKeyNames.IS_WIFI, (data) => {
-            console.log(data);
-            if (data.code == 1 && data.result !== null) {
-                if (data.result.substring(1, data.result.length) == merge_id) {
-
-                    this.onSelect(data.result.substring(0, 1));
+        SQLite.selectData('SELECT * FROM carcheckchoose WHERE busno = ?',
+            [merge_id],
+            (data) => {
+                console.log(data.result.rows.item(0).busno +'-------'+data.result.rows.item(0).type+'------'+merge_id);
+                if (data.code == 1) {
+                    if(data.result.rows.length>0){
+                        for(let i=0; i<data.result.rows.length; i++){
+                            if(data.result.rows.item(0).busno == merge_id){
+                                this.onSelect(data.result.rows.item(0).type);
+                            }
+                        }
+                    }
                 }
-            }
-        });
+            });
     }
 
     onSelect(index) {
@@ -58,8 +65,31 @@ export  default class CarCheckWifiSelect extends BaseComponent {
     }
 
     initFinish() {
+        SQLite.createTable();
         name = this.props.navigation.state.params.name;
         merge_id = this.props.navigation.state.params.merge_id;
+    }
+
+    saveData = () => {
+        SQLite.selectData('SELECT * FROM carcheckchoose WHERE busno = ?',
+        [merge_id],
+        (data) => {
+            if (data.code === 1) {
+                if(data.result.rows.length==0){
+                    SQLite.changeData('INSERT INTO carcheckchoose (busno,type) VALUES (?,?)', [merge_id, this.state.index]);
+                }else{
+                    for(let i=0; i<data.result.rows.length;i++){
+                        if(data.result.rows.item(i).busno == merge_id){
+                            SQLite.changeData('DELETE From carcheckchoose WHERE busno = ?', [merge_id]);
+                            SQLite.changeData('INSERT INTO carcheckchoose (busno,type) VALUES (?,?)', [merge_id, this.state.index]);
+                        }
+                        break;
+                    }
+
+                }
+            }
+        });
+
     }
 
     render() {
@@ -107,8 +137,7 @@ export  default class CarCheckWifiSelect extends BaseComponent {
 
                 <View style={{flex:1}}></View>
                 <TouchableOpacity style={styles.bottomButton} activeOpacity={0.8} onPress={()=>{
-                    StorageUtil.mSetItem(StorageKeyNames.IS_WIFI, this.state.index+merge_id);
-                        if(this.state.index ==0){
+                     if(this.state.index ==0){
                             this.toNextPage('CarCheckWifiList',{
                             name: name,
                             merge_id: merge_id,
@@ -119,6 +148,7 @@ export  default class CarCheckWifiSelect extends BaseComponent {
                             merge_id: merge_id,
                         })
                     }
+                    this.saveData();
 
                 }}>
                     <Text style={styles.buttonText}>确定</Text>

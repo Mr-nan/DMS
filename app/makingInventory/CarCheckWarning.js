@@ -34,6 +34,7 @@ const options = {
     storageOptions: {
         skipBackup: true,
         path: 'images',
+        blueToothText:'设备未连接'
     }
 };
 
@@ -58,6 +59,11 @@ export  default class CarCheckWarning extends BaseComponent {
 
     initFinish() {
         NativeModules.DmsCustom.isConnection((data)=>{
+            if(data==1){
+                that.setState({
+                    blueToothText: '设备已连接'
+                });
+            }
         })
         NativeAppEventEmitter
             .addListener('onReadData', this.onReadData);
@@ -69,6 +75,12 @@ export  default class CarCheckWarning extends BaseComponent {
         status=this.props.navigation.state.params.status;
         this.getData();
 
+    }
+
+    onBlueConnection(){
+        that.setState({
+            blueToothText: '设备已连接'
+        });
     }
 
     onReadData(data){
@@ -177,7 +189,7 @@ export  default class CarCheckWarning extends BaseComponent {
         return (
             <View style={styles.contain}>
                 <View style={styles.blueTooth}>
-                    <Text style={{flex: 1, textAlign:'center'}}>设备未连接</Text>
+                    <Text style={{flex: 1, textAlign:'center'}}>{this.state.blueToothText}</Text>
                 </View>
                 <TouchableOpacity activeOpacity={0.8} onPress={this.labelClick}>
                     <View style={[styles.wainingExplain,{paddingVertical: Pixel.getPixel(18)}]}>

@@ -45,6 +45,7 @@ export  default class CarCheckNoWifiList extends BaseComponent {
             leftStyle: {},
             rightStyle: {},
             renderPlaceholderOnly: 'blank',
+            blueToothText: '设备未连接'
         };
         this.onSelect = this.onSelect.bind(this)
         that = this;
@@ -162,8 +163,25 @@ export  default class CarCheckNoWifiList extends BaseComponent {
     }
 
     saveData = (value) => {
-        SQLite.changeData('INSERT INTO carchecksuccess (busno,vin,excecode,execinfo,rfid_img_id,chkno,newrfid,brand,chk_time,name,storage,type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)', [merge_id, value.vin, '1205', '正常', '', value.chkno, ''
-            , value.brand, value.chk_time, value.name, value.storage, value.type]);
+        SQLite.selectData('SELECT * FROM carchecksuccess WHERE busno = ?',
+            [merge_id],
+            (data) => {
+                if (data.code === 1) {
+                    if(data.result.rows.length==0){
+                        SQLite.changeData('INSERT INTO carchecksuccess (busno,vin,excecode,execinfo,rfid_img_id,chkno,newrfid,brand,chk_time,name,storage,type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)', [merge_id, value.vin, '1205', '正常', '', value.chkno, ''
+                            , value.brand, value.chk_time, value.name, value.storage, value.type]);
+                    }else{
+                        for(let i=0; i<data.result.rows.length;i++){
+                            if(data.result.rows.item(i).busno == merge_id){
+                                SQLite.changeData('DELETE From carchecksuccess WHERE busno = ?', [merge_id]);
+                                SQLite.changeData('INSERT INTO carchecksuccess (busno,vin,excecode,execinfo,rfid_img_id,chkno,newrfid,brand,chk_time,name,storage,type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)', [merge_id, value.vin, '1205', '正常', '', value.chkno, ''
+                                    , value.brand, value.chk_time, value.name, value.storage, value.type]);
+                            }
+                            break;
+                        }
+                    }
+                }
+            });
         that.findData();
 
     }
@@ -174,6 +192,9 @@ export  default class CarCheckNoWifiList extends BaseComponent {
             [merge_id],
             (data) => {
                 if (data.code === 1) {
+                    if(data.result.rows.length==0){
+                        this.props.screenProps.showToast('暂无成功数据！');
+                    }
                         for (let i = 0; i < data.result.rows.length; i++) {
                             lists.push(data.result.rows.item(0));
                         }
@@ -214,8 +235,13 @@ export  default class CarCheckNoWifiList extends BaseComponent {
         SQLite.createTable();
         NativeAppEventEmitter
             .addListener('onReadData', this.onReadData);
-        // NativeModules.DmsCustom.isConnection((data)=>{
-        // })
+        NativeModules.DmsCustom.isConnection((data)=>{
+            if(data==1){
+                that.setState({
+                    blueToothText: '设备已连接'
+                });
+            }
+        })
         index1 = 0;
         name = this.props.navigation.state.params.name;
         merge_id = this.props.navigation.state.params.merge_id;
@@ -262,6 +288,12 @@ export  default class CarCheckNoWifiList extends BaseComponent {
                     this.props.screenProps.showModal(false);
                     this.props.screenProps.showToast(response.mjson.retmsg);
                 });
+    }
+
+    onBlueConnection(){
+        that.setState({
+            blueToothText: '设备已连接'
+        });
     }
 
     checkData=()=>{
@@ -352,7 +384,7 @@ export  default class CarCheckNoWifiList extends BaseComponent {
             return (
                 <View style={styles.container}>
                     <View style={styles.topStyle}>
-                        <Text style={{flex: 1, textAlign:'center'}}>设备未连接</Text>
+                        <Text style={{flex: 1, textAlign:'center'}}>{this.state.blueToothText}</Text>
                     </View>
                     <View style={styles.searchStyle}>
                         <View style={{flex:1, }}>
