@@ -8,7 +8,9 @@ import {
     RefreshControl,
     TextInput,
     Image,
-    TouchableOpacity
+    TouchableOpacity,
+    NativeAppEventEmitter,
+    NativeModules
 } from 'react-native';
 import {CarCheckCarListItem} from '../component/ComponentBlob'
 import BaseComponent from '../component/BaseComponent';
@@ -19,12 +21,19 @@ import {RadioGroup, RadioButton} from 'react-native-flexi-radio-button';
 import  PixelUtil from '../utils/PixelUtil'
 import AllNavigationView from '../component/AllNavigationView';
 var Pixel = new PixelUtil();
+import SQLiteUtil from '../utils/SQLiteUtil';
+const SQLite = new SQLiteUtil();
 let allSouce = [];
+let lists = [];
 const searchIcon = require('../../images/assessment_customer_find.png');
 let name = '';
 let merge_id = '';
-let index=0;
-
+let index1 = 0;
+let that = null;
+let haveCheck = false;
+let sublist=[];
+let subSomeCarCheckData;
+let dbItem;
 export  default class CarCheckNoWifiList extends BaseComponent {
     // 初始化模拟数据
     constructor(props) {
@@ -33,41 +42,217 @@ export  default class CarCheckNoWifiList extends BaseComponent {
         this.retmsg = ''
         this.state = {
             dataSource: {},
-            isRefreshing: false,
-            leftStyle:{},
-            rightStyle:{},
+            leftStyle: {},
+            rightStyle: {},
             renderPlaceholderOnly: 'blank',
+            blueToothText: '设备未连接'
         };
         this.onSelect = this.onSelect.bind(this)
+        that = this;
     }
 
     onSelect(index) {
-        if(index==0){
+        index1 = index;
+        if (index1 == 0) {
             this.setState({
-                leftStyle:{ color: 'white'},
-                rightStyle:{color:'black'}
+                leftStyle: {color: 'white'},
+                rightStyle: {color: 'black'}
             });
-        }else{
+            this.findData();
+        } else {
             this.setState({
-                leftStyle:{ color: 'black'},
-                rightStyle:{color:'white'}
+                leftStyle: {color: 'black'},
+                rightStyle: {color: 'white'}
             });
+            this.readData();
         }
-        this.getData(index);
+    }
+
+    findData = () => {
+        lists = [];
+        if (that.keyword == '' || that.keyword == null) {
+            SQLite.selectData('SELECT * FROM carchecksuccess WHERE busno = ?',
+                [merge_id],
+                (data) => {
+                    console.log('------------------' + data.code);
+                    if (data.code === 1) {
+                        console.log(data.result);
+                        lists.push(...allSouce)
+                            for (let i = 0; i < data.result.rows.length; i++) {
+                                console.log(data.result.rows.item(i).chkno);
+                                for (let j = 0; j < allSouce.length; j++) {
+                                    if (allSouce[j].chkno == data.result.rows.item(i).chkno) {
+                                        lists.splice(j, 1);
+                                        break;
+                                    }
+                                }
+                            }
+                        const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+                        this.setState({
+                            dataSource: ds.cloneWithRows(lists),
+                        });
+                    } else {
+                        const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+                        this.setState({
+                            dataSource: ds.cloneWithRows(allSouce),
+                        });
+                    }
+                });
+
+        } else {
+            SQLite.selectData('SELECT * FROM carchecksuccess WHERE busno = ?',
+                [merge_id],
+                (data) => {
+                    console.log('------------------' + data.code);
+                    if (data.code === 1) {
+
+                        if(index1==0){
+                            if(data.result.rows.length==0){
+                                for (let value of allSouce) {
+                                        let subStr = '';
+                                        subStr = value.vin.substring(11, 17);
+                                        if (subStr == this.keyword) {
+                                            lists.push(value);
+                                        }
+                                }
+                            }else{
+                                for (let i = 0; i < data.result.rows.length; i++) {
+                                    for (let value of allSouce) {
+                                        if (value.chkno !== data.result.rows.item(i).chkno) {
+                                            let subStr = '';
+                                            subStr = value.vin.substring(11, 17);
+                                            if (subStr == this.keyword) {
+                                                lists.push(value);
+                                            }
+                                        }
+
+                                    }
+                                }
+                            }
+
+                        }else{
+                            for (let i = 0; i < data.result.rows.length; i++) {
+                                        let subStr = '';
+                                        subStr = value.vin.substring(11, 17);
+                                        if (subStr == this.keyword) {
+                                            lists.push(value);
+                                        }
+                            }
+
+                        }
+                        const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+                        this.setState({
+                            dataSource: ds.cloneWithRows(lists),
+                        });
+                    }else{
+                        for (let value of allSouce) {
+                            let subStr = '';
+                            subStr = value.vin.substring(11, 17);
+                            if (subStr == this.keyword) {
+                                lists.push(value);
+                            }
+                        }
+                        const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+                        this.setState({
+                            dataSource: ds.cloneWithRows(lists),
+                        });
+                    }
+                });
+        }
+
+    }
+
+    saveData = (value) => {
+        SQLite.selectData('SELECT * FROM carchecksuccess WHERE busno = ?',
+            [merge_id],
+            (data) => {
+                if (data.code === 1) {
+                    if(data.result.rows.length==0){
+                        SQLite.changeData('INSERT INTO carchecksuccess (busno,vin,excecode,execinfo,rfid_img_id,chkno,newrfid,brand,chk_time,name,storage,type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)', [merge_id, value.vin, '1205', '正常', '', value.chkno, ''
+                            , value.brand, value.chk_time, value.name, value.storage, value.type]);
+                    }else{
+                        for(let i=0; i<data.result.rows.length;i++){
+                            if(data.result.rows.item(i).busno == merge_id){
+                                SQLite.changeData('DELETE From carchecksuccess WHERE busno = ?', [merge_id]);
+                                SQLite.changeData('INSERT INTO carchecksuccess (busno,vin,excecode,execinfo,rfid_img_id,chkno,newrfid,brand,chk_time,name,storage,type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)', [merge_id, value.vin, '1205', '正常', '', value.chkno, ''
+                                    , value.brand, value.chk_time, value.name, value.storage, value.type]);
+                            }
+                            break;
+                        }
+                    }
+                }
+            });
+        that.findData();
+
+    }
+
+    readData = () => {
+        lists = [];
+        SQLite.selectData('SELECT * FROM carchecksuccess WHERE busno = ?',
+            [merge_id],
+            (data) => {
+                if (data.code === 1) {
+                    if(data.result.rows.length==0){
+                        this.props.screenProps.showToast('暂无成功数据！');
+                    }
+                        for (let i = 0; i < data.result.rows.length; i++) {
+                            lists.push(data.result.rows.item(0));
+                        }
+                    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+                    this.setState({
+                        dataSource: ds.cloneWithRows(lists),
+                    });
+                    return;
+                } else {
+                    this.props.screenProps.showToast('暂无成功数据！');
+                    return;
+                }
+            });
+
+    }
+
+    onReadData(data) {//盘库检验蓝牙测到的标签是否在列表中存在
+        haveCheck = false;
+        if (allSouce !== null) {
+            for (let value of allSouce) {
+                if (value.rfid !== null) {
+                    if (value.rfid == data.result) {
+                        that.saveData(value)
+                        haveCheck = true;
+                        break;
+                    }
+                }
+            }
+            if (!haveCheck) {
+                that.props.screenProps.showToast('标签无匹配！');
+            }
+        } else {
+            that.props.screenProps.showToast('数据异常，请重新进入此页面！');
+        }
     }
 
     initFinish() {
-        index=0;
+        SQLite.createTable();
+        NativeAppEventEmitter
+            .addListener('onReadData', this.onReadData);
+        NativeModules.DmsCustom.isConnection((data)=>{
+            if(data==1){
+                that.setState({
+                    blueToothText: '设备已连接'
+                });
+            }
+        })
+        index1 = 0;
         name = this.props.navigation.state.params.name;
         merge_id = this.props.navigation.state.params.merge_id;
-        this.getData(index);
+        this.props.screenProps.showModal(true);
+        this.getData(index1);
     }
 
-    getData = (index) => {
+    getData = (index1) => {
         let url = "";
         allSouce = [];
-        this.props.screenProps.showModal(true);
-        if (index == 0) {//盘库车辆列表
+        if (index1 == 0) {//盘库车辆列表
             url = Urls.CARCHECKLOADCHKSTOREDATA;
         } else {//盘库成功车辆列表
             url = Urls.CARCHECKLOADCOMPLETEDCHKDATA;
@@ -80,12 +265,11 @@ export  default class CarCheckNoWifiList extends BaseComponent {
 
             .then((response) => {
                     this.props.screenProps.showModal(false);
-                    if(response.mjson.retdata.chklist==null){
+                    if (response.mjson.retdata.chklist == null) {
                         this.props.screenProps.showToast('数据为空！');
                         const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
                         this.setState({
                             dataSource: ds.cloneWithRows(allSouce),
-                            isRefreshing: false
                         });
                         return;
                     }
@@ -96,7 +280,6 @@ export  default class CarCheckNoWifiList extends BaseComponent {
                         const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
                         this.setState({
                             dataSource: ds.cloneWithRows(allSouce),
-                            isRefreshing: false
                         });
                     }
                     this.setState({renderPlaceholderOnly: 'success'});
@@ -107,10 +290,82 @@ export  default class CarCheckNoWifiList extends BaseComponent {
                 });
     }
 
-    refreshingData = () => {
+    onBlueConnection(){
+        that.setState({
+            blueToothText: '设备已连接'
+        });
+    }
+
+    checkData=()=>{
+        sublist=[];
+        SQLite.selectData('SELECT * FROM carchecksuccess WHERE busno = ?',
+            [merge_id],
+            (data) => {
+                if (data.code === 1) {
+                    //chkno;
+                    // private String excecode;
+                    // private String execinfo;
+                    // private String newrfid;
+                    // private String rfid_img_id;
+                    // private String vin;
+                    subSomeCarCheckData={};
+                    dbItem=null;
+                    for (let i = 0; i < data.result.rows.length; i++) {
+                        dbItem=data.result.rows.item(i);
+                        subSomeCarCheckData={
+                            chkno : dbItem.chkno,
+                            excecode : dbItem.excecode,
+                            execinfo : dbItem.execinfo,
+                            newrfid : '',
+                            rfid_img_id : '',
+                            vin : dbItem.vin,
+                        }
+                        sublist.push(subSomeCarCheckData);
+                    }
+                    this.requestData();
+                } else {
+                    this.props.screenProps.showToast('暂无成功数据！');
+                }
+            });
+    }
+
+    requestData = () => {//提交盘库成功列表
+        if(sublist.length<=0){
+            this.props.screenProps.showToast('暂无成功数据！');
+            return;
+        }
+        console.log(JSON.stringify(sublist).toString());
+        // this.props.screenProps.showModal(true);
+        let url = "";
         allSouce = [];
-        this.setState({isRefreshing: true});
-        this.getData(index);
+        url = Urls.CARCHECKPATCHSUBMITCHKDATA;
+        let maps = {
+            list: JSON.stringify(sublist).toString(),
+        };
+        request(url, 'Post', maps)
+
+            .then((response) => {
+                    this.props.screenProps.showModal(false);
+                    this.deleteData();
+                },
+                (error) => {
+                    this.props.screenProps.showModal(false);
+                    this.props.screenProps.showToast(response.mjson.retmsg);
+                });
+    }
+
+    deleteData=()=>{
+        for (let i = 0; i < sublist.length; i++) {
+            for (let j = 0; j < allSouce.length; j++) {
+                if (allSouce[j].chkno == sublist[i].chkno) {
+                    allSouce.splice(j, 1);
+                    break;
+                }
+            }
+        }
+        SQLite.changeData('DELETE FROM carchecksuccess where busno = ?', [merge_id]);
+        this.props.screenProps.showToast('盘库成功');
+        this.onSelect(0);
     };
 
     textChange = (text) => {
@@ -129,20 +384,22 @@ export  default class CarCheckNoWifiList extends BaseComponent {
             return (
                 <View style={styles.container}>
                     <View style={styles.topStyle}>
-                        <Text style={{flex: 1, textAlign:'center'}}>设备未连接</Text>
+                        <Text style={{flex: 1, textAlign:'center'}}>{this.state.blueToothText}</Text>
                     </View>
                     <View style={styles.searchStyle}>
                         <View style={{flex:1, }}>
                             <TextInput
                                 multiline={true}
                                 style={{height: Pixel.getPixel(40)}}
-                                placeholder={'车架号、名称、品牌关键字'}
+                                placeholder={'车架号后六位'}
                                 underlineColorAndroid={"#00000000"}
                                 onChangeText={this.textChange}
                             />
                         </View>
 
-                        <TouchableOpacity activeOpacity={0.8} onPress={this.searchData}>
+                        <TouchableOpacity activeOpacity={0.8} onPress={
+                            this.keyword=='' && index1==1 ? this.readData: this.findData
+                          }>
                             <Image style={styles.searchIcon} source={searchIcon}/>
                         </TouchableOpacity>
 
@@ -156,11 +413,11 @@ export  default class CarCheckNoWifiList extends BaseComponent {
                         onSelect={(index) => this.onSelect(index)}
                     >
                         <RadioButton>
-                            <Text style={[{color:'white'},this.state.leftStyle]}>待盘车辆</Text>
+                            <Text style={[{color:'white'},this.state.leftStyle]}>本地待盘车辆</Text>
                         </RadioButton>
 
                         <RadioButton>
-                            <Text style={[{color:'black'},this.state.rightStyle,]}>成功车辆</Text>
+                            <Text style={[{color:'black'},this.state.rightStyle,]}>本地成功车辆</Text>
                         </RadioButton>
 
                     </RadioGroup>
@@ -168,17 +425,16 @@ export  default class CarCheckNoWifiList extends BaseComponent {
                         contentContainerStyle={styles.listStyle}
                         dataSource={this.state.dataSource}
                         renderRow={this.renderRow}
-                        refreshControl={
-                            <RefreshControl
-                                refreshing={this.state.isRefreshing}
-                                onRefresh={this.refreshingData}
-                                tintColor={[fontAndColor.COLORB0]}
-                                colors={[fontAndColor.COLORB0]}
-                            />
-                        }
+                        enableEmptySections = {true}
                     />
 
-                    <AllNavigationView title={name} backIconClick={() => {
+                    <TouchableOpacity style={styles.bottomButton} activeOpacity={0.8} onPress={
+                        this.checkData
+                    }>
+                        <Text style={styles.buttonText}>提交已盘车辆</Text>
+                    </TouchableOpacity>
+
+                    <AllNavigationView title={'无网盘库'} backIconClick={() => {
                     this.backPage();
                 }} parentNavigation={this}/>
 
@@ -187,24 +443,9 @@ export  default class CarCheckNoWifiList extends BaseComponent {
         }
     }
 
-    searchData = () => {
-        allSouce = []
-        this.props.screenProps.showModal(true);
-        this.getData();
-    }
-
     renderRow = (rowData, sectionID, rowId) => {
         return (
             <CarCheckCarListItem
-                onPress={()=>{this.toNextPage('CarCheckWarning',{
-                    vin: rowData.vin,
-                    chkno: rowData.chkno,
-                    model: rowData.name,
-                    brand: rowData.brand,
-                    address: rowData.storage,
-                    status: rowData.type,
-                    freshDataClick: this.freshDataClick
-                });}}
                 brandName={rowData.type==null ? '':(rowData.type=='0'?'【建档车辆  】' +rowData.brand : '【质押车辆  】'+rowData.brand)}
                 modelName={rowData.name}
                 vin={'车架号：'+rowData.vin}
@@ -212,11 +453,6 @@ export  default class CarCheckNoWifiList extends BaseComponent {
                 type={rowData.type==null || rowData.type=='' ? '': '盘库中'}
             />);
 
-    }
-    freshDataClick=()=>{
-        name = this.props.navigation.state.params.name;
-        merge_id = this.props.navigation.state.params.merge_id;
-        this.getData(index);
     }
 }
 
@@ -255,5 +491,22 @@ const styles = StyleSheet.create({
         backgroundColor: '#76C8C2',
         justifyContent: 'space-around',
         marginTop: Pixel.getPixel(10)
+    },
+    bottomButton: {
+        flexDirection: 'row',
+        margin: Pixel.getPixel(25),
+        borderRadius: 4,
+        backgroundColor: fontAndColor.all_blue,
+        marginHorizontal: Pixel.getPixel(25),
+        position:'absolute',
+        bottom: Pixel.getPixel(10)
+    },
+    buttonText: {
+        fontSize: Pixel.getPixel(16),
+        flexDirection: 'row',
+        color: 'white',
+        flex: 1,
+        textAlign: 'center',
+        paddingVertical: Pixel.getPixel(7)
     },
 });

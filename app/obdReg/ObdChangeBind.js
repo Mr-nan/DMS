@@ -6,7 +6,8 @@ import {
     View,
     Image,
     TouchableOpacity,
-    NativeModules
+    NativeModules,
+    NativeAppEventEmitter,
 } from 'react-native';
 
 import {RadioGroup, RadioButton} from 'react-native-flexi-radio-button';
@@ -23,7 +24,7 @@ import StorageUtil from '../utils/StorageUtil';
 import * as StorageKeyNames from '../constant/storageKeyNames';
 let imageData;
 let files;
-
+let that=null;
 const options = {
     //弹出框选项
     title: '请选择',
@@ -48,10 +49,24 @@ export  default class ObdChangeBind extends BaseComponent {
             index: 0,
             labelText: '扫描标签',
             scanObdText: '请扫描OBD',
-            scanLabel: 'E28068102000000447C0B022',
-            imageSource: addIcon
+            scanLabel: '请扫描标签',
+            imageSource: addIcon,
+            blueToothText:'设备未连接'
         }
         this.onSelect = this.onSelect.bind(this)
+        that = this;
+    }
+
+    initFinish(){
+        NativeModules.DmsCustom.isConnection((data)=>{
+            if(data==1){
+                that.setState({
+                    blueToothText: '设备已连接'
+                });
+            }
+        })
+        NativeAppEventEmitter
+            .addListener('onReadData', this.onReadData);
     }
 
     onSelect(index) {
@@ -72,7 +87,7 @@ export  default class ObdChangeBind extends BaseComponent {
         return (
             <View style={styles.container}>
                 <View style={styles.blueTooth}>
-                    <Text style={{flex: 1, textAlign:'center'}}>设备未连接</Text>
+                    <Text style={{flex: 1, textAlign:'center'}}>{this.state.blueToothText}</Text>
                 </View>
 
                 <RadioGroup
@@ -133,6 +148,12 @@ export  default class ObdChangeBind extends BaseComponent {
         )
     }
 
+    onBlueConnection(){
+        that.setState({
+            blueToothText: '设备已连接'
+        });
+    }
+
     cancel = () => {
         this.backPage();
     }
@@ -185,6 +206,7 @@ export  default class ObdChangeBind extends BaseComponent {
             this.props.screenProps.showToast('请拍照！');
             return;
         }
+
         files = {
             file_id: imageData.file_id,
             syscodedata_id: 'reqfile1'
@@ -248,10 +270,17 @@ export  default class ObdChangeBind extends BaseComponent {
             }
         });
     }
+
+    onReadData(data){
+        that.setState({
+            scanLabel: data.result
+        });
+    }
+
     labelClick = () => {
         if (this.state.index == 0) {
 
-            alert('扫描标签')
+            this.toNextPage('BluetoothScene',{onReadData:this.onReadData})
         } else {
             NativeModules.DmsCustom.qrScan((success) => {
                 console.log('success', success)

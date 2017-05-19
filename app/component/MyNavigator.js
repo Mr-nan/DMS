@@ -22,6 +22,7 @@ import ReporInfoFkong from '../collect&Report/ReporInfoFkong'
 import CarCheckCustomer from '../makingInventory/CarCheckCustomer';
 import CarCheckWifiSelect from '../makingInventory/CarCheckWifiSelect';
 import CarCheckNoWifiList from '../makingInventory/CarCheckNoWifiList';
+import CarCheckWifiList from '../makingInventory/CarCheckWifiList';
 import CarCheckWarning from '../makingInventory/CarCheckWarning';
 import AssessCustomerScene from '../assess/AssessmentCustomerScene';
 import AssessmentSelectScene from '../assess/AssessmentSelectScene';
@@ -48,6 +49,7 @@ export default MyApp = StackNavigator({
         CustomerList: {screen: CustomerList},
         CarCheckCustomer: {screen: CarCheckCustomer},
         CarCheckWifiSelect: {screen: CarCheckWifiSelect},
+        CarCheckWifiList:{screen:CarCheckWifiList},
         CarCheckNoWifiList: {screen: CarCheckNoWifiList},
         CarCheckWarning: {screen: CarCheckWarning},
 

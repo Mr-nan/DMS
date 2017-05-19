@@ -138,6 +138,7 @@ export  default class CarCheckCustomer extends BaseComponent {
                         contentContainerStyle={styles.listStyle}
                         dataSource={this.state.dataSource}
                         renderRow={this.renderRow}
+                        enableEmptySections = {true}
                         renderFooter={
                             this.renderListFooter
                         }
