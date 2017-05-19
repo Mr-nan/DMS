@@ -32,7 +32,7 @@ export default class CustomerItem extends Component {
         if(companyName !== '' && companyName !== null){
             companyName = '(' + companyName + ')'
         }else{
-            companyName = '(无)'
+            companyName = '(空)'
         }
 
         return (
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     },
     secondFont: {
         fontSize: Pixel.getFontPixel(13),
-        color: 'rgba(0,0,0,0.7)',
+        color: FontAndColor.txt_gray,
         flex:1
     },
 

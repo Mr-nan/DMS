@@ -16,7 +16,9 @@ import CustomerList from '../collect&Report/CustomerList'
 import CustomerItemCarList from '../collect&Report/CustomerItemCarList'
 import ReportCustomerList from '../collect&Report/ReportCustomerList'
 import VersionInfo from '../collect&Report/VersionInfo'
-
+import ReportInfoManage from '../collect&Report/ReportInfoManage'
+import ReporInfoPeople from '../collect&Report/ReporInfoPeople'
+import ReporInfoFkong from '../collect&Report/ReporInfoFkong'
 import CarCheckCustomer from '../makingInventory/CarCheckCustomer';
 import CarCheckWifiSelect from '../makingInventory/CarCheckWifiSelect';
 import CarCheckNoWifiList from '../makingInventory/CarCheckNoWifiList';
@@ -24,6 +26,7 @@ import CarCheckWifiList from '../makingInventory/CarCheckWifiList';
 import CarCheckWarning from '../makingInventory/CarCheckWarning';
 import AssessCustomerScene from '../assess/AssessmentCustomerScene';
 import AssessmentSelectScene from '../assess/AssessmentSelectScene';
+import OneCarListScene from '../assess/OneCarListScene';
 
 import BluetoothScene from '../main/BluetoothScene';
 
@@ -33,6 +36,7 @@ export default MyApp = StackNavigator({
         Root: {screen: RootScene},
         LoginScene: {screen: LoginScene},
         FunctionScene: {screen: FunctionScene},
+<<<<<<< HEAD
         ObdCustom:{screen:ObdCustom},
         ObdCheckoutRecordFragment:{screen:ObdCheckoutRecordFragment},
         ObdCarList:{screen:ObdCarList},
@@ -56,7 +60,34 @@ export default MyApp = StackNavigator({
 
         BluetoothScene:{screen:BluetoothScene},
         SelectMaskComponent:{screen:SelectMaskComponent}
+=======
+        ObdCustom: {screen: ObdCustom},
+        ObdCheckoutRecordFragment: {screen: ObdCheckoutRecordFragment},
+        ObdCarList: {screen: ObdCarList},
+        ObdCarDetail: {screen: ObdCarDetail},
+        WebScene: {screen: WebScene},
+        ObdWarningExplain: {screen: ObdWarningExplain},
+        ObdChangeBind: {screen: ObdChangeBind},
+        CustomerList: {screen: CustomerList},
+        CarCheckCustomer: {screen: CarCheckCustomer},
+        CarCheckWifiSelect: {screen: CarCheckWifiSelect},
+        CarCheckNoWifiList: {screen: CarCheckNoWifiList},
+        CarCheckWarning: {screen: CarCheckWarning},
 
+        CustomerItemCarList: {screen: CustomerItemCarList},
+        ReportCustomerList: {screen: ReportCustomerList},
+
+        AssessCustomerScene: {screen: AssessCustomerScene},
+        AssessmentSelectScene: {screen: AssessmentSelectScene},
+        OneCarListScene: {screen: OneCarListScene},
+        VersionInfo: {screen: VersionInfo},
+>>>>>>> dff94eed72d836d1e9c94a4f7c08dc3855af6d5d
+
+        BluetoothScene: {screen: BluetoothScene},
+        SelectMaskComponent: {screen: SelectMaskComponent},
+        ReportInfoManage: {screen: ReportInfoManage},
+        ReporInfoPeople: {screen: ReporInfoPeople},
+        ReporInfoFkong: {screen: ReporInfoFkong}
     },
     {
         initialRouteName: 'Root',

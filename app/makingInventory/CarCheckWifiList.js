@@ -39,6 +39,7 @@ export  default class CarCheckNoWifiList extends BaseComponent {
             leftStyle: {},
             rightStyle: {},
             renderPlaceholderOnly: 'blank',
+            blueToothText: '设备未连接'
         };
         this.onSelect = this.onSelect.bind(this)
     }
@@ -61,6 +62,12 @@ export  default class CarCheckNoWifiList extends BaseComponent {
 
     onReadData(data) {
         alert(data.result);
+    }
+
+    onBlueConnection(){
+        this.setState({
+            blueToothText: '设备已连接'
+        });
     }
 
     initFinish() {

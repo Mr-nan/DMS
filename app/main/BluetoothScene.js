@@ -79,6 +79,7 @@ export default class BluetoothScene extends BaseComponent{
                 deviceName:this.deviceN,
                 scan:'搜索设备'
             });
+            this.props.navigation.state.params.onBlueConnection();
         }else{
             NativeModules.DmsCustom.scanSound(0);
             console.log('连接失败');

@@ -7,6 +7,7 @@ import {
     View,
     Text,
     Image,
+    TextInput,
     TouchableOpacity
 } from 'react-native';
 import  {PAGECOLOR,width,height,adapeSize,fontadapeSize} from './MethodComponet'
@@ -16,8 +17,8 @@ class CollectCustomerListItem extends PureComponent{
 
     _onclick=(componeyId)=>{
 
-        const {customListItemClick,merge_id}=this.props;
-        customListItemClick(merge_id);
+        const {customListItemClick,merge_id,legalcompany,carNum}=this.props;
+        customListItemClick(merge_id,legalcompany,carNum);
     }
     render(){
 
@@ -68,10 +69,12 @@ class CollectCarListItem extends PureComponent{
 }
 class ReportCustomerListItem extends PureComponent{
 
-    _onclick=(componeyId)=>{
 
+    _onclick=()=>{
+
+        const { merge_id,companyName,money} =this.props;
         const {repCustomItemClick}=this.props;
-        repCustomItemClick(componeyId);
+        repCustomItemClick(merge_id,companyName,money);
     }
 
     render(){
@@ -92,6 +95,60 @@ class ReportCustomerListItem extends PureComponent{
     }
 
 
+}
+
+class RepDetailListHeader extends PureComponent{
+
+    render(){
+        const {people,money,date,target}=this.props;
+
+        return (
+        <View>
+            <View style={styles.repHeadWarp}>
+                <Text style={styles.repPeopleInf}>{people}</Text>
+                <View style={styles.repInfoWap}>
+                    <Text style={styles.money}>{money}</Text>
+                    <Text style={styles.dateF}>{date}</Text>
+                </View>
+            </View>
+                <View style={styles.targetWarp}>
+                    <Text style={styles.targeText}>{target}</Text>
+                </View>
+        </View>
+
+
+
+
+        )
+    }
+}
+class CustomButton extends PureComponent{
+
+    render(){
+        const {title, onPress}=this.props;
+
+        return (
+            <TouchableOpacity style={styles.customButtonWarp}  onPress={onPress}>
+                <Text style={styles.customButtonText}>{title}</Text>
+            </TouchableOpacity>
+        )
+    }
+
+}
+
+class RepListFootComponent extends PureComponent{
+
+    render(){
+
+        const {lTitle,rTitle,lOnPress,rOnpress}=this.props;
+        return(
+
+            <View style={styles.footViewWarp}>
+                <CustomButton title={lTitle} onPress={lOnPress}/>
+                <CustomButton title={rTitle} onPress={rOnpress}/>
+            </View>
+        )
+    }
 }
 
 class ListHeadComponent extends PureComponent{
@@ -118,6 +175,19 @@ class SeparatorComponent extends PureComponent{
 
     }
 }
+class ListFootComponent extends PureComponent{
+
+    render(){
+        const {info}=this.props
+
+        return (
+            <View style={styles.listFootWarp}>
+                <Text style={styles.listFootText}>{info}</Text>
+            </View>
+        )
+    }
+
+}
 
 class ListFootComponentMore extends PureComponent{
 
@@ -128,7 +198,6 @@ class ListFootComponentMore extends PureComponent{
                 </View>
             )
         }
-
 }
 class ListFootComponentNorMore extends PureComponent{
 
@@ -143,7 +212,42 @@ class ListFootComponentNorMore extends PureComponent{
 
 }
 
-export {CollectCustomerListItem,CollectCarListItem,ReportCustomerListItem,ListHeadComponent,SeparatorComponent,ListFootComponentMore,ListFootComponentNorMore}
+class RepRateInput extends PureComponent{
+
+
+    render(){
+
+        const {typeName}=this.props;
+        return (
+            <View style={repStyles.rateInputWarp}>
+                <Text style={{color:'gray'}}>{typeName}</Text>
+                <TextInput underlineColorAndroid='transparent' keyboardType={'decimal-pad'} style={repStyles.rateinputstyle}/>
+                <Text style={{color:'gray'}}>{'%'}</Text>
+            </View>
+
+        )
+    }
+
+}
+
+class RepBordeInput extends PureComponent{
+
+    render(){
+
+        const {width}=this.props;
+        return(
+            <TextInput underlineColorAndroid='transparent' style={[repStyles.rateinputstyle,{width:width,marginLeft:adapeSize(10),marginBottom:adapeSize(10)}]}/>
+        )
+
+
+    }
+
+}
+
+export {ListFootComponent,CollectCustomerListItem,CollectCarListItem,ReportCustomerListItem,
+    ListHeadComponent,SeparatorComponent,ListFootComponentMore,ListFootComponentNorMore,
+    RepDetailListHeader,RepListFootComponent,RepRateInput,RepBordeInput
+}
 
 
 const styles=StyleSheet.create({
@@ -216,9 +320,92 @@ const styles=StyleSheet.create({
         margin:adapeSize(5),
         color:'white',
 
+    },
+    repHeadWarp:{
+        backgroundColor:PAGECOLOR.white,
+        paddingLeft:adapeSize(10),
+        paddingRight:adapeSize(10),
+    },
+    repPeopleInf:{
+
+        fontSize:fontadapeSize(14),
+        marginTop:adapeSize(10),
+        marginBottom:adapeSize(10),
+    },
+    repInfoWap:{
+
+        flexDirection:'row',
+        justifyContent:'space-between',
+        marginTop:adapeSize(10),
+        marginBottom:adapeSize(5)
+    },
+    money:{
+
+        color:'gray'
+
+    },
+    dateF:{
+        color:'gray'
+    },
+    targetWarp:{
+
+        backgroundColor:PAGECOLOR.deapGray,
+        marginBottom:adapeSize(5)
+    },
+    targeText:{
+        marginLeft:adapeSize(10),
+        fontSize:adapeSize(14),
+        color:PAGECOLOR.white,
+        marginTop:adapeSize(5),
+        marginBottom:adapeSize(5)
+    },
+    customButtonWarp:{
+
+        backgroundColor:PAGECOLOR.all_blue,
+        borderRadius:adapeSize(5),
+        flex:1,
+        justifyContent:'center',
+        alignItems:'center',
+        marginLeft:adapeSize(10),
+        marginRight:adapeSize(10)
+    },
+
+    customButtonText:{
+
+        fontSize:adapeSize(18),
+        color:PAGECOLOR.white,
+        marginTop:adapeSize(10),
+        marginBottom:adapeSize(10),
+
+    },
+    footViewWarp:{
+
+        flexDirection:'row',
+        marginTop:adapeSize(10),
+        marginBottom:adapeSize(10)
     }
 
 
+})
+
+const repStyles=StyleSheet.create({
+
+    rateInputWarp:{
+        flexDirection:'row',
+        marginLeft:adapeSize(10),
+        marginTop:adapeSize(10),
+        marginBottom:adapeSize(5),
+    },
+    rateinputstyle:{
+        borderColor:PAGECOLOR.esc_button,
+        borderWidth:0.5,
+        borderRadius:adapeSize(4),
+        height:adapeSize(20),
+        width:adapeSize(80),
+        marginLeft:adapeSize(20),
+        marginRight:adapeSize(10),
+        textAlign:'center'
+    },
 
 
 })
