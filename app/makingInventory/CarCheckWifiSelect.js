@@ -16,8 +16,8 @@ const select_wifi_close = require('../../images/select_wifi_close.png');
 const wifiText = '有网环境盘库，系统自动随盘随提交，准确率高，操作便捷，推荐使用。';
 const wifiText2 = '若同一商户同一次盘库先进行了无网盘库但未提交，再重新改为有网盘库时，之前的无网盘库记录将被清空';
 const noWifiText = '无网环境盘库，需手动批量提交，易出现数据丢失，建议在确实无网时再慎重使用。';
-let name='';
-let merge_id='';
+let name = '';
+let merge_id = '';
 
 export  default class CarCheckWifiSelect extends BaseComponent {
     // 初始化模拟数据
@@ -26,16 +26,16 @@ export  default class CarCheckWifiSelect extends BaseComponent {
         this.state = {
             index: 0,
             wifiStyle: {},
-            noWifiStyle: {display:'none'}
+            noWifiStyle: {display: 'none'}
 
         }
         this.onSelect = this.onSelect.bind(this)
         StorageUtil.mGetItem(StorageKeyNames.IS_WIFI, (data) => {
             console.log(data);
-            if (data.code == 1 && data.result !==null) {
-                if(data.result.substring(1,data.result.length)==merge_id){
+            if (data.code == 1 && data.result !== null) {
+                if (data.result.substring(1, data.result.length) == merge_id) {
 
-                    this.onSelect(data.result.substring(0,1));
+                    this.onSelect(data.result.substring(0, 1));
                 }
             }
         });
@@ -58,8 +58,8 @@ export  default class CarCheckWifiSelect extends BaseComponent {
     }
 
     initFinish() {
-        name=this.props.navigation.state.params.name;
-        merge_id=this.props.navigation.state.params.merge_id;
+        name = this.props.navigation.state.params.name;
+        merge_id = this.props.navigation.state.params.merge_id;
     }
 
     render() {
@@ -106,18 +106,20 @@ export  default class CarCheckWifiSelect extends BaseComponent {
                 </View>
 
                 <View style={{flex:1}}></View>
-                <TouchableOpacity style={styles.bottomButton}activeOpacity={0.8} onPress={()=>{
+                <TouchableOpacity style={styles.bottomButton} activeOpacity={0.8} onPress={()=>{
                     StorageUtil.mSetItem(StorageKeyNames.IS_WIFI, this.state.index+merge_id);
-                    NetWorkTool.checkNetworkState((isConnected)=>{
-                    if(!isConnected){
-                        this.props.screenProps.showToast(NetWorkTool.NOT_NETWORK);
-                      }else{
+                        if(this.state.index ==0){
+                            this.toNextPage('CarCheckWifiList',{
+                            name: name,
+                            merge_id: merge_id,
+                        })
+                    }else{
                         this.toNextPage('CarCheckNoWifiList',{
-                        name: name,
-                        merge_id: merge_id,
-                    })
-                      }
-                    });
+                            name: name,
+                            merge_id: merge_id,
+                        })
+                    }
+
                 }}>
                     <Text style={styles.buttonText}>确定</Text>
                 </TouchableOpacity>
@@ -163,18 +165,18 @@ const styles = StyleSheet.create({
         marginHorizontal: Pixel.getPixel(20),
         fontSize: Pixel.getPixel(12),
     },
-    bottomButton:{
-        flexDirection:'row',
+    bottomButton: {
+        flexDirection: 'row',
         margin: Pixel.getPixel(15),
-        borderRadius:4,
-        backgroundColor:fontAndColor.all_blue
+        borderRadius: 4,
+        backgroundColor: fontAndColor.all_blue
     },
-    buttonText:{
-        fontSize:Pixel.getPixel(16),
-        color:'white',
-        flex:1,
-        textAlign:'center',
-        paddingVertical:Pixel.getPixel(7)
+    buttonText: {
+        fontSize: Pixel.getPixel(16),
+        color: 'white',
+        flex: 1,
+        textAlign: 'center',
+        paddingVertical: Pixel.getPixel(7)
     }
 
 });

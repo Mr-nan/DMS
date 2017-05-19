@@ -44,7 +44,9 @@ export  default class ObdCustom extends BaseComponent {
                     if (page == 1 && response.mjson.retdata.list.length <= 0) {
                         this.props.screenProps.showToast('数据为空！');
                     } else {
-                        allPage = response.mjson.retdata.total / 10;
+                        // allPage = response.mjson.retdata.total / 10;
+                        allPage=Math.ceil(Number.parseInt(response.mjson.retdata.total)/10);
+                        console.log(allPage);
                         allSouce.push(...response.mjson.retdata.list);
                         const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
                         this.setState({
@@ -103,6 +105,7 @@ export  default class ObdCustom extends BaseComponent {
                         contentContainerStyle={styles.listStyle}
                         dataSource={this.state.dataSource}
                         renderRow={this.renderRow}
+                        enableEmptySections = {true}
                         renderFooter={
                             this.renderListFooter
                         }

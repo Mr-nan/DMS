@@ -6,7 +6,8 @@ import {
     View,
     Image,
     TouchableOpacity,
-    NativeModules
+    NativeModules,
+    NativeAppEventEmitter,
 } from 'react-native';
 
 import {RadioGroup, RadioButton} from 'react-native-flexi-radio-button';
@@ -23,7 +24,7 @@ import StorageUtil from '../utils/StorageUtil';
 import * as StorageKeyNames from '../constant/storageKeyNames';
 let imageData;
 let files;
-
+let that=null;
 const options = {
     //弹出框选项
     title: '请选择',
@@ -48,10 +49,16 @@ export  default class ObdChangeBind extends BaseComponent {
             index: 0,
             labelText: '扫描标签',
             scanObdText: '请扫描OBD',
-            scanLabel: 'E28068102000000447C0B022',
+            scanLabel: '请扫描标签',
             imageSource: addIcon
         }
         this.onSelect = this.onSelect.bind(this)
+        that = this;
+    }
+
+    initFinish(){
+        NativeAppEventEmitter
+            .addListener('onReadData', this.onReadData);
     }
 
     onSelect(index) {
@@ -248,10 +255,17 @@ export  default class ObdChangeBind extends BaseComponent {
             }
         });
     }
+
+    onReadData(data){
+        that.setState({
+            scanLabel: data.result
+        });
+    }
+
     labelClick = () => {
         if (this.state.index == 0) {
 
-            alert('扫描标签')
+            this.toNextPage('BluetoothScene',{onReadData:this.onReadData})
         } else {
             NativeModules.DmsCustom.qrScan((success) => {
                 console.log('success', success)

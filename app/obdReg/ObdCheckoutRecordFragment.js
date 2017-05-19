@@ -79,6 +79,7 @@ export  default class ObdCheckoutRecordFragment extends BaseComponent {
                             contentContainerStyle={styles.listStyle}
                             dataSource={this.state.dataSource}
                             renderRow={this.renderRow}
+                            enableEmptySections = {true}
                         />
                     </View>
 
