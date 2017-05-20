@@ -55,7 +55,20 @@ export default class PurchaseOrderScene extends BaseComponent{
     };
 
     _renderItem = (item)=>{
-        return(<OrderItem item={item} />)
+        return(<OrderItem item={item} onItemClick={this._onItemClick}/>)
+    };
+
+    _onItemClick = (item) =>{
+
+        this.props.toNextPage('PurchaseCarScene',{
+            name:this.cName,
+            merge_id:this.merge_id,
+            payment_id:item.payment_id,
+            payment_number:item.payment_number,
+            loanmnystr:item.loanmnystr,
+            makedatestr:item.makedatestr,
+            loanmny:item.loanmny
+        });
     };
 
     _onEndReached = ()=>{

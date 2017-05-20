@@ -1,5 +1,5 @@
 /**
- * Created by Administrator on 2017/5/17.
+ * Created by Administrator on 2017/5/18.
  */
 import React from 'react';
 import {
@@ -18,13 +18,13 @@ import SearchTitleView from '../component/SearchTitleView';
 import * as Net from '../utils/RequestUtil';
 import * as appUrls from '../constant/appUrls';
 
-import BottomStockItem from './component/BottomStockItem'
+import PurchaseCarItem from './component/PurchaseCarItem'
 
 import AddNewCarBottom from './component/AddNewCarBottom';
-import OrderTitleItem from './component/OrderTitleItem';
+import PurchaseTitleItem from './component/PurchaseTitleItem';
 
 
-export default class OneCarListScene extends BaseComponent{
+export default class PurchaseCarScene extends BaseComponent{
 
     constructor(props){
         super(props);
@@ -39,8 +39,7 @@ export default class OneCarListScene extends BaseComponent{
         this.state= {
             loading: false,
             dataSource: this.ds.cloneWithRows(this.allSource),
-            waitPrice:'单车待评估车辆金额：',
-            addEnable:false
+            waitPrice:'采购贷待评估车辆金额：'
         };
     }
 
@@ -62,7 +61,7 @@ export default class OneCarListScene extends BaseComponent{
     };
 
     _renderItem = (item)=>{
-        return(<BottomStockItem item={item} />)
+        return(<PurchaseCarItem item={item} />)
     };
 
     _onEndReached = ()=>{
@@ -101,30 +100,18 @@ export default class OneCarListScene extends BaseComponent{
             payment_id:this.payment_id
         };
 
-        Net.request(appUrls.ONECARGETAUTOLIST,'post',maps).then(
+        Net.request(appUrls.PURCHAAUTOLIST,'post',maps).then(
             (response)=>{
                 this._closeLoadingModal();
 
                 let rep = response.mjson.retdata;
                 this.total = Math.ceil(Number.parseInt(rep.total)/Number.parseInt(rep.listRows));
-                let sum = 0;
-                try {
-                    sum = Number.parseFloat(rep.loan_mny_sum);
-                } catch (error) {
-                    sum = 0;
-                }
-                let money = Number.parseFloat(this.props.navigation.state.params.loanmny);
-                let addE = true;
-                if(sum >= money){
-                    addE = false;
-                }
 
                 this.allSource.push(...rep.list);
                 this.setState({
                     dataSource:this.ds.cloneWithRows(this.allSource),
                     loading:false,
-                    waitPrice:'单车待评估车辆金额：' + rep.wait_mny_str,
-                    addEnable:addE
+                    waitPrice:'采购贷待评估车辆金额：' + rep.wait_mny_str
                 });
 
                 console.log('response data',{rep});
@@ -153,11 +140,10 @@ export default class OneCarListScene extends BaseComponent{
         return(
             <View style={styles.container}>
                 <View style={styles.wrapContainer}>
-                    <OrderTitleItem
+                    <PurchaseTitleItem
                         payment_number={this.props.navigation.state.params.payment_number}
                         jkje={this.props.navigation.state.params.loanmnystr}
                         yksj={this.props.navigation.state.params.makedatestr}
-                        zjqd={this.props.navigation.state.params.fund_channel}
                     />
                     <SearchTitleView hint={'车架号后六位'} onSearchClick={this._onSearchClick}/>
                     <View style={styles.fillSpace}>
@@ -178,7 +164,7 @@ export default class OneCarListScene extends BaseComponent{
                         />
                     </View>
                     <AddNewCarBottom waitPrice={this.state.waitPrice}
-                                     onAddClick={()=>{}} addEnable={this.state.addEnable}/>
+                                     onAddClick={()=>{}} addEnable={false}/>
                 </View>
                 <AllNavigationView title={this.cName} backIconClick={() => {
                     this.backPage();

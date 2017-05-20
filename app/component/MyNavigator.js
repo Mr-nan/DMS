@@ -27,6 +27,9 @@ import CarCheckWarning from '../makingInventory/CarCheckWarning';
 import AssessCustomerScene from '../assess/AssessmentCustomerScene';
 import AssessmentSelectScene from '../assess/AssessmentSelectScene';
 import OneCarListScene from '../assess/OneCarListScene';
+import StockTopCarScene from '../assess/StockTopCarScene';
+import PurchaseCarScene from '../assess/PurchaseCarScene';
+import CarInfoScene from '../assess/CarInfoScene';
 
 import BluetoothScene from '../main/BluetoothScene';
 
@@ -56,6 +59,9 @@ export default MyApp = StackNavigator({
         AssessCustomerScene: {screen: AssessCustomerScene},
         AssessmentSelectScene: {screen: AssessmentSelectScene},
         OneCarListScene: {screen: OneCarListScene},
+        StockTopCarScene: {screen: StockTopCarScene},
+        PurchaseCarScene: {screen: PurchaseCarScene},
+        CarInfoScene: {screen: CarInfoScene},
         VersionInfo: {screen: VersionInfo},
 
         BluetoothScene: {screen: BluetoothScene},

@@ -14,7 +14,7 @@ const Pixel = new PixelUtil();
 import * as FontAndColor from '../../constant/fontAndColor';
 const {width} = Dimensions.get('window');
 
-export default class OrderItem extends Component {
+export default class PurchaseTitleItem extends Component {
 
     constructor(props) {
         super(props);
@@ -22,7 +22,7 @@ export default class OrderItem extends Component {
 
     render() {
 
-        const {payment_number, jkje,yksj,zjqd} = this.props;
+        const {payment_number, jkje,yksj} = this.props;
 
         return (
             <View style={styles.container}>
@@ -31,9 +31,6 @@ export default class OrderItem extends Component {
                     <View style={styles.contentWrap}>
                         <Text style={styles.firstFont}>{'借款金额：' + jkje}</Text>
                         <Text style={styles.secondFont}>{'用款时间：' + yksj}</Text>
-                    </View>
-                    <View style={styles.contentWrap}>
-                        <Text style={styles.firstFont}>{'资金渠道：' + zjqd}</Text>
                     </View>
                 </View>
                 <View style={styles.bottomBorder}/>
@@ -49,7 +46,7 @@ const styles = StyleSheet.create({
     subContainer: {
         backgroundColor: FontAndColor.all_background,
         paddingHorizontal: Pixel.getPixel(10),
-        height: Pixel.getPixel(92)
+        height: Pixel.getPixel(82)
     },
     titleWrap: {
         marginTop: Pixel.getPixel(10),

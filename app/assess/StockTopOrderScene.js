@@ -55,7 +55,26 @@ export default class StockTopOrderScene extends BaseComponent{
     };
 
     _renderItem = (item)=>{
-        return(<OrderItem item={item} />)
+        return(<OrderItem item={item} onItemClick={this._onItemClick}/>)
+    };
+
+    _onItemClick = (item) =>{
+        let fund_channel = '';
+        if(item.trenchtype_name !== undefined &&
+            item.trenchtype_name !== null){
+            fund_channel = item.trenchtype_name;
+        }
+        this.props.toNextPage('StockTopCarScene',{
+            name:this.cName,
+            merge_id:this.merge_id,
+            payment_id:item.payment_id,
+            payment_number:item.payment_number,
+            loanmnystr:item.loanmnystr,
+            makedatestr:item.makedatestr,
+            loanmny:item.loanmny,
+            fund_channel:fund_channel
+        });
+
     };
 
     _onEndReached = ()=>{
@@ -128,7 +147,6 @@ export default class StockTopOrderScene extends BaseComponent{
         this._showLoadingModal();
         this._getData();
     };
-
 
     render(){
         return(
