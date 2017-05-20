@@ -67,7 +67,8 @@ export default class StockBottomScene extends BaseComponent{
             auto_id:item.auto_id,
             is_time_out:item.is_time_out,
             payment_id:'',
-            merge_id:this.merge_id
+            merge_id:this.merge_id,
+            refreshLastPage:this._onRefresh
         })
     };
 
@@ -133,7 +134,7 @@ export default class StockBottomScene extends BaseComponent{
 
     };
 
-    _onSearchClick=(searchValue)=>{
+    _onSearchClick = (searchValue)=>{
         console.log('搜索');
         this.page = 1;
         this.total = 0;
@@ -141,6 +142,10 @@ export default class StockBottomScene extends BaseComponent{
         this.allSource = [];
         this._showLoadingModal();
         this._getData();
+    };
+
+    _onAddClick = () =>{
+        this.props.toNextPage('CarBrandSelectScene',{});
     };
 
     render(){
@@ -164,7 +169,7 @@ export default class StockBottomScene extends BaseComponent{
                         }
                     />
                 </View>
-                <AddNewCarBottom waitPrice={this.state.waitPrice} onAddClick={()=>{}} addEnable={true}/>
+                <AddNewCarBottom waitPrice={this.state.waitPrice} onAddClick={this._onAddClick} addEnable={true}/>
             </View>
         );
     }

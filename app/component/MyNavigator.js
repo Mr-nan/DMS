@@ -29,6 +29,8 @@ import AssessmentSelectScene from '../assess/AssessmentSelectScene';
 import OneCarListScene from '../assess/OneCarListScene';
 import StockTopCarScene from '../assess/StockTopCarScene';
 import PurchaseCarScene from '../assess/PurchaseCarScene';
+import AddCarNumberScene from '../assess/AddCarNumberScene';
+import CarBrandSelectScene from '../assess/CarBrandSelectScene';
 import CarInfoScene from '../assess/CarInfoScene';
 
 import BluetoothScene from '../main/BluetoothScene';
@@ -49,7 +51,7 @@ export default MyApp = StackNavigator({
         CustomerList: {screen: CustomerList},
         CarCheckCustomer: {screen: CarCheckCustomer},
         CarCheckWifiSelect: {screen: CarCheckWifiSelect},
-        CarCheckWifiList:{screen:CarCheckWifiList},
+        CarCheckWifiList: {screen: CarCheckWifiList},
         CarCheckNoWifiList: {screen: CarCheckNoWifiList},
         CarCheckWarning: {screen: CarCheckWarning},
 
@@ -62,6 +64,8 @@ export default MyApp = StackNavigator({
         StockTopCarScene: {screen: StockTopCarScene},
         PurchaseCarScene: {screen: PurchaseCarScene},
         CarInfoScene: {screen: CarInfoScene},
+        AddCarNumberScene: {screen: AddCarNumberScene},
+        CarBrandSelectScene: {screen: CarBrandSelectScene},
         VersionInfo: {screen: VersionInfo},
 
         BluetoothScene: {screen: BluetoothScene},

@@ -8,7 +8,8 @@ import {
     Image,
     StyleSheet,
     ScrollView,
-    Dimensions
+    Dimensions,
+    TouchableOpacity
 }from 'react-native';
 
 import BaseComponent from '../component/BaseComponent';
@@ -345,11 +346,36 @@ export default class CarInfoScene extends BaseComponent {
         let its = renderSource.map((dt, index) => {
             return this._renderItem(dt, index)
         });
-        
+
         this.setState({
             renderItems: its
         });
 
+    };
+
+    _deleteData = () => {
+
+        this._showLoadingModal();
+        let url = '';
+        let maps = {};
+        if (this.state.from_name === 'StockBottomScene' || this.state.from_name === 'StockTopCarScene') {
+            url = appUrls.INVENTORYFINANCINGDELAUTO;
+            maps.auto_id = this.state.auto_id;
+        } else if (this.state.from_name === 'OneCarListScene') {
+            url = appUrls.ONECARDELAUTO;
+            maps.auto_id = this.state.auto_id;
+        }
+
+        Net.request(url, 'post', maps).then(
+            (response) => {
+                this._closeLoadingModal();
+                this._showHint('删除成功');
+                this.backPage();
+                this.props.refreshLastPage;
+            },
+            (error) => {
+                this._closeLoadingModal();
+            });
     };
 
     _renderItem = (data, index) => {
@@ -376,7 +402,7 @@ export default class CarInfoScene extends BaseComponent {
         } else if (data.type === '3') {
             return (
                 <View key={index}>
-                    <View  style={styles.content_tag_wrap}>
+                    <View style={styles.content_tag_wrap}>
                         <Text style={styles.content_tag_title}>{'查看部位'}</Text>
                         <TagSelectView cellData={this.tagViews}/>
                     </View>
@@ -482,15 +508,17 @@ export default class CarInfoScene extends BaseComponent {
                     <View style={styles.btnWrap}>
                         {
                             this.state.assessFlag &&
-                            <View style={styles.pgBtn}>
+                            <TouchableOpacity style={styles.pgBtn} onPress={()=>{}}>
                                 <Text style={styles.btnFont}>{this.state.accessText}</Text>
-                            </View>
+                            </TouchableOpacity>
                         }
                         {
                             this.state.deleteFlag &&
-                            <View style={styles.deleteBtn}>
+                            <TouchableOpacity activeOpacity={0.6}
+                                              style={styles.deleteBtn}
+                                              onPress={this._deleteData}>
                                 <Text style={styles.btnFont}>{'删除'}</Text>
-                            </View>
+                            </TouchableOpacity>
                         }
                     </View>
                 </View>
