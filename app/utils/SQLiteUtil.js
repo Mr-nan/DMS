@@ -54,8 +54,8 @@ const SQLite = React.createClass({
         //盘库
         db.transaction((tx) => {
             tx.executeSql('CREATE TABLE IF NOT EXISTS ' + "carchecksuccess" + '('
-                + 'busno VARCHAR(20) PRIMARY KEY NOT NULL,'
-                +'vin VARCHAR(20) default "",'
+                + 'busno VARCHAR(20) default "",'
+                +'vin VARCHAR(20) PRIMARY KEY NOT NULL,'
                 +'excecode VARCHAR(20) default "1205",'
                 +'execinfo VARCHAR(20) default "正常",'
                 +'rfid_img_id VARCHAR(20) default "",'

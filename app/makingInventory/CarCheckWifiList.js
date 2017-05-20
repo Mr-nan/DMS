@@ -233,7 +233,7 @@ export  default class CarCheckNoWifiList extends BaseComponent {
                 modelName={rowData.name}
                 vin={'车架号：'+rowData.vin}
                 address={'监管地：'+rowData.storage}
-                type={rowData.type==null || rowData.type=='' ? '': '盘库中'}
+                type={index1==0 ? '盘库中': '盘库成功'}
             />);
 
     }
