@@ -145,7 +145,11 @@ export default class StockBottomScene extends BaseComponent{
     };
 
     _onAddClick = () =>{
-        this.props.toNextPage('CarBrandSelectScene',{});
+        this.props.toNextPage('AddCarNumberScene',{
+            merge_id:this.merge_id,
+            from:'StockBottomScene',
+            payment_id:''
+        });
     };
 
     render(){
