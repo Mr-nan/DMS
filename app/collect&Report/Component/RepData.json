@@ -1,0 +1,247 @@
+{
+   "totulData":{
+     "biz_situation": {
+       "title": "商户经营状态",
+       "type": "option",
+       "option":["正常","关注","风险预警"]
+     },
+     "place_status": {
+       "title":"经营场地是否整洁有序,经营所需环节正常齐备",
+       "type":"option",
+       "option":["正常( 整齐 )","关注( 杂乱 )","风险预警( 破损维修明显)"]
+     },
+    "main_biz_status":{
+      "title":"商户主营业务是否为二手车，借款人，实际控制人或股东是否有涉及其他行业",
+      "type":"option",
+      "option":["正常","风险预警"]
+    },
+     "main_price_range":{
+       "title":"主力车型及价格区间的大致构成",
+       "type":"option",
+       "option":["20万以下","20-50万","50-80万","80-100万","100万以上"]
+     },
+     "rate":{
+       "title":"批发或零售，具体占比",
+       "type":"rate",
+       "subinfo":[{"title":"批发","key":"wholesale_rate"},{"title":"零售","key":"retail_rate"}]
+     },
+     "has_main_supplier":{
+       "title":"车源来源，是否有主要或重点合作方备注",
+       "type":"optionInput",
+       "subinfo":["是","否"]
+     },
+     "rateInput":{
+       "title":"主要销售区域以及方式",
+       "type":"rateInput",
+       "subinfo":[{"title":"批发","key":"msa_wholesale_rate"},{"title":"零售","key":"msa_retail_rate"}]
+     },
+     "showroom_entering_status":{
+       "title":"展厅或市场的进店量",
+       "type":"option",
+       "option":["正常","较少(关注) "]
+     },
+     "transfer_custom":{
+       "title":"收车是否过户，过户习惯",
+       "type":"option",
+       "option":["正常","关注","风险预警"]
+
+     },
+
+     "avg_turnover_days":{
+       "title":"平均周转天数",
+       "type":"input"
+     },
+     "area_atd_compare": {
+       "title": "区域平均周转天数及商户周转天数对比",
+       "type": "option",
+       "option":["高","中","低"]
+     },
+     "area_profit_compare": {
+       "title": "区域平均利润情况及商户利润情况对比",
+       "type": "option",
+       "option":["高","中","低"]
+     },
+     "auto_ownership_status": {
+       "title": "商户车辆的权属是否清晰，是否存在押车，合伙收车或寄售车辆是否存在一车多押等权属争议情况等",
+       "type": "option",
+       "option":["正常","关注","风险预警"]
+     },
+
+     "auto_pledge_status": {
+       "title": "商户车辆在我司的质押情况；商户车辆在其他机构的质押情况",
+       "type": "option",
+       "option":["正常","关注","风险预警"]
+     },
+     "other_credit_status": {
+       "title": "是否存在征信未体现的其他金融借款或民间借贷等负债情况",
+       "type": "option",
+       "option":["正常","关注","风险预警"]
+     },
+     "salary_payment_status": {
+       "title": "是否正常发放薪资；工作氛围及员工精神状态",
+       "type": "option",
+       "option":["正常","关注","风险预警"]
+     },
+     "dr_quality": {
+       "title": "商户在现在的品质情况以及日后发展预期",
+       "type": "option",
+       "option":["一级优秀","二级优良","三级普通"]
+     },
+     "dr_reputation": {
+       "title": "商户在当地的声誉",
+       "type": "option",
+       "option":["良好","关注","风险预警"]
+     },
+     "dr_health": {
+       "title": "借款人，实际控制人或股东重病或其他重大健康状况",
+       "type": "option",
+       "option":["无","关注","风险预警"]
+     },
+     "dr_mind": {
+       "title": "借款人状态（精神状态以及发展思路是否清晰)",
+       "type": "option",
+       "option":["无","关注","风险预警"]
+     },
+
+     "dr_mult_identity": {
+       "title": "借款人或实际控制人有多个身份证或身份信息",
+       "type": "option",
+       "option":["无","风险预警"]
+     },
+     "dr_family": {
+       "title": "借款人，实际控制人或股东婚姻及家庭稳定性情况",
+       "type": "option",
+       "option":["无","关注","风险预警"]
+     },
+     "dr_hobby": {
+       "title": "借款人，实际控制人或股东存在吸毒，巨额赌博等嗜好",
+       "type": "option",
+       "option":["无","风险预警"]
+     },
+     "dr_punishment": {
+       "title": "借款人，实际控制人或股东被国家行政机关处罚",
+       "type": "option",
+       "option":["无","关注","风险预警"]
+     },
+     "dr_controller_change": {
+       "title": "借款人，实际控制人，股东或重要经营关键人物变更",
+       "type": "option",
+       "option":["无","关注","风险预警"]
+     },
+     "dr_equity_change": {
+       "title": "股权分割或股东变更；被收购，重组；股东间相处情况",
+       "type": "option",
+       "option":["无","关注","风险预警"]
+     },
+     "dr_nationality_status": {
+       "title": "借款人或实际控制人取得外国国籍或者开设国外分支机构",
+       "type": "option",
+       "option":["无","关注","风险预警"]
+     },
+
+     "rc_loan_purposes": {
+       "title": "借款用途是否用于其主营业务",
+       "type": "option",
+       "option":["全部用在二手车经营","有资金外用情形或迹象","资金风险关注"]
+     },
+     "rc_has_bad_auto": {
+       "title": "是否存在涉及经营事故，泡水或其他违背市场行情车辆",
+       "type": "option",
+       "option":["正常","关注","风险预警"]
+     },
+     "rc_inv_status": {
+       "title": "检查时商户的车辆在库情况及日常车辆在库情况",
+       "type": "option",
+       "option":["正常","关注","风险预警"]
+     },
+     "rc_cooperating_status": {
+       "title": "监管配合度",
+       "type": "option",
+       "option":["良好","一般","差"]
+     },
+     "rc_illegal_borr_cert": {
+       "title": "是否存在捏造虚假信息借出借用相关监管要件",
+       "type": "option",
+       "option":["没有","存在极少数","关注风险"]
+     },
+     "rc_illegal_sell": {
+       "title": "是否存在未经我司许可私自出售车辆且未按规定还款或置换",
+       "type": "option",
+       "option":["没有","存在极少数","关注风险"]
+     },
+     "rc_illegal_diversion": {
+       "title": "是否存在未经我司许可擅自挪用或长期使用我司质押车辆",
+       "type": "option",
+       "option":["没有","存在极少数","关注风险"]
+     },
+     "rc_borr_cert_overdue": {
+       "title": "监管要件的借出超期或未按承诺使用",
+       "type": "option",
+       "option":["没有","存在极少数","关注风险"]
+     },
+     "rc_report_timely": {
+       "title": "商户是否按时提交贷后报告，贷后报告真实性及规范度",
+       "type": "option",
+       "option":["按时提报","贷后报告真实性存异","不配合提供"]
+     },
+     "rc_daily_repayment": {
+       "title": "商户日常还款情况是否正常",
+       "type": "option",
+       "option":["正常","能按时还需多次催促","关注风险"]
+     }
+
+   },
+   "special":{
+     "wholesale_rate":"批发占比为空",//批发占比
+     "retail_rate":"零售占比",//
+     "msa_wholesale_rate":"主要销售区域批发占比",
+     "msa_retail_rate":"主要销售区域零售占比",
+     "main_supplier_note":"车辆来源备注为空",//
+     "msa_note":"主要的销售区域及方式备注",
+     "rc_overview":"综合评价为空"
+   }
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

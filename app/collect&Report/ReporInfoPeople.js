@@ -13,7 +13,7 @@ import {
 import BaseComponent from '../component/BaseComponent'
 import * as apis from '../constant/appUrls'
 import  {request} from '../utils/RequestUtil'
-import {STATECODE} from './Component/MethodComponet'
+import {STATECODE,addition} from './Component/MethodComponet'
 import {commenStyle,repStyles} from './Component/PageStyleSheet'
 import AllNavigationView from '../component/AllNavigationView';
 import {RepDetailListHeader,RepListFootComponent} from './Component/ListItemComponent'
@@ -48,22 +48,56 @@ const itemoption= {
     dr_nationality_status:['无','关注','风险预警'],
 
 }
-
-
 export default class ReporInfoPeople extends BaseComponent{
 
+
+    state={
+
+        renderPlaceholderOnly:STATECODE.loading,
+
+    }
+    peoplePostData={
+        dr_quality: '0',
+        dr_reputation: '0',
+        dr_health: '0',
+        dr_mind: '0',
+        dr_mult_identity: '0',
+        dr_family: '0',
+        dr_hobby: '0',
+        dr_punishment: '0',
+        dr_controller_change: '0',
+        dr_equity_change: '0',
+        dr_nationality_status: '0'
+    }
+
+
+    initFinish(){
+
+        let holeInfo=this._getProps('holeInfo');
+        Object.keys(this.peoplePostData).map((item)=>{this.peoplePostData[item]=holeInfo[item]});
+        this.setState({
+
+            renderPlaceholderOnly:STATECODE.loadSuccess
+        })
+    }
 
     _getProps=(showKey)=>{
 
         let temp =this.props.navigation.state.params;
 
         return temp[showKey];
-
     }
 
     _radioButtonClick=(groupIndex,radioIndex, value)=>{
+        let tempData=title[groupIndex].selectKey;
+        if(tempData =='dr_hobby'||tempData=='dr_mult_identity'){
 
-        console.log(groupIndex+'==='+radioIndex+'----'+value)
+            this.peoplePostData[tempData]=value=='1'?'3':(value+1).toString();
+        }else {
+            this.peoplePostData[tempData]=(value+1).toString();
+        }
+
+
     }
 
     _nextTepClick=()=>{
@@ -72,16 +106,52 @@ export default class ReporInfoPeople extends BaseComponent{
             {merge_id:this._getProps('merge_id'),
                 title:this._getProps('title'),
                 money:this._getProps('money'),
-                month:this._getProps('month')})
+                month:this._getProps('month'),
+                holeInfo:this._getProps('holeInfo'),
+                lastInfo:this._getProps('currentPageInfo'),
+                currentInfo:this.peoplePostData,
+            })
     }
     _temporaryClick=()=>{
-        alert('暂存')
+
+        let parmer ={merge_id:this._getProps('merge_id'),month:this._getProps('month')};
+        Object.assign(parmer,this.peoplePostData);
+        let lastPageInfo =this._getProps('currentPageInfo');
+        Object.assign(lastPageInfo,parmer);
+         lastPageInfo.wholesale_rate=addition(lastPageInfo.wholesale_rate,100);
+         lastPageInfo.retail_rate=addition(lastPageInfo.retail_rate,100);
+         lastPageInfo.msa_wholesale_rate=addition(lastPageInfo.msa_wholesale_rate,100);
+         lastPageInfo.msa_retail_rate=addition(lastPageInfo.msa_retail_rate,100);
+
+
+        request(apis.PATROLEVALSAVEUPDATEPATROLEVAL, 'Post', lastPageInfo)
+            .then((response) => {
+                    this.props.screenProps.showToast('保存成功');
+                },
+                (error) => {
+                    this.props.screenProps.showToast('保存失败');
+
+                });
     }
 
     _renderItem=(data)=>{
 
         let tempData =itemoption[data.item.selectKey];
         let tempBlob =[];
+        let tempSelect= Number(this.peoplePostData[data.item.selectKey]);
+        let selcted =tempSelect;
+        if(data.item.selectKey =='dr_hobby'||data.item.selectKey=='dr_mult_identity'){
+
+            if(tempSelect=='3'){
+                selcted=1;
+            }else {
+                selcted=tempSelect-1;
+            }
+        }else {
+
+            selcted=tempSelect-1;
+        }
+
 
         tempData.map((item, index) => {
 
@@ -95,7 +165,7 @@ export default class ReporInfoPeople extends BaseComponent{
             <View>
                 <Text style={{marginLeft:10}}>{data.index+1+'、'+data.item.title}</Text>
                 <RadioGroup
-                    selectedIndex={-1}
+                    selectedIndex={selcted}
                     style={repStyles.radioGroup}
                     color="black"
                     onSelect={(index, value)=>{this._radioButtonClick(data.index,index,value)}}>
@@ -113,6 +183,27 @@ export default class ReporInfoPeople extends BaseComponent{
     }
 
     render(){
+
+        if(this.state.renderPlaceholderOnly!=STATECODE.loadSuccess){
+
+            return (
+
+                <View style={commenStyle.commenPage}>
+                    <View style={commenStyle.testUI}>
+                        <RepDetailListHeader
+                            people={this._getProps('title')}
+                            money={this._getProps('money')}
+                            date={this._getProps('month')}
+                            target="借款人指标"
+                        />
+                    </View>
+                    <AllNavigationView title={this._getProps('title')} backIconClick={() => {
+                        this.backPage();
+                    }} parentNavigation={this}/>
+                </View>
+            )
+
+        }
 
         return (
             <View style={commenStyle.commenPage}>

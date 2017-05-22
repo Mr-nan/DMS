@@ -19,6 +19,8 @@ import VersionInfo from '../collect&Report/VersionInfo'
 import ReportInfoManage from '../collect&Report/ReportInfoManage'
 import ReporInfoPeople from '../collect&Report/ReporInfoPeople'
 import ReporInfoFkong from '../collect&Report/ReporInfoFkong'
+import CollectCarInfo from '../collect&Report/CollectCarInfo'
+import SubmitReporInfo from '../collect&Report/SubmitReporInfo'
 import CarCheckCustomer from '../makingInventory/CarCheckCustomer';
 import CarCheckWifiSelect from '../makingInventory/CarCheckWifiSelect';
 import CarCheckNoWifiList from '../makingInventory/CarCheckNoWifiList';
@@ -49,10 +51,11 @@ export default MyApp = StackNavigator({
 
         CustomerItemCarList:{screen:CustomerItemCarList},
         ReportCustomerList:{screen:ReportCustomerList},
-
+        CollectCarInfo:{screen:CollectCarInfo},
         AssessCustomerScene:{screen:AssessCustomerScene},
         AssessmentSelectScene:{screen:AssessmentSelectScene},
         VersionInfo:{screen:VersionInfo},
+        SubmitReporInfo:{screen:SubmitReporInfo},
 
         BluetoothScene:{screen:BluetoothScene},
         SelectMaskComponent:{screen:SelectMaskComponent},

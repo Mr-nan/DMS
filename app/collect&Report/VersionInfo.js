@@ -24,7 +24,6 @@ export default class VersionInfo extends BaseComponent{
         renderPlaceholderOnly:STATECODE.loading
     };
 
-
     _dateReversal=(time)=>{
 
         let date = new Date();
@@ -60,7 +59,6 @@ export default class VersionInfo extends BaseComponent{
                 (error) => {
 
                 });
-
     }
 
 
