@@ -25,6 +25,7 @@ import * as StorageKeyNames from '../constant/storageKeyNames';
 
 import ImageViewPage from 'react-native-viewpager';
 import TagSelectView from './component/TagSelectView';
+import AddCarPricePop from './component/AddCarPricePop';
 
 export default class CarInfoScene extends BaseComponent {
 
@@ -46,7 +47,8 @@ export default class CarInfoScene extends BaseComponent {
             assessFlag: false,
             loadFunction: false,
             accessText: '评估',
-            renderItems: []
+            renderItems: [],
+            assessPop: false
         };
 
         this.tagViews = [];
@@ -489,6 +491,39 @@ export default class CarInfoScene extends BaseComponent {
 
     };
 
+    //二次评估弹框
+    _openPop = () => {
+        this.setState({
+            assessPop: true
+        });
+    };
+
+    _closePop = () => {
+        this.setState({
+            assessPop: false
+        });
+    };
+
+    _onOkClick = (price) => {
+        let maps = {
+            auto_id: this.state.auto_id,
+            certification: this.certification,
+            is_new: this.state.is_new,
+            merge_id: this.state.merge_id,
+            model_id: this.state.model_id,
+            region_assess_mny: price
+        };
+        Net.request(appUrls.INVENTORYFINANCINGRESETPRICE, 'post', maps).then(
+            (response) => {
+                this._closePop();
+                this._getData();
+            },
+            (error) => {
+                this._showHint('服务器请求失败，请重新请求');
+            });
+    };
+
+
     render() {
         return (
             <View style={styles.container}>
@@ -508,7 +543,9 @@ export default class CarInfoScene extends BaseComponent {
                     <View style={styles.btnWrap}>
                         {
                             this.state.assessFlag &&
-                            <TouchableOpacity style={styles.pgBtn} onPress={()=>{}}>
+                            <TouchableOpacity style={styles.pgBtn} onPress={() => {
+                                this._openPop();
+                            }}>
                                 <Text style={styles.btnFont}>{this.state.accessText}</Text>
                             </TouchableOpacity>
                         }
@@ -525,6 +562,12 @@ export default class CarInfoScene extends BaseComponent {
                 <AllNavigationView title={'车辆信息'} backIconClick={() => {
                     this.backPage();
                 }} parentNavigation={this}/>
+                {
+                    this.state.assessPop && <AddCarPricePop
+                        closePop={this._closePop}
+                        onOkClick={this._onOkClick}
+                    />
+                }
             </View>
         )
     }
