@@ -24,6 +24,7 @@ let tabSouce = [];
 let obd_info = null;
 let regulation_info = null;
 let auto_base_info;
+let warn_record_ids;
 
 export  default class ObdCarDetail extends BaseComponent {
     // 初始化模拟数据
@@ -34,33 +35,32 @@ export  default class ObdCarDetail extends BaseComponent {
             dataSource: {},
             tabDataSource: {},
             renderPlaceholderOnly: 'blank',
-            isRefreshing: false
         };
     }
 
     initFinish() {
         allSouce = [];
         this.props.screenProps.showModal(true);
-        this.getData();
+        this.getData(false);
     }
 
-    getData = () => {
+    getData = (isFresh) => {
         auto_base_info = null;
         regulation_info = null;
         tabSouce = [];
         let maps = {
-            // rid: this.props.navigation.state.params.rid,
-            rid: '39',
+            rid: this.props.navigation.state.params.rid,
+            // rid: '39',
         };
         request(Urls.OBD_CAR_DETAIL, 'Post', maps)
 
             .then((response) => {
-            console.log(response);
                     this.props.screenProps.showModal(false);
                     if (response.mjson.retdata == '' || response.mjson.retdata == null) {
                         return;
                     }
-                    if (response.mjson.retdata.auto_base_info !== null) {
+                    console.log('1111111111auto_base_info');
+                    if (response.mjson.retdata.auto_base_info !== null ) {
                         auto_base_info = response.mjson.retdata.auto_base_info;
                         allSouce.push([(auto_base_info.auto_type.name + '：' + auto_base_info.auto_type.value), (auto_base_info.certification.name + '：' + auto_base_info.certification.value)]);
                         allSouce.push([(auto_base_info.brand_name.name + '：' + auto_base_info.brand_name.value), (auto_base_info.series_name.name + '：' + auto_base_info.series_name.value)]);
@@ -72,14 +72,17 @@ export  default class ObdCarDetail extends BaseComponent {
                         allSouce.push([(auto_base_info.mileage.name + '：' + auto_base_info.mileage.value), (auto_base_info.plate_number.name + '：' + auto_base_info.plate_number.value)]);
                         allSouce.push([(auto_base_info.inspection_end.name + '：' + auto_base_info.inspection_end.value), (auto_base_info.insurance_end.name + '：' + auto_base_info.insurance_end.value)]);
                         allSouce.push([(auto_base_info.record_type.name + '：' + auto_base_info.record_type.value), (auto_base_info.storage.name + '：' + auto_base_info.storage.value)]);
+                        console.log(allSouce);
                         const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
                         this.setState({
                             dataSource: ds.cloneWithRows(allSouce),
-                            isRefreshing: false
                         });
+                    }else{
+                        return;
                     }
                     if (response.mjson.retdata.regulation_info !== null) {
                         regulation_info = response.mjson.retdata.regulation_info;
+                        warn_record_ids=regulation_info.warn_record_id;
                     }
                     if (response.mjson.retdata.obd_info !== null) {
                         obd_info = response.mjson.retdata.obd_info;
@@ -111,7 +114,7 @@ export  default class ObdCarDetail extends BaseComponent {
     render() {
         if (this.state.renderPlaceholderOnly !== 'success' || auto_base_info == null) {
             return (<View style={{backgroundColor: fontAndColor.COLORA3, flex: 1, paddingTop: Pixel.getPixel(15)}}>
-                <AllNavigationView title={this.props.navigation.state.params.name} backIconClick={() => {
+                <AllNavigationView title={'OBD监管详情'} backIconClick={() => {
                     this.backPage();
                 }} rightFootClick={()=>{}}/>
             </View>);
@@ -125,6 +128,7 @@ export  default class ObdCarDetail extends BaseComponent {
                                 <ListView
                                     contentContainerStyle={styles.listStyle}
                                     dataSource={this.state.dataSource}
+                                    enableEmptySections = {true}
                                     renderRow={this.renderRow}
                                 />
 
@@ -155,7 +159,7 @@ export  default class ObdCarDetail extends BaseComponent {
                                         <Text
                                             style={obd_info.is_explain=='1'? {color: 'red'}: null}>{obd_info.obd_status}</Text>
                                     </View>
-                                    <TouchableOpacity style={{marginRight:Pixel.getPixel(10)}} activeOpacity={0.8}
+                                    <TouchableOpacity style={[{marginRight:Pixel.getPixel(10)},  warn_record_ids=='0' ? {display: 'none'}: null]} activeOpacity={0.8}
                                                       onPress={()=>{this.toNextPage('ObdWarningExplain',{
                                                           warn_record_id: regulation_info.warn_record_id,
                                                           freshDataClick: this.freshDataClick});}}>
@@ -177,6 +181,7 @@ export  default class ObdCarDetail extends BaseComponent {
                                 <ListView
                                     contentContainerStyle={styles.listStyle}
                                     dataSource={this.state.tabDataSource}
+                                    enableEmptySections = {true}
                                     renderRow={this._tableRenderRow}
                                 />
                             </View>

@@ -24,9 +24,14 @@ import SubmitReporInfo from '../collect&Report/SubmitReporInfo'
 import CarCheckCustomer from '../makingInventory/CarCheckCustomer';
 import CarCheckWifiSelect from '../makingInventory/CarCheckWifiSelect';
 import CarCheckNoWifiList from '../makingInventory/CarCheckNoWifiList';
+import CarCheckWifiList from '../makingInventory/CarCheckWifiList';
 import CarCheckWarning from '../makingInventory/CarCheckWarning';
 import AssessCustomerScene from '../assess/AssessmentCustomerScene';
 import AssessmentSelectScene from '../assess/AssessmentSelectScene';
+import OneCarListScene from '../assess/OneCarListScene';
+import StockTopCarScene from '../assess/StockTopCarScene';
+import PurchaseCarScene from '../assess/PurchaseCarScene';
+import CarInfoScene from '../assess/CarInfoScene';
 
 import BluetoothScene from '../main/BluetoothScene';
 
@@ -36,18 +41,19 @@ export default MyApp = StackNavigator({
         Root: {screen: RootScene},
         LoginScene: {screen: LoginScene},
         FunctionScene: {screen: FunctionScene},
-        ObdCustom:{screen:ObdCustom},
-        ObdCheckoutRecordFragment:{screen:ObdCheckoutRecordFragment},
-        ObdCarList:{screen:ObdCarList},
-        ObdCarDetail:{screen:ObdCarDetail},
-        WebScene:{screen:WebScene},
-        ObdWarningExplain:{screen:ObdWarningExplain},
-        ObdChangeBind:{screen:ObdChangeBind},
-        CustomerList:{screen:CustomerList},
-        CarCheckCustomer:{screen:CarCheckCustomer},
-        CarCheckWifiSelect:{screen:CarCheckWifiSelect},
-        CarCheckNoWifiList:{screen:CarCheckNoWifiList},
-        CarCheckWarning:{screen:CarCheckWarning},
+        ObdCustom: {screen: ObdCustom},
+        ObdCheckoutRecordFragment: {screen: ObdCheckoutRecordFragment},
+        ObdCarList: {screen: ObdCarList},
+        ObdCarDetail: {screen: ObdCarDetail},
+        WebScene: {screen: WebScene},
+        ObdWarningExplain: {screen: ObdWarningExplain},
+        ObdChangeBind: {screen: ObdChangeBind},
+        CustomerList: {screen: CustomerList},
+        CarCheckCustomer: {screen: CarCheckCustomer},
+        CarCheckWifiSelect: {screen: CarCheckWifiSelect},
+        CarCheckWifiList:{screen:CarCheckWifiList},
+        CarCheckNoWifiList: {screen: CarCheckNoWifiList},
+        CarCheckWarning: {screen: CarCheckWarning},
 
         CustomerItemCarList:{screen:CustomerItemCarList},
         ReportCustomerList:{screen:ReportCustomerList},
@@ -57,11 +63,15 @@ export default MyApp = StackNavigator({
         VersionInfo:{screen:VersionInfo},
         SubmitReporInfo:{screen:SubmitReporInfo},
 
-        BluetoothScene:{screen:BluetoothScene},
-        SelectMaskComponent:{screen:SelectMaskComponent},
-        ReportInfoManage:{screen:ReportInfoManage},
-        ReporInfoPeople:{screen:ReporInfoPeople},
-        ReporInfoFkong:{screen:ReporInfoFkong}
+        OneCarListScene: {screen: OneCarListScene},
+        StockTopCarScene: {screen: StockTopCarScene},
+        PurchaseCarScene: {screen: PurchaseCarScene},
+
+        BluetoothScene: {screen: BluetoothScene},
+        SelectMaskComponent: {screen: SelectMaskComponent},
+        ReportInfoManage: {screen: ReportInfoManage},
+        ReporInfoPeople: {screen: ReporInfoPeople},
+        ReporInfoFkong: {screen: ReporInfoFkong}
     },
     {
         initialRouteName: 'Root',

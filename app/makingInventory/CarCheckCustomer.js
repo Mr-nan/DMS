@@ -138,6 +138,7 @@ export  default class CarCheckCustomer extends BaseComponent {
                         contentContainerStyle={styles.listStyle}
                         dataSource={this.state.dataSource}
                         renderRow={this.renderRow}
+                        enableEmptySections = {true}
                         renderFooter={
                             this.renderListFooter
                         }
@@ -175,7 +176,8 @@ export  default class CarCheckCustomer extends BaseComponent {
                 onPress={()=>{
                     this.toNextPage('CarCheckWifiSelect',{
                     name: rowData.name,
-                    merge_id: rowData.busino
+                    merge_id: rowData.busino,
+                    freshDataClick: this.freshDataClick
                 });}}
                 customerName={rowData.name}
                 carNum={rowData.wpkCount}

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {AppRegistry, Text, View, Image, TextInput, StyleSheet, TouchableOpacity,NativeModules} from 'react-native';
+import {AppRegistry, Text, View, Image, TextInput, StyleSheet, TouchableOpacity,NativeModules,NativeAppEventEmitter,} from 'react-native';
 const login_logs = require('../../images/login_logs.png');
 import BaseComponent from '../component/BaseComponent';
 import {request} from '../utils/RequestUtil';
@@ -34,8 +34,11 @@ const options = {
     storageOptions: {
         skipBackup: true,
         path: 'images',
+        blueToothText:'设备未连接'
     }
 };
+
+let that = null;
 export  default class CarCheckWarning extends BaseComponent {
     // 初始化模拟数据
     constructor(props) {
@@ -51,18 +54,39 @@ export  default class CarCheckWarning extends BaseComponent {
             imageSource: login_logs,
             labelStyle: {}
         };
-
+        that = this;
     }
 
     initFinish() {
-        const {vin1, chkno1, model1, brand1, address1, status1}=this.props.navigation.state.params;
-        vin=vin1;
-        chkno=chkno1;
-        model=model1;
-        brand=brand1;
-        address=address1;
-        status=status1;
+        NativeModules.DmsCustom.isConnection((data)=>{
+            if(data==1){
+                that.setState({
+                    blueToothText: '设备已连接'
+                });
+            }
+        })
+        NativeAppEventEmitter
+            .addListener('onReadData', this.onReadData);
+        vin=this.props.navigation.state.params.vin;
+        chkno=this.props.navigation.state.params.chkno;
+        model=this.props.navigation.state.params.model;
+        brand=this.props.navigation.state.params.brand;
+        address=this.props.navigation.state.params.address;
+        status=this.props.navigation.state.params.status;
         this.getData();
+
+    }
+
+    onBlueConnection(){
+        that.setState({
+            blueToothText: '设备已连接'
+        });
+    }
+
+    onReadData(data){
+        that.setState({
+            scanLabelText: data.result
+        });
     }
 
     getData = () => {
@@ -165,7 +189,7 @@ export  default class CarCheckWarning extends BaseComponent {
         return (
             <View style={styles.contain}>
                 <View style={styles.blueTooth}>
-                    <Text style={{flex: 1, textAlign:'center'}}>设备未连接</Text>
+                    <Text style={{flex: 1, textAlign:'center'}}>{this.state.blueToothText}</Text>
                 </View>
                 <TouchableOpacity activeOpacity={0.8} onPress={this.labelClick}>
                     <View style={[styles.wainingExplain,{paddingVertical: Pixel.getPixel(18)}]}>
@@ -243,9 +267,7 @@ export  default class CarCheckWarning extends BaseComponent {
     }
     scanLabelClick=()=>{
         if(this.state.labelText=='扫描标签'){
-            this.setState({
-                scanLabelText: 'E28068102000000447C0B022'
-            });
+            this.toNextPage('BluetoothScene',{onReadData:this.onReadData})
         }else {
             NativeModules.DmsCustom.qrScan((success) => {
                 console.log('success', success)

@@ -23,6 +23,8 @@ import StorageUtil from '../utils/StorageUtil';
 import * as StorageKeyNames from '../constant/storageKeyNames';
 const {width} = Dimensions.get('window');
 
+import * as Net from '../utils/RequestUtil';
+import * as appUrls from '../constant/appUrls';
 
 const clpg = require('../../images/clpg.png');
 const clrk = require('../../images/clrk.png');
@@ -64,6 +66,12 @@ export default class FunctionScene extends BaseComponent {
             }
         });
 
+        Net.request(appUrls.AUTOGETVIEWINGPOSITION,'post',{}).then(
+            (response)=>{
+                StorageUtil.mSetItem(StorageKeyNames.TAG_VIEW, JSON.stringify(response.mjson.retdata));
+            },
+            (error)=>{
+            });
     };
 
     _itemClick = (type) => {
@@ -80,8 +88,6 @@ export default class FunctionScene extends BaseComponent {
                 this.toNextPage('CarCheckCustomer', {});
                 break;
             case 4:
-                NativeAppEventEmitter
-                .addListener('onReadData', this._onReadData);
                 break;
             case 5:
                 this.toNextPage('ReportCustomerList',{})
@@ -90,10 +96,6 @@ export default class FunctionScene extends BaseComponent {
                 this.toNextPage('ObdCustom', {});
                 break;
         }
-    };
-
-    _onReadData = (data)=>{
-        console.log('blue data',data.result);
     };
 
     _renderItem = (data) => {
