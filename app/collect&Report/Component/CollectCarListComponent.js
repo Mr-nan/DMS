@@ -21,19 +21,26 @@ class CustomButton extends  PureComponent{
 
         isSelected:false,
     }
-    setSelected=()=>{
+
+    setSelected=(state)=>{
 
         this.setState({
-            isSelected:!this.state.isSelected
+            isSelected:state
             })
     }
+    // _itemOnClick=()=>{
+    //
+    //     const {onPress}=this.props;
+    //     onPress(this.setSelected)
+    //
+    // }
 
     render(){
 
-        const {onPress,title}=this.props;
+        const {title, onPress}=this.props;
         return(
-            <TouchableOpacity style={[styles.selectItem,this.state.isSelected&&{borderColor:'gray',}]} onPress={this.setSelected}>
-                <Text style={[styles.selctItemText,this.state.isSelected&&{color:'gray'}]}>{title}</Text>
+            <TouchableOpacity style={[styles.selectItem,this.state.isSelected&&{borderColor:PAGECOLOR.all_blue}]} onPress={onPress}>
+                <Text style={[styles.selctItemText,this.state.isSelected&&{color:PAGECOLOR.all_blue}]}>{title}</Text>
             </TouchableOpacity>
             )
     }
@@ -62,8 +69,6 @@ class RfIdButton extends  PureComponent{
     }
 
 }
-
-
 
 
 class CollectTitle extends  PureComponent{
@@ -132,15 +137,32 @@ class CollectTitle extends  PureComponent{
 
  class CollectSelect extends PureComponent{
 
+    refBlobs=[]
+    selectedIndex='0';
+    tempref;
+
+     componentDidMount() {
+
+         this.tempref=this.refBlobs[this.selectedIndex];
+         this.tempref.setSelected(true)
+     }
+     _selectButtonClick=(index)=>{
+         this.tempref.setSelected(false);
+         let tempref=this.refBlobs[index];
+         tempref.setSelected(true);
+         this.tempref=tempref;
+
+     }
+
     render(){
         const {titles}=this.props;
-
         let tempBlobs=[];
-
         titles.map((item,index)=>{
 
-            tempBlobs.push(<CustomButton  key={index} title={item}/>)
+            let tempitem = <CustomButton ref={(cus)=>{this.refBlobs[index]=cus}} key={index} title={item} index={index} onPress={()=>{this._selectButtonClick(index)}}/>
+            tempBlobs.push(tempitem)
         })
+        this.selectedIndex='1';
         return(
             <View style={styles.selectStyle}>{tempBlobs}</View>
         )
@@ -244,7 +266,7 @@ const styles=StyleSheet.create({
     },
     selectItem:{
         borderRadius:adapeSize(5),
-        borderColor:PAGECOLOR.all_blue,
+        borderColor:'gray',
         borderWidth:1,
         marginLeft:adapeSize(10),
         marginRight:adapeSize(10),
@@ -255,7 +277,7 @@ const styles=StyleSheet.create({
 
     selctItemText:{
 
-        color:PAGECOLOR.all_blue,
+        color:'gray',
         marginBottom:adapeSize(10),
         marginTop:adapeSize(10),
         marginLeft:adapeSize(5),
