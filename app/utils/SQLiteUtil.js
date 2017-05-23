@@ -3,8 +3,7 @@ import SQLiteStorage from 'react-native-sqlite-storage';
 
 SQLiteStorage.DEBUG(true);
 var db;
-const Collection_TABLE_NAME = "CarName";//收藏表
-const PUBLISH_TABLE_NAME = "publishCar"; //发布编辑
+const NEW_CAR = "newcar"; //添加新车
 
 const SQLite = React.createClass({
 
@@ -34,6 +33,70 @@ const SQLite = React.createClass({
         if (!db) {
             this.open();
         }
+
+        //添加新车
+        db.transaction((tx) => {
+            tx.executeSql('CREATE TABLE IF NOT EXISTS ' + NEW_CAR + '('
+                + 'accident varchar(20) default "",'
+                + 'auto_base_id varchar(20) default "",'
+                + 'brand_id varchar(20) default "",'
+                + 'car_box varchar(20) default "",'
+                + 'car_color varchar(20) default "",'
+                + 'car_condition varchar(20) default "",'
+                + 'car_door varchar(20) default "",'
+                + 'car_seat varchar(20) default "",'
+                + 'car_status varchar(20) default "",'
+                + 'certification varchar(20) default "",'
+                + 'chechong_mny varchar(20) default "",'
+                + 'che300_mny varchar(20) default "",'
+                + 'dealer_price varchar(20) default "",'
+                + 'displacement varchar(20) default "",'
+                + 'engine_number varchar(20) default "",'
+                + 'viewing_position varchar(200) default "",'
+                + 'frame_number varchar(20) default "" unique, '
+                + 'gearbox varchar(20) default "",'
+                + 'gearbox_speed varchar(20) default "",'
+                + 'group_id varchar(50) default "",'
+                + 'init_reg varchar(20) default "",'
+                + 'ip varchar(20) default "",'
+                + 'remark varchar(200) default "",'
+                + 'is_new varchar(20) default "",'
+                + 'isshow varchar(20) default "",'
+                + 'last_update_time varchar(20) default "",'
+                + 'maintenance varchar(20) default "",'
+                + 'manufacture varchar(20) default "",'
+                + 'merge_id varchar(20) default "",'
+                + 'model_id varchar(20) default "",'
+                + 'nature_use varchar(20) default "",'
+                + 'personal_price varchar(20) default "",'
+                + 'plate_number varchar(20) default "",'
+                + 'retail_price varchar(20) default "",'
+                + 'rfid_damaged varchar(20) default "",'
+                + 'region_assess_mny varchar(20) default "",'
+                + 'record_type varchar(20) default "",'
+                + 'series_id varchar(20) default "",'
+                + 'status varchar(20) default "",'
+                + 'storage_id varchar(20) default "",'
+                + 'transfer_count varchar(20) default "",'
+                + 'mileage varchar(20) default "",'
+                + 'tablestatus varchar(20) default "",'
+                + 'trim_color varchar(20) default "",'
+                + 'region_rebate varchar(20) default "",'
+                + 'updatetime varchar(20) default "",'
+                + 'user_id varchar(20) default "",'
+                + 'lend_mny varchar(20) default "",'
+                + 'wading varchar(20) default "");'
+                , [], () => {
+                    this._successCB('executeSql');
+                }, (err) => {
+                    this._errorCB('executeSql', err);
+                });
+        }, (err) => {
+            this._errorCB('transaction', err);
+        }, () => {
+            this._successCB('transaction');
+        });
+
         //盘库
         db.transaction((tx) => {
             tx.executeSql('CREATE TABLE IF NOT EXISTS ' + "carcheckchoose" + '('
@@ -48,7 +111,7 @@ const SQLite = React.createClass({
             this._errorCB('transaction', err);
         }, () => {
             this._successCB('transaction');
-        })
+        });
 
         //盘库
         db.transaction((tx) => {
@@ -101,9 +164,9 @@ const SQLite = React.createClass({
             this.open();
         }
         db.executeSql(sql, array, function (rs) {
-            callBack({code:1,result:rs});
+            callBack({code: 1, result: rs});
         }, function (error) {
-            callBack({code:-1,error:error});
+            callBack({code: -1, error: error});
         });
     },
     /**
