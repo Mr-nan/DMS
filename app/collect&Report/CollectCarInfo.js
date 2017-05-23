@@ -7,7 +7,8 @@ import {
     View,
     Text,
     FlatList,
-    KeyboardAvoidingView
+    KeyboardAvoidingView,
+    NativeModules
 } from 'react-native';
 import BaseComponent from '../component/BaseComponent'
 import {CollectTitle,CollectDate,CollectTitelInput,CollectButtonInput,CollectSelect,CollectOBDRFID,CollectNestTep} from './Component/CollectCarListComponent'
@@ -31,7 +32,7 @@ const data=[
     {title:'扫描登记证',type:click,showValue:'',placeholder:'请扫描登记证',key:'regbr'},
     {title:'扫描行驶证',type:click,showValue:'',placeholder:'请扫描行驶证',key:'runbr'},
     {title:'扫描身份证',type:click,showValue:'',placeholder:'请扫描身份证',key:'carid'},
-    {title:['描登标签','扫描OBD'],type:doubleClick,showValue:'',placeholder:'请扫描标签',key:'obd_numberrfid'},
+    {title:['扫描标签','扫描OBD'],type:doubleClick,showValue:'',placeholder:'请扫描标签',key:'obd_numberrfid'},
 ]
 
 export  default  class CollectCarInfo extends BaseComponent{
@@ -44,7 +45,18 @@ export  default  class CollectCarInfo extends BaseComponent{
     }
     _scanItemClick=(key)=>{
 
-        alert(key)
+        if(key=='runbr'){
+
+            NativeModules.DmsCustom.scanVL((info,error)=>{console.log(info)})
+        }else if(key=='regbr'){
+
+            NativeModules.DmsCustom.scanVin((info,error)=>{console.log(info)})
+        }else {
+
+            NativeModules.DmsCustom.scanID((info,error)=>{console.log(info)})
+        }
+
+
     }
 
     _renderItem=(data)=>{

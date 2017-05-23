@@ -38,6 +38,12 @@
 		12183D721ED41A590098B610 /* xiangjianniu.png in Resources */ = {isa = PBXBuildFile; fileRef = 12183D601ED41A590098B610 /* xiangjianniu.png */; };
 		12183D731ED41A590098B610 /* 相机蒙版.png in Resources */ = {isa = PBXBuildFile; fileRef = 12183D611ED41A590098B610 /* 相机蒙版.png */; };
 		12183D771ED41A910098B610 /* VLTopView.m in Sources */ = {isa = PBXBuildFile; fileRef = 12183D761ED41A910098B610 /* VLTopView.m */; };
+		12183D9E1ED423330098B610 /* VinCameraViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 12183D9D1ED423330098B610 /* VinCameraViewController.mm */; };
+		12183DA11ED423570098B610 /* TopView.m in Sources */ = {isa = PBXBuildFile; fileRef = 12183DA01ED423570098B610 /* TopView.m */; };
+		12183DA51ED426150098B610 /* OBDScanController.m in Sources */ = {isa = PBXBuildFile; fileRef = 12183DA41ED426150098B610 /* OBDScanController.m */; };
+		12183DA81ED42DBD0098B610 /* IDCardCameraViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 12183DA71ED42DBD0098B610 /* IDCardCameraViewController.mm */; };
+		12183DAE1ED42DCA0098B610 /* SIDTopView.m in Sources */ = {isa = PBXBuildFile; fileRef = 12183DAC1ED42DCA0098B610 /* SIDTopView.m */; };
+		12B049D31ED446C40051CD56 /* libSIDCard.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 12B049D21ED446C40051CD56 /* libSIDCard.a */; };
 		133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C398B91ACF4ADC00677621 /* libRCTLinking.a */; };
 		139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139105C11AF99BAD00B5F7CC /* libRCTSettings.a */; };
 		139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139FDEF41B06529B00C62182 /* libRCTWebSocket.a */; };
@@ -309,6 +315,19 @@
 		12183D741ED41A740098B610 /* SVehicleLicense.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVehicleLicense.h; sourceTree = "<group>"; };
 		12183D751ED41A910098B610 /* VLTopView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VLTopView.h; sourceTree = "<group>"; };
 		12183D761ED41A910098B610 /* VLTopView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VLTopView.m; sourceTree = "<group>"; };
+		12183D9C1ED423330098B610 /* VinCameraViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VinCameraViewController.h; sourceTree = "<group>"; };
+		12183D9D1ED423330098B610 /* VinCameraViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VinCameraViewController.mm; sourceTree = "<group>"; };
+		12183D9F1ED423570098B610 /* TopView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TopView.h; sourceTree = "<group>"; };
+		12183DA01ED423570098B610 /* TopView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TopView.m; sourceTree = "<group>"; };
+		12183DA21ED4237B0098B610 /* vinTyper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vinTyper.h; sourceTree = "<group>"; };
+		12183DA31ED426150098B610 /* OBDScanController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OBDScanController.h; sourceTree = "<group>"; };
+		12183DA41ED426150098B610 /* OBDScanController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OBDScanController.m; sourceTree = "<group>"; };
+		12183DA61ED42DBD0098B610 /* IDCardCameraViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDCardCameraViewController.h; sourceTree = "<group>"; };
+		12183DA71ED42DBD0098B610 /* IDCardCameraViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IDCardCameraViewController.mm; sourceTree = "<group>"; };
+		12183DAA1ED42DCA0098B610 /* SIDCard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SIDCard.h; sourceTree = "<group>"; };
+		12183DAB1ED42DCA0098B610 /* SIDTopView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SIDTopView.h; sourceTree = "<group>"; };
+		12183DAC1ED42DCA0098B610 /* SIDTopView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SIDTopView.m; sourceTree = "<group>"; };
+		12B049D21ED446C40051CD56 /* libSIDCard.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libSIDCard.a; sourceTree = "<group>"; };
 		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
 		139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* DMS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DMS.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -349,6 +368,7 @@
 				00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */,
 				00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */,
 				12183D4B1ED41A350098B610 /* libvinTyper.a in Frameworks */,
+				12B049D31ED446C40051CD56 /* libSIDCard.a in Frameworks */,
 				00C302E81ABCBA2D00DB3ED1 /* libRCTImage.a in Frameworks */,
 				133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */,
 				00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */,
@@ -459,16 +479,26 @@
 			isa = PBXGroup;
 			children = (
 				12183D4F1ED41A590098B610 /* Resources */,
-				12183D461ED41A350098B610 /* 4D39F52BD46AC7CD8470.lic */,
-				12183D471ED41A350098B610 /* libSVehicleLicense.a */,
-				12183D481ED41A350098B610 /* libvinTyper.a */,
+				12183DAF1ED42DD40098B610 /* lib */,
 				12183D431ED419400098B610 /* DmsCustom.h */,
 				12183D441ED419400098B610 /* DmsCustom.m */,
 				12183D751ED41A910098B610 /* VLTopView.h */,
 				12183D761ED41A910098B610 /* VLTopView.m */,
+				12183DA21ED4237B0098B610 /* vinTyper.h */,
+				12183D9F1ED423570098B610 /* TopView.h */,
+				12183DA01ED423570098B610 /* TopView.m */,
 				12183D741ED41A740098B610 /* SVehicleLicense.h */,
 				12183D4C1ED41A480098B610 /* VLCameraViewController.h */,
 				12183D4D1ED41A480098B610 /* VLCameraViewController.mm */,
+				12183D9C1ED423330098B610 /* VinCameraViewController.h */,
+				12183D9D1ED423330098B610 /* VinCameraViewController.mm */,
+				12183DAA1ED42DCA0098B610 /* SIDCard.h */,
+				12183DAB1ED42DCA0098B610 /* SIDTopView.h */,
+				12183DAC1ED42DCA0098B610 /* SIDTopView.m */,
+				12183DA61ED42DBD0098B610 /* IDCardCameraViewController.h */,
+				12183DA71ED42DBD0098B610 /* IDCardCameraViewController.mm */,
+				12183DA31ED426150098B610 /* OBDScanController.h */,
+				12183DA41ED426150098B610 /* OBDScanController.m */,
 			);
 			path = scans;
 			sourceTree = "<group>";
@@ -496,6 +526,17 @@
 				12183D611ED41A590098B610 /* 相机蒙版.png */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		12183DAF1ED42DD40098B610 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				12183D461ED41A350098B610 /* 4D39F52BD46AC7CD8470.lic */,
+				12183D471ED41A350098B610 /* libSVehicleLicense.a */,
+				12183D481ED41A350098B610 /* libvinTyper.a */,
+				12B049D21ED446C40051CD56 /* libSIDCard.a */,
+			);
+			name = lib;
 			sourceTree = "<group>";
 		};
 		12BA2E0A1EC9B1C0004DD111 /* Products */ = {
@@ -1100,11 +1141,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				12183DA11ED423570098B610 /* TopView.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				12183D771ED41A910098B610 /* VLTopView.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				12183DA51ED426150098B610 /* OBDScanController.m in Sources */,
+				12183DA81ED42DBD0098B610 /* IDCardCameraViewController.mm in Sources */,
+				12183D9E1ED423330098B610 /* VinCameraViewController.mm in Sources */,
 				12183D451ED419400098B610 /* DmsCustom.m in Sources */,
 				12183D4E1ED41A480098B610 /* VLCameraViewController.mm in Sources */,
+				12183DAE1ED42DCA0098B610 /* SIDTopView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1223,6 +1269,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = 8RXU2MG5MH;
+				ENABLE_BITCODE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)..\node_modules\neact-native-image-pickerios",
@@ -1251,6 +1298,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 8RXU2MG5MH;
+				ENABLE_BITCODE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)..\node_modules\neact-native-image-pickerios",
