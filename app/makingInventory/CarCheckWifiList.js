@@ -58,6 +58,7 @@ export  default class CarCheckNoWifiList extends BaseComponent {
                 rightStyle: {color: 'white'}
             });
         }
+        this.props.screenProps.showModal(true);
         this.getData(index1);
     }
 
