@@ -104,7 +104,7 @@ export  default class CustomerItemCarList extends BaseComponent{
     _renderItem =(data)=>{
         return(
             <CollectCarListItem
-                carFrameNumber={'车架号 ：'+data.item.vin}
+                carFrameNumber={data.item.vin}
                 carType={data.item.brand_name}
                 carDetailType={data.item.model_name}
                 place={'监管地 : '+data.item.storge}

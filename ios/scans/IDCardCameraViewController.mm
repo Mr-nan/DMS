@@ -396,8 +396,8 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
     if(1==[_sIDCard getRecognizeType])
     {
         //正面
-//        NSString *nsResult = [NSString stringWithFormat:@"%@\n%@\n%@\n%@\n%@\n%@",_sIDCard.nsName,_sIDCard.nsSex,_sIDCard.nsNation,_sIDCard.nsBirth,_sIDCard.nsAddress,_sIDCard.nsIDNum];
-//        _topView.label.text = nsResult;
+        NSString *nsResult = [NSString stringWithFormat:@"%@\n%@\n%@\n%@\n%@\n%@",_sIDCard.nsName,_sIDCard.nsSex,_sIDCard.nsNation,_sIDCard.nsBirth,_sIDCard.nsAddress,_sIDCard.nsIDNum];
+        _topView.label.text = nsResult;
       NSString *nsReult =[NSString stringWithFormat:@"%@",_sIDCard.nsIDNum];
     
       [self dismissViewControllerAnimated:YES completion:^{

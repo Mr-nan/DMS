@@ -77,6 +77,11 @@ export  default class ReportCustomerList extends BaseComponent{
             isDateTimePickerVisible:false
         })
     }
+    _hideDateimePicker=()=>{
+        this.setState({
+            isDateTimePickerVisible:false
+        })
+    }
 
     _getOrderState=(state)=>{
 
@@ -200,7 +205,7 @@ export  default class ReportCustomerList extends BaseComponent{
             <DateTimePicker
                 isVisible={this.state.isDateTimePickerVisible}
                 onConfirm={this._handleDatePicked}
-                onCancel={this._hideDateTimePicker}
+                onCancel={this._hideDateimePicker}
                 titleIOS="请选择日期"
                 confirmTextIOS='确定'
                 cancelTextIOS='取消'

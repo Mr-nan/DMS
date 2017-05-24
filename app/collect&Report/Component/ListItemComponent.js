@@ -54,7 +54,7 @@ class CollectCarListItem extends PureComponent{
                 <Text style={styles.cccCarType}>{carType}</Text>
                 <Text style={styles.cccCardetailType}>{carDetailType}</Text>
                 <View style={styles.carStateWarp}>
-                    <Text style={styles.cccCarInfo}>{carFrameNumber}</Text>
+                    <Text style={styles.cccCarInfo}>{'车架号 ：'+carFrameNumber}</Text>
                     <View style={[styles.carStateTextWarp,type==4?null:{width:0}]}>
                         <Text style={styles.carStateText}>{'补充车辆资料'}</Text>
                     </View>

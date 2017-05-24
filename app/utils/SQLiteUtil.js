@@ -117,7 +117,7 @@ const SQLite = React.createClass({
         db.transaction((tx) => {
             tx.executeSql('CREATE TABLE IF NOT EXISTS ' + "carchecksuccess" + '('
                 + 'busno VARCHAR(20) default "",'
-                +'vin VARCHAR(20) PRIMARY KEY NOT NULL,'
+                + 'vin VARCHAR(20) PRIMARY KEY NOT NULL,'
                 +'excecode VARCHAR(20) default "1205",'
                 +'execinfo VARCHAR(20) default "正常",'
                 +'rfid_img_id VARCHAR(20) default "",'
@@ -138,6 +138,51 @@ const SQLite = React.createClass({
         }, () => {
             this._successCB('transaction');
         })
+
+
+        //收车
+        db.transaction((tx) => {
+            tx.executeSql('CREATE TABLE IF NOT EXISTS ' + "carCollectInfo" + '('
+                + 'vin VARCHAR(20) default "",'
+                + 'onstorge VARCHAR(20) default "",'
+                + 'oncard VARCHAR(20) default "",'
+                + 'owner VARCHAR(20) default "",'
+                + 'ownership VARCHAR(20) default "",'
+                + 'allin VARCHAR(20) default "",'
+                + 'rg_type VARCHAR(20) default "",'
+                + 'regbr VARCHAR(20) default "",'
+                + 'runbr VARCHAR(20) default "",'
+                + 'carid VARCHAR(20) default "",'
+                + 'obd_number VARCHAR(20) default "",'
+                + 'rfid VARCHAR(20) default "");'
+                , [], () => {
+                    this._successCB('executeSql');
+                }, (err) => {
+                    this._errorCB('executeSql', err);
+                });
+        }, (err) => {
+            this._errorCB('transaction', err);
+        }, () => {
+            this._successCB('transaction');
+        })
+        //收车图片
+        db.transaction((tx) => {
+            tx.executeSql('CREATE TABLE IF NOT EXISTS ' + "carImageInfo" + '('
+                + 'file_id varchar(20) default "",'
+                + 'syscodedata_id varchar(20) default "",'
+                + 'vin varchar(20) default "");'
+                , [], () => {
+                    this._successCB('executeSql');
+                }, (err) => {
+                    this._errorCB('executeSql', err);
+                });
+        }, (err) => {
+            this._errorCB('transaction', err);
+        }, () => {
+            this._successCB('transaction');
+        })
+
+
 
     },
     close(){
@@ -179,7 +224,7 @@ const SQLite = React.createClass({
         }
         db.transaction(
             function (tx) {
-                console.log('changeData');
+                // console.log('changeData');
                 tx.executeSql(sql, array);
             }, function (error) {
                 // console.log('shibai' + error.message);
