@@ -11,7 +11,7 @@ import  {RepListSearch} from './Component/SearchBarBlobs'
 import * as apis from '../constant/appUrls'
 import  {request} from '../utils/RequestUtil'
 import {toutalPage,STATECODE,dateFormat} from './Component/MethodComponet'
-import {ReportCustomerListItem,SeparatorComponent,ListFootComponentNorMore,ListFootComponentMore} from './Component/ListItemComponent'
+import {ReportCustomerListItem,ListFootComponent} from './Component/ListItemComponent'
 import {commenStyle} from './Component/PageStyleSheet'
 import AllNavigationView from '../component/AllNavigationView';
 import DateTimePicker from 'react-native-modal-datetime-picker'
@@ -55,8 +55,6 @@ export  default class ReportCustomerList extends BaseComponent{
             .then((response) => {
 
                     let tempJson=response.mjson.retdata;
-
-
                     pageControl.total=toutalPage(tempJson.listcount,10);
                     this.setState({
                         data:tempJson.busilist,
@@ -126,10 +124,27 @@ export  default class ReportCustomerList extends BaseComponent{
         }
 
     }
+    _renderFootComponent=()=>{
 
-    _repCustomItemClick=(merge_id,companyName,money)=>{
+        if(this.state.renderPlaceholderOnly==STATECODE.loading){
 
-        this.toNextPage('ReportInfoManage',{merge_id:merge_id,title:companyName,money:money,month:pageControl.month})
+            return (<ListFootComponent info="正在加载..."/>)
+        }
+        if (this.state.loadMoreState=='0'){
+
+            return (<ListFootComponent info='加载更多...'/>)
+        }
+        return (<ListFootComponent info='已加载全部数据'/>)
+    }
+
+    _repCustomItemClick=(merge_id,companyName,money,stateCode)=>{
+
+        if(stateCode!='1'){
+            this.toNextPage('ReportInfoManage',{merge_id:merge_id,title:companyName,money:money,month:pageControl.month})
+        }else {
+            this.toNextPage('SubmitReporInfo',{merge_id:merge_id,title:companyName,money:money,month:pageControl.month})
+        }
+
     }
 
     _onRefresh=()=>{
@@ -147,24 +162,21 @@ export  default class ReportCustomerList extends BaseComponent{
             money={'未结清借款 ：'+data.item.loanBalance+'万元'}
             merge_id={data.item.merge_id}
             state={this._getOrderState(data.item.reportStstus)}
+            stateCode={data.item.reportStstus}
             repCustomItemClick={this._repCustomItemClick}
         />)
 
     }
     _getFootHeader=(state)=>{
         if (state=='0'){
-
             return ListFootComponentMore
         }
         return ListFootComponentNorMore;
 
     }
 
-
-
     render(){
 
-        let foot =this._getFootHeader(this.state.loadMoreState);
         return (
 
         <View style={commenStyle.commenPage}>
@@ -178,7 +190,7 @@ export  default class ReportCustomerList extends BaseComponent{
                     onEndReachedThreshold={0.5}
                     refreshing={this.state.refreshing}
                     onRefresh={this._onRefresh}
-                    ListFooterComponent={foot}
+                    ListFooterComponent={this._renderFootComponent}
                 />
 
             </View>

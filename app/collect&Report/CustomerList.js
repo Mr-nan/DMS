@@ -59,6 +59,7 @@ export default  class CustomerList extends BaseComponent{
 
         if(sourceControl.currentPage==sourceControl.total){
             // this.props.screenProps.showToast('全部数据已加载');
+
         }
         else {
           sourceControl.currentPage=sourceControl.currentPage + 1;

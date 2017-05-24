@@ -2,7 +2,7 @@
  * Created by lcus on 2017/5/10.
  */
 
-import { Dimensions } from 'react-native';
+import { Dimensions,Platform } from 'react-native';
 
 const STATECODE ={
 
@@ -12,6 +12,12 @@ const STATECODE ={
     empty:'empty'
 
 }
+
+const getTopdistance=()=>{
+
+    return Platform.OS === 'android'?48:68;
+
+}
 const PAGECOLOR = {
 
     white:'white',
@@ -19,35 +25,12 @@ const PAGECOLOR = {
     all_blue : "#08c5a7",
     all_background :"#F0F0F0",
     esc_button :"#999999",
-    deapGray:"#666666"
+    deapGray:"#666666",
+    line_color:"#12d4dc",
+    font_blue:'#3F51B5'
 }
 
-const easyRequest =(url,paramer)=>{
 
-
-    request(url, 'Post', paramer)
-        .then((response) => {
-
-                let tempJson=response.mjson.retdata;
-
-                return {stateCode:1,data:tempJson}
-
-            },
-            (error) => {
-
-                if(error.mycode!= -300||error.mycode!= -500){
-
-                    this.props.showToast(error.mjson.msg);
-                }else {
-
-                    this.props.showToast('服务器连接有问题')
-                }
-
-                return {stateCode:-6}
-            });
-
-
-}
 
 const {width, height} = Dimensions.get('window')
 
@@ -56,6 +39,10 @@ const changeToMillion=(number)=>{
     let temp =Number.parseFloat(number);
 
     return Math.floor(temp/10000*10000)/10000
+}
+const addition=(number,additonNum)=>{
+
+    return number==0?'0':Number.parseFloat(number/additonNum).toString()
 }
 const dateFormat = (date,fmt) => {
     let o = {
@@ -81,6 +68,10 @@ const fontadapeSize = (size)=> {
 
     return adapeSize(size) + 2;
 }
+const getDefaultValue=(value)=>{
+
+    return value==0?null:value.toString();
+}
 
 const toutalPage =(toutal,rows)=>{
 
@@ -94,4 +85,4 @@ const toutalPage =(toutal,rows)=>{
 
 }
 
-export {STATECODE,PAGECOLOR,width,height,dateFormat,adapeSize,fontadapeSize,changeToMillion,toutalPage}
+export {STATECODE,PAGECOLOR,width,height,dateFormat,adapeSize,fontadapeSize,changeToMillion,toutalPage,getTopdistance,addition,getDefaultValue}
