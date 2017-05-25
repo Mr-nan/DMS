@@ -20,26 +20,23 @@ class CustomButton extends  PureComponent{
     state={
 
         isSelected:false,
+        disabled:false,
     }
 
     setSelected=(state)=>{
 
+
         this.setState({
-            isSelected:state
-            })
+            isSelected:state,
+        })
+
     }
-    // _itemOnClick=()=>{
-    //
-    //     const {onPress}=this.props;
-    //     onPress(this.setSelected)
-    //
-    // }
 
     render(){
 
         const {title, onPress}=this.props;
         return(
-            <TouchableOpacity style={[styles.selectItem,this.state.isSelected&&{borderColor:PAGECOLOR.all_blue}]} onPress={onPress}>
+            <TouchableOpacity disabled={this.state.disabled}style={[styles.selectItem,this.state.isSelected&&{borderColor:PAGECOLOR.all_blue}]} onPress={onPress}>
                 <Text style={[styles.selctItemText,this.state.isSelected&&{color:PAGECOLOR.all_blue}]}>{title}</Text>
             </TouchableOpacity>
             )
@@ -73,6 +70,8 @@ class RfIdButton extends  PureComponent{
 
 class CollectTitle extends  PureComponent{
 
+
+
     render(){
 
         const {title,value}=this.props;
@@ -86,6 +85,15 @@ class CollectTitle extends  PureComponent{
 }
  class CollectDate extends PureComponent{
 
+
+    setText=(text)=>{
+
+        this.input.setNativeProps({
+
+            text:text
+        })
+    }
+
     render(){
 
         const {title,value, onPress, placeholder}=this.props;
@@ -93,7 +101,7 @@ class CollectTitle extends  PureComponent{
             <View style={styles.titleWarp}>
                 <Text style={styles.textleft}>{title}</Text>
                 <TouchableOpacity style={{justifyContent:'center'}} onPress={onPress}>
-                    <TextInput editable={false} style={[styles.textRight,styles.tintput]} placeholder={placeholder}/>
+                    <TextInput ref={(ti)=>{this.input=ti}} editable={false} style={[styles.textRight,styles.tintput]} placeholder={placeholder}/>
                 </TouchableOpacity>
             </View>
         )
@@ -104,11 +112,11 @@ class CollectTitle extends  PureComponent{
 
     render(){
 
-        const {title,value, placeholder}=this.props;
+        const {title,value, placeholder, onEndEditing}=this.props;
         return(
             <View style={styles.titleWarp}>
                 <Text style={styles.textleft}>{title}</Text>
-                <TextInput  style={[styles.textRight,styles.tintput]} placeholder={placeholder}/>
+                <TextInput onEndEditing={onEndEditing} style={[styles.textRight,styles.tintput]} placeholder={placeholder}/>
             </View>
         )
     }
@@ -119,6 +127,14 @@ class CollectTitle extends  PureComponent{
  class CollectButtonInput extends PureComponent{
 
 
+    setTitle=(text)=>{
+
+        this.input.setNativeProps({
+
+            text:text
+        })
+    }
+
     render(){
 
         const {title,value, onPress, placeholder}=this.props;
@@ -127,7 +143,7 @@ class CollectTitle extends  PureComponent{
                 <TouchableOpacity style={styles.buttonWarp} onPress={onPress}>
                 <Text style={styles.buttonText}>{title}</Text>
                 </TouchableOpacity>
-                <TextInput  style={[styles.textRight,styles.tintput]} placeholder={placeholder} defaultValue={value}/>
+                <TextInput ref={(inpt)=>{this.input=inpt}}  style={[styles.textRight,styles.tintput]} placeholder={placeholder} defaultValue={value}/>
             </View>
         )
     }
@@ -147,11 +163,13 @@ class CollectTitle extends  PureComponent{
          this.tempref.setSelected(true)
      }
      _selectButtonClick=(index)=>{
+         const {selectedIndex}=this.props;
+
          this.tempref.setSelected(false);
          let tempref=this.refBlobs[index];
          tempref.setSelected(true);
          this.tempref=tempref;
-
+         selectedIndex(index)
      }
 
     render(){
@@ -220,7 +238,7 @@ const styles=StyleSheet.create({
         justifyContent:'space-between',
         marginLeft:adapeSize(10),
         marginRight:adapeSize(10),
-        alignItems:'center'
+        alignItems:'center',
     },
     textleft:{
 
@@ -238,7 +256,7 @@ const styles=StyleSheet.create({
     tintput:{
         width:adapeSize(160),
         height:adapeSize(20),
-        fontSize:adapeSize(12)
+        fontSize:adapeSize(14)
 
     },
     buttonWarp:{
