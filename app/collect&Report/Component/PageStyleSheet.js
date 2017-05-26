@@ -17,7 +17,7 @@ const  commenStyle =StyleSheet.create({
     testUI:{
         flex:1,
         backgroundColor:PAGECOLOR.all_background,
-        marginTop:Platform.OS === 'android'?48:68,
+        marginTop:Platform.OS === 'android'?adapeSize(48):adapeSize(68),
     }
 
 })

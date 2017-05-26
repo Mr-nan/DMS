@@ -168,6 +168,7 @@ const SQLite = React.createClass({
         //收车图片
         db.transaction((tx) => {
             tx.executeSql('CREATE TABLE IF NOT EXISTS ' + "carImageInfo" + '('
+                + 'file_url varchar(20) default "",'
                 + 'file_id varchar(20) default "",'
                 + 'syscodedata_id varchar(20) default "",'
                 + 'vin varchar(20) default "");'
@@ -181,8 +182,6 @@ const SQLite = React.createClass({
         }, () => {
             this._successCB('transaction');
         })
-
-
 
     },
     close(){

@@ -32,6 +32,7 @@ import OneCarListScene from '../assess/OneCarListScene';
 import StockTopCarScene from '../assess/StockTopCarScene';
 import PurchaseCarScene from '../assess/PurchaseCarScene';
 import CarInfoScene from '../assess/CarInfoScene';
+import CollectCarPhoto from '../collect&Report/CollectCarPhoto'
 
 import BluetoothScene from '../main/BluetoothScene';
 
@@ -71,7 +72,8 @@ export default MyApp = StackNavigator({
         SelectMaskComponent: {screen: SelectMaskComponent},
         ReportInfoManage: {screen: ReportInfoManage},
         ReporInfoPeople: {screen: ReporInfoPeople},
-        ReporInfoFkong: {screen: ReporInfoFkong}
+        ReporInfoFkong: {screen: ReporInfoFkong},
+        CollectCarPhoto:{screen:CollectCarPhoto}
     },
     {
         initialRouteName: 'Root',

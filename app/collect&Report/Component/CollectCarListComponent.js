@@ -8,7 +8,8 @@ import {
     Text,
     Image,
     TextInput,
-    TouchableOpacity
+    TouchableOpacity,
+    ActivityIndicator
 } from 'react-native';
 import  {PAGECOLOR,width,height,adapeSize,fontadapeSize} from './MethodComponet'
 
@@ -48,10 +49,11 @@ class RfIdButton extends  PureComponent{
 
         isSelected:false,
     }
-    setSelected=()=>{
+    setSelected=(state)=>{
 
+        const {onPress}=this.props;
         this.setState({
-            isSelected:!this.state.isSelected
+            isSelected:state
         })
     }
 
@@ -59,7 +61,7 @@ class RfIdButton extends  PureComponent{
 
         const {onPress,title}=this.props;
         return(
-            <TouchableOpacity style={styles.rfidWarp} onPress={this.setSelected}>
+            <TouchableOpacity activeOpacity={0.1} style={[styles.rfidWarp,this.state.isSelected&&{backgroundColor:PAGECOLOR.all_blue}]} onPress={onPress}>
                 <Text style={[styles.selctItemText,{color:"white", fontSize:adapeSize(14)}]}>{title}</Text>
             </TouchableOpacity>
         )
@@ -101,7 +103,7 @@ class CollectTitle extends  PureComponent{
             <View style={styles.titleWarp}>
                 <Text style={styles.textleft}>{title}</Text>
                 <TouchableOpacity style={{justifyContent:'center'}} onPress={onPress}>
-                    <TextInput ref={(ti)=>{this.input=ti}} editable={false} style={[styles.textRight,styles.tintput]} placeholder={placeholder}/>
+                    <TextInput ref={(ti)=>{this.input=ti}} editable={false} style={[styles.textRight,styles.tintput]} placeholder={placeholder} defaultValue={value}/>
                 </TouchableOpacity>
             </View>
         )
@@ -116,7 +118,7 @@ class CollectTitle extends  PureComponent{
         return(
             <View style={styles.titleWarp}>
                 <Text style={styles.textleft}>{title}</Text>
-                <TextInput onEndEditing={onEndEditing} style={[styles.textRight,styles.tintput]} placeholder={placeholder}/>
+                <TextInput onEndEditing={onEndEditing} style={[styles.textRight,styles.tintput]} placeholder={placeholder} defaultValue={value}/>
             </View>
         )
     }
@@ -162,25 +164,25 @@ class CollectTitle extends  PureComponent{
          this.tempref=this.refBlobs[this.selectedIndex];
          this.tempref.setSelected(true)
      }
-     _selectButtonClick=(index)=>{
+     _selectButtonClick=(index,itemKey)=>{
          const {selectedIndex}=this.props;
 
          this.tempref.setSelected(false);
          let tempref=this.refBlobs[index];
          tempref.setSelected(true);
          this.tempref=tempref;
-         selectedIndex(index)
+         selectedIndex(index,itemKey)
      }
 
     render(){
-        const {titles}=this.props;
+        const {titles,itemKey,defaultSelct}=this.props;
         let tempBlobs=[];
         titles.map((item,index)=>{
 
-            let tempitem = <CustomButton ref={(cus)=>{this.refBlobs[index]=cus}} key={index} title={item} index={index} onPress={()=>{this._selectButtonClick(index)}}/>
+            let tempitem = <CustomButton ref={(cus)=>{this.refBlobs[index]=cus}} key={index} title={item} index={index} onPress={()=>{this._selectButtonClick(index,itemKey)}}/>
             tempBlobs.push(tempitem)
         })
-        this.selectedIndex='1';
+        this.selectedIndex=defaultSelct-1;
         return(
             <View style={styles.selectStyle}>{tempBlobs}</View>
         )
@@ -192,14 +194,45 @@ class CollectTitle extends  PureComponent{
 class CollectOBDRFID extends PureComponent{
 
 
+    componentDidMount() {
+        this.bq.setSelected(true)
+    }
+    _setTitle=(title)=>{
+
+        this.input.setNativeProps({
+            text:title
+        })
+    }
+    _bqClick=()=>{
+
+       const {markScan}=this.props;
+       this.bq.setSelected(true);
+       this.obd.setSelected(false);
+       this.input.setNativeProps({
+           placeholder:'请扫描标签',
+           text:''
+       })
+        markScan();
+    }
+    _obdClick=()=>{
+        const {OBDScan}=this.props;
+        this.bq.setSelected(false);
+        this.obd.setSelected(true);
+        this.input.setNativeProps({
+            placeholder:'请扫描OBD',
+            text:''
+        })
+        OBDScan();
+    }
+
     render(){
 
         return(
             <View style={styles.selectStyle}>
 
-                <RfIdButton title={'扫描标签'}/>
-                <RfIdButton title={'扫描OBD'}/>
-                <TextInput style={[styles.tintput,{height:adapeSize(40),marginTop:adapeSize(3),textAlign:'right'}]} placeholder={'请选择'}/>
+                <RfIdButton ref={(biaoqian)=>{this.bq=biaoqian}} onPress={this._bqClick} title={'扫描标签'}/>
+                <RfIdButton ref={(obd)=>{this.obd=obd}}  onPress={this._obdClick} title={'扫描OBD'}/>
+                <TextInput ref={(ip)=>{this.input=ip}} editable={false} style={[styles.tintput,{height:adapeSize(40),marginTop:adapeSize(3),textAlign:'right'}]}  placeholder={'请选择'}/>
 
             </View>
         )
@@ -211,9 +244,10 @@ class CollectNestTep extends PureComponent{
 
     render(){
 
+        const {onPress}=this.props;
         return (
-
-            <TouchableOpacity style={{width:width,height:adapeSize(40),bottom:0,backgroundColor:PAGECOLOR.all_blue,justifyContent:'center',position: 'absolute',}}>
+            <TouchableOpacity style={{width:width,height:adapeSize(40),bottom:0,backgroundColor:PAGECOLOR.all_blue,justifyContent:'center',position: 'absolute',}}
+                              onPress={onPress}>
                 <Text style={styles.netTepText}>{'下一步'}</Text>
             </TouchableOpacity>
         )
@@ -221,13 +255,90 @@ class CollectNestTep extends PureComponent{
     }
 
 }
-//  class  CollectPhotoSelect extends PureComponent{
-//
-//
-//
-// }
 
-export {CollectButtonInput,CollectDate,CollectTitelInput,CollectTitle,CollectSelect,CollectOBDRFID,CollectNestTep}
+class NetWorkingImage extends PureComponent{
+
+    state={
+        error: false,
+        loading: false,
+        progress: 0
+    }
+
+    render(){
+
+        let loader=this.state.loading?
+            <View>
+                <Text>{this.state.progress}%</Text>
+                <ActivityIndicator style={{marginLeft:5}} />
+            </View>:null;
+       return this.state.error?<Text>{this.state.error}</Text>:
+          <TouchableOpacity>
+           <Image
+               source={this.props.source}
+               style={[photoStyles.imagadd]}
+               onLoadStart={(e) => this.setState({loading: true})}
+               onError={(e) => this.setState({error: e.nativeEvent.error, loading: false})}
+               onProgress={(e) => this.setState({progress: Math.round(100 * e.nativeEvent.loaded / e.nativeEvent.total)})}
+               onLoad={() => this.setState({loading: false, error: false})}>
+               {loader}
+           </Image>
+          </TouchableOpacity>
+    }
+}
+
+
+
+
+
+ class  CollectPhotoSelect extends PureComponent{
+
+
+    state={
+        photoItem:[],
+    }
+
+     _setPhphoto=(data)=>{
+
+            this.setState({
+                photoItem:data
+            })
+ }
+     onclick=()=>{
+        const {addCarClick,index}=this.props;
+        addCarClick(this.state.photoItem,index);
+     }
+
+    render(){
+
+        const {title}=this.props;
+        let temp=[]
+        this.state.photoItem.map((item,index)=>{
+
+            temp.push(<NetWorkingImage key={index} source={{uri:item}}/>)
+        })
+
+        const {addCarClick}=this.props;
+        return(
+
+
+            <View style={photoStyles.warp}>
+                <Text style={photoStyles.photoText}>{title}</Text>
+                <View style={photoStyles.photosWarp}>
+
+                    <View style={photoStyles.uploaposWarp}>
+                        {temp}
+                    </View>
+                    <TouchableOpacity style={photoStyles.imagadd} onPress={this.onclick}>
+                        <Image style={[photoStyles.imagadd,{marginLeft:0}]} source={require('../../../images/carAdd.jpg')}/>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        )
+    }
+
+}
+
+export {CollectButtonInput,CollectDate,CollectTitelInput,CollectTitle,CollectSelect,CollectOBDRFID,CollectNestTep,CollectPhotoSelect}
 
 
 const styles=StyleSheet.create({
@@ -318,7 +429,7 @@ const styles=StyleSheet.create({
        height:adapeSize(40),
        justifyContent:'center',
         alignItems:'center',
-        backgroundColor:PAGECOLOR.all_blue,
+        backgroundColor:'gray',
         borderRadius:adapeSize(5),
         marginTop:adapeSize(3),
         marginBottom:adapeSize(3),
@@ -328,3 +439,44 @@ const styles=StyleSheet.create({
 
 })
 
+const photoStyles=StyleSheet.create({
+
+    warp:{
+     marginLeft:adapeSize(10),
+     marginRight:adapeSize(10),
+    },
+    photoText:{
+        marginTop:adapeSize(5),
+        marginBottom:adapeSize(5)
+    },
+    photosWarp:{
+
+        flexDirection:'row',
+        justifyContent:'flex-end',
+        alignItems:'center',
+        marginTop:adapeSize(5),
+        marginBottom:adapeSize(10),
+        width:width-adapeSize(20),
+        height:(width-adapeSize(70))/5,
+    },
+    imagadd:{
+
+        width:(width-adapeSize(70))/5,
+        height:(width-adapeSize(70))/5,
+        marginLeft:adapeSize(10)
+
+    },
+    uploaposWarp:{
+        flex:1,
+        marginRight:adapeSize(10),
+        flexDirection:'row',
+        justifyContent:'flex-start'
+    },
+    progress: {
+        flex: 1,
+        alignItems: 'center',
+        flexDirection: 'row',
+        width: 100
+    },
+
+})
