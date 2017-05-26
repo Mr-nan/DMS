@@ -168,7 +168,7 @@ export  default class ObdCarList extends BaseComponent {
         return (
             <ObdCarItem
                 onPress={()=>{this.toNextPage('ObdCarDetail',{
-                    rid: this.props.navigation.state.params.merge_id,
+                    rid: rowData.id,
                 });}}
                 textStyle={rowData.is_explain=='1' ? {color: 'red'} : null}
                 modelName={rowData.model_name}

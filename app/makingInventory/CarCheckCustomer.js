@@ -176,8 +176,7 @@ export  default class CarCheckCustomer extends BaseComponent {
                 onPress={()=>{
                     this.toNextPage('CarCheckWifiSelect',{
                     name: rowData.name,
-                    merge_id: rowData.busino,
-                    freshDataClick: this.freshDataClick
+                    merge_id: rowData.busino
                 });}}
                 customerName={rowData.name}
                 carNum={rowData.wpkCount}

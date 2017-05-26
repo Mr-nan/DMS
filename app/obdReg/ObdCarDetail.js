@@ -78,7 +78,7 @@ export  default class ObdCarDetail extends BaseComponent {
                             dataSource: ds.cloneWithRows(allSouce),
                         });
                     }else{
-                        return;
+                        this.props.screenProps.showToast('数据为空！');
                     }
                     if (response.mjson.retdata.regulation_info !== null) {
                         regulation_info = response.mjson.retdata.regulation_info;
