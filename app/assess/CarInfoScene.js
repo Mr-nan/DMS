@@ -25,6 +25,7 @@ import * as StorageKeyNames from '../constant/storageKeyNames';
 
 import ImageViewPage from 'react-native-viewpager';
 import TagSelectView from './component/TagSelectView';
+import AddCarPricePop from './component/AddCarPricePop';
 
 export default class CarInfoScene extends BaseComponent {
 
@@ -46,7 +47,8 @@ export default class CarInfoScene extends BaseComponent {
             assessFlag: false,
             loadFunction: false,
             accessText: '评估',
-            renderItems: []
+            renderItems: [],
+            assessPop: false
         };
 
         this.tagViews = [];
@@ -346,11 +348,36 @@ export default class CarInfoScene extends BaseComponent {
         let its = renderSource.map((dt, index) => {
             return this._renderItem(dt, index)
         });
-        
+
         this.setState({
             renderItems: its
         });
 
+    };
+
+    _deleteData = () => {
+
+        this._showLoadingModal();
+        let url = '';
+        let maps = {};
+        if (this.state.from_name === 'StockBottomScene' || this.state.from_name === 'StockTopCarScene') {
+            url = appUrls.INVENTORYFINANCINGDELAUTO;
+            maps.auto_id = this.state.auto_id;
+        } else if (this.state.from_name === 'OneCarListScene') {
+            url = appUrls.ONECARDELAUTO;
+            maps.auto_id = this.state.auto_id;
+        }
+
+        Net.request(url, 'post', maps).then(
+            (response) => {
+                this._closeLoadingModal();
+                this._showHint('删除成功');
+                this.backPage();
+                this.props.refreshLastPage;
+            },
+            (error) => {
+                this._closeLoadingModal();
+            });
     };
 
     _renderItem = (data, index) => {
@@ -377,7 +404,7 @@ export default class CarInfoScene extends BaseComponent {
         } else if (data.type === '3') {
             return (
                 <View key={index}>
-                    <View  style={styles.content_tag_wrap}>
+                    <View style={styles.content_tag_wrap}>
                         <Text style={styles.content_tag_title}>{'查看部位'}</Text>
                         <TagSelectView cellData={this.tagViews}/>
                     </View>
@@ -531,22 +558,28 @@ export default class CarInfoScene extends BaseComponent {
                         {
                             this.state.assessFlag &&
                             <TouchableOpacity style={styles.pgBtn} onPress={this._onPgBtnClick}>
-                            <View style={styles.pgBtn}>
                                 <Text style={styles.btnFont}>{this.state.accessText}</Text>
-                            </View>
                             </TouchableOpacity>
                         }
                         {
                             this.state.deleteFlag &&
-                            <View style={styles.deleteBtn}>
+                            <TouchableOpacity activeOpacity={0.6}
+                                              style={styles.deleteBtn}
+                                              onPress={this._deleteData}>
                                 <Text style={styles.btnFont}>{'删除'}</Text>
-                            </View>
+                            </TouchableOpacity>
                         }
                     </View>
                 </View>
                 <AllNavigationView title={'车辆信息'} backIconClick={() => {
                     this.backPage();
                 }} parentNavigation={this}/>
+                {
+                    this.state.assessPop && <AddCarPricePop
+                        closePop={this._closePop}
+                        onOkClick={this._onOkClick}
+                    />
+                }
             </View>
         )
     }
