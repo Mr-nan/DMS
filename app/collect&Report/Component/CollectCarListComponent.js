@@ -294,7 +294,7 @@ class NetWorkingImage extends PureComponent{
 
 
     state={
-        photoItem:[],
+        photoItem:this.props.cacheRows,
     }
 
      _setPhphoto=(data)=>{
