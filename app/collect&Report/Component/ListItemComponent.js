@@ -41,8 +41,8 @@ class CollectCarListItem extends PureComponent{
 
     _onclick=()=>{
 
-        const {carListItemClick,carID}=this.props;
-        carListItemClick(carID);
+        const {carListItemClick,carFrameNumber}=this.props;
+        carListItemClick(carFrameNumber);
     }
 
     render(){
@@ -54,7 +54,7 @@ class CollectCarListItem extends PureComponent{
                 <Text style={styles.cccCarType}>{carType}</Text>
                 <Text style={styles.cccCardetailType}>{carDetailType}</Text>
                 <View style={styles.carStateWarp}>
-                    <Text style={styles.cccCarInfo}>{carFrameNumber}</Text>
+                    <Text style={styles.cccCarInfo}>{'车架号 ：'+carFrameNumber}</Text>
                     <View style={[styles.carStateTextWarp,type==4?null:{width:0}]}>
                         <Text style={styles.carStateText}>{'补充车辆资料'}</Text>
                     </View>
@@ -72,9 +72,8 @@ class ReportCustomerListItem extends PureComponent{
 
     _onclick=()=>{
 
-        const { merge_id,companyName,money} =this.props;
-        const {repCustomItemClick}=this.props;
-        repCustomItemClick(merge_id,companyName,money);
+        const { merge_id,companyName,money,stateCode,repCustomItemClick} =this.props;
+        repCustomItemClick(merge_id,companyName,money,stateCode);
     }
 
     render(){
@@ -87,7 +86,7 @@ class ReportCustomerListItem extends PureComponent{
                     <Text style={styles.cccCarInfo}>{money}</Text>
                     <View style={{flexDirection:'row',marginBottom:adapeSize(8),marginLeft:adapeSize(20)}}>
                         <Text style={styles.cccCarInfo}>{'状态 ：'}</Text>
-                        <Text style={styles.ccListCarNum}>{state}</Text>
+                        <Text style={[styles.ccListCarNum,state=='已提交'?{color:'green'}:null]}>{state}</Text>
                     </View>
                 </View>
             </TouchableOpacity>
@@ -111,7 +110,7 @@ class RepDetailListHeader extends PureComponent{
                     <Text style={styles.dateF}>{date}</Text>
                 </View>
             </View>
-                <View style={styles.targetWarp}>
+                <View style={[styles.targetWarp,target==''?{height:0}:null]}>
                     <Text style={styles.targeText}>{target}</Text>
                 </View>
         </View>
@@ -168,7 +167,7 @@ class SeparatorComponent extends PureComponent{
     render(){
 
         return (
-            <View style={{width:width,height:adapeSize(4),backgroundColor:PAGECOLOR.all_background}}>
+            <View style={{width:width-adapeSize(20),height:0.5,backgroundColor:'lightgray',marginLeft:adapeSize(10),marginRight:adapeSize(10)}}>
 
             </View>
         )
@@ -215,13 +214,15 @@ class ListFootComponentNorMore extends PureComponent{
 class RepRateInput extends PureComponent{
 
 
+
+
     render(){
 
-        const {typeName}=this.props;
+        const {typeName, onChangeText, defaultValue}=this.props;
         return (
             <View style={repStyles.rateInputWarp}>
                 <Text style={{color:'gray'}}>{typeName}</Text>
-                <TextInput underlineColorAndroid='transparent' keyboardType={'decimal-pad'} style={repStyles.rateinputstyle}/>
+                <TextInput ref={(inpt)=>{this.input=inpt}} defaultValue={defaultValue} onChangeText={onChangeText} underlineColorAndroid='transparent' keyboardType={'decimal-pad'} style={repStyles.rateinputstyle}/>
                 <Text style={{color:'gray'}}>{'%'}</Text>
             </View>
 
@@ -234,11 +235,10 @@ class RepBordeInput extends PureComponent{
 
     render(){
 
-        const {width}=this.props;
+        const {width,onChangeText,keyboardType,defaultValue}=this.props;
         return(
-            <TextInput underlineColorAndroid='transparent' style={[repStyles.rateinputstyle,{width:width,marginLeft:adapeSize(10),marginBottom:adapeSize(10)}]}/>
+            <TextInput defaultValue={defaultValue} keyboardType={keyboardType} onChangeText={onChangeText} underlineColorAndroid='transparent' style={[repStyles.rateinputstyle,{width:width,marginLeft:adapeSize(10),marginBottom:adapeSize(10)}]}/>
         )
-
 
     }
 

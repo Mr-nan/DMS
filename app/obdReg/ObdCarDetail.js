@@ -49,8 +49,8 @@ export  default class ObdCarDetail extends BaseComponent {
         regulation_info = null;
         tabSouce = [];
         let maps = {
-            // rid: this.props.navigation.state.params.rid,
-            rid: '39',
+            rid: this.props.navigation.state.params.rid,
+            // rid: '39',
         };
         request(Urls.OBD_CAR_DETAIL, 'Post', maps)
 
@@ -77,6 +77,8 @@ export  default class ObdCarDetail extends BaseComponent {
                         this.setState({
                             dataSource: ds.cloneWithRows(allSouce),
                         });
+                    }else{
+                        this.props.screenProps.showToast('数据为空！');
                     }
                     if (response.mjson.retdata.regulation_info !== null) {
                         regulation_info = response.mjson.retdata.regulation_info;
@@ -112,7 +114,7 @@ export  default class ObdCarDetail extends BaseComponent {
     render() {
         if (this.state.renderPlaceholderOnly !== 'success' || auto_base_info == null) {
             return (<View style={{backgroundColor: fontAndColor.COLORA3, flex: 1, paddingTop: Pixel.getPixel(15)}}>
-                <AllNavigationView title={this.props.navigation.state.params.name} backIconClick={() => {
+                <AllNavigationView title={'OBD监管详情'} backIconClick={() => {
                     this.backPage();
                 }} rightFootClick={()=>{}}/>
             </View>);

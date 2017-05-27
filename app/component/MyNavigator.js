@@ -19,6 +19,8 @@ import VersionInfo from '../collect&Report/VersionInfo'
 import ReportInfoManage from '../collect&Report/ReportInfoManage'
 import ReporInfoPeople from '../collect&Report/ReporInfoPeople'
 import ReporInfoFkong from '../collect&Report/ReporInfoFkong'
+import CollectCarInfo from '../collect&Report/CollectCarInfo'
+import SubmitReporInfo from '../collect&Report/SubmitReporInfo'
 import CarCheckCustomer from '../makingInventory/CarCheckCustomer';
 import CarCheckWifiSelect from '../makingInventory/CarCheckWifiSelect';
 import CarCheckNoWifiList from '../makingInventory/CarCheckNoWifiList';
@@ -29,12 +31,11 @@ import AssessmentSelectScene from '../assess/AssessmentSelectScene';
 import OneCarListScene from '../assess/OneCarListScene';
 import StockTopCarScene from '../assess/StockTopCarScene';
 import PurchaseCarScene from '../assess/PurchaseCarScene';
-import AddCarNumberScene from '../assess/AddCarNumberScene';
-import CarBrandSelectScene from '../assess/CarBrandSelectScene';
 import CarInfoScene from '../assess/CarInfoScene';
 import AddCarInfoScene from '../assess/AddCarInfoScene';
 import AddCarPriceScene from '../assess/AddCarPriceScene';
 import AddCarImageScene from '../assess/AddCarImageScene';
+import CollectCarPhoto from '../collect&Report/CollectCarPhoto';
 
 import BluetoothScene from '../main/BluetoothScene';
 
@@ -54,18 +55,22 @@ export default MyApp = StackNavigator({
         CustomerList: {screen: CustomerList},
         CarCheckCustomer: {screen: CarCheckCustomer},
         CarCheckWifiSelect: {screen: CarCheckWifiSelect},
-        CarCheckWifiList: {screen: CarCheckWifiList},
+        CarCheckWifiList:{screen:CarCheckWifiList},
         CarCheckNoWifiList: {screen: CarCheckNoWifiList},
         CarCheckWarning: {screen: CarCheckWarning},
 
-        CustomerItemCarList: {screen: CustomerItemCarList},
-        ReportCustomerList: {screen: ReportCustomerList},
+        CustomerItemCarList:{screen:CustomerItemCarList},
+        ReportCustomerList:{screen:ReportCustomerList},
+        CollectCarInfo:{screen:CollectCarInfo},
+        AssessCustomerScene:{screen:AssessCustomerScene},
+        AssessmentSelectScene:{screen:AssessmentSelectScene},
+        VersionInfo:{screen:VersionInfo},
+        SubmitReporInfo:{screen:SubmitReporInfo},
 
-        AssessCustomerScene: {screen: AssessCustomerScene},
-        AssessmentSelectScene: {screen: AssessmentSelectScene},
         OneCarListScene: {screen: OneCarListScene},
         StockTopCarScene: {screen: StockTopCarScene},
         PurchaseCarScene: {screen: PurchaseCarScene},
+<<<<<<< HEAD
         CarInfoScene: {screen: CarInfoScene},
         AddCarNumberScene: {screen: AddCarNumberScene},
         CarBrandSelectScene: {screen: CarBrandSelectScene},
@@ -73,12 +78,15 @@ export default MyApp = StackNavigator({
         AddCarPriceScene: {screen: AddCarPriceScene},
         AddCarImageScene: {screen: AddCarImageScene},
         VersionInfo: {screen: VersionInfo},
+=======
+>>>>>>> dedf1076e40ef471014d7907bc4c161123bdfb79
 
         BluetoothScene: {screen: BluetoothScene},
         SelectMaskComponent: {screen: SelectMaskComponent},
         ReportInfoManage: {screen: ReportInfoManage},
         ReporInfoPeople: {screen: ReporInfoPeople},
-        ReporInfoFkong: {screen: ReporInfoFkong}
+        ReporInfoFkong: {screen: ReporInfoFkong},
+        CollectCarPhoto:{screen:CollectCarPhoto}
     },
     {
         initialRouteName: 'Root',

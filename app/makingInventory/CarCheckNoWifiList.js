@@ -83,7 +83,6 @@ export  default class CarCheckNoWifiList extends BaseComponent {
                                 for (let j = 0; j < allSouce.length; j++) {
                                     if (allSouce[j].chkno == data.result.rows.item(i).chkno) {
                                         lists.splice(j, 1);
-                                        break;
                                     }
                                 }
                             }
@@ -103,7 +102,6 @@ export  default class CarCheckNoWifiList extends BaseComponent {
             SQLite.selectData('SELECT * FROM carchecksuccess WHERE busno = ?',
                 [merge_id],
                 (data) => {
-                    console.log('------------------' + data.code);
                     if (data.code === 1) {
 
                         if(index1==0){
@@ -113,29 +111,32 @@ export  default class CarCheckNoWifiList extends BaseComponent {
                                         subStr = value.vin.substring(11, 17);
                                         if (subStr == this.keyword) {
                                             lists.push(value);
+                                            break;
                                         }
                                 }
                             }else{
-                                for (let i = 0; i < data.result.rows.length; i++) {
-                                    for (let value of allSouce) {
-                                        if (value.chkno !== data.result.rows.item(i).chkno) {
-                                            let subStr = '';
-                                            subStr = value.vin.substring(11, 17);
-                                            if (subStr == this.keyword) {
-                                                lists.push(value);
+                                    for (let j=0; j<allSouce;j++) {
+                                        for(let i=0;i<data.result.rows.length;i++){
+                                            if (allSouce[j].chkno !== data.result.rows.item(i).chkno) {
+                                                let subStr = '';
+                                                subStr = allSouce[j].vin.substring(11, 17);
+                                                if (subStr == this.keyword) {
+                                                    lists.push(allSouce[j]);
+                                                    break;
+                                                }
                                             }
                                         }
 
                                     }
-                                }
                             }
 
                         }else{
                             for (let i = 0; i < data.result.rows.length; i++) {
                                         let subStr = '';
-                                        subStr = value.vin.substring(11, 17);
+                                        subStr = data.result.rows.item(i).vin.substring(11, 17);
                                         if (subStr == this.keyword) {
-                                            lists.push(value);
+                                            lists.push(data.result.rows.item(i));
+                                            break;
                                         }
                             }
 
@@ -150,6 +151,7 @@ export  default class CarCheckNoWifiList extends BaseComponent {
                             subStr = value.vin.substring(11, 17);
                             if (subStr == this.keyword) {
                                 lists.push(value);
+                                break;
                             }
                         }
                         const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
@@ -163,25 +165,8 @@ export  default class CarCheckNoWifiList extends BaseComponent {
     }
 
     saveData = (value) => {
-        SQLite.selectData('SELECT * FROM carchecksuccess WHERE busno = ?',
-            [merge_id],
-            (data) => {
-                if (data.code === 1) {
-                    if(data.result.rows.length==0){
-                        SQLite.changeData('INSERT INTO carchecksuccess (busno,vin,excecode,execinfo,rfid_img_id,chkno,newrfid,brand,chk_time,name,storage,type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)', [merge_id, value.vin, '1205', '正常', '', value.chkno, ''
-                            , value.brand, value.chk_time, value.name, value.storage, value.type]);
-                    }else{
-                        for(let i=0; i<data.result.rows.length;i++){
-                            if(data.result.rows.item(i).busno == merge_id){
-                                SQLite.changeData('DELETE From carchecksuccess WHERE busno = ?', [merge_id]);
-                                SQLite.changeData('INSERT INTO carchecksuccess (busno,vin,excecode,execinfo,rfid_img_id,chkno,newrfid,brand,chk_time,name,storage,type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)', [merge_id, value.vin, '1205', '正常', '', value.chkno, ''
-                                    , value.brand, value.chk_time, value.name, value.storage, value.type]);
-                            }
-                            break;
-                        }
-                    }
-                }
-            });
+        SQLite.changeData('INSERT INTO carchecksuccess (vin,busno,excecode,execinfo,rfid_img_id,chkno,newrfid,brand,chk_time,name,storage,type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)', [value.vin,merge_id, '1205', '正常', '', value.chkno, ''
+            , value.brand, value.chk_time, value.name, value.storage, value.type]);
         that.findData();
 
     }
@@ -191,21 +176,20 @@ export  default class CarCheckNoWifiList extends BaseComponent {
         SQLite.selectData('SELECT * FROM carchecksuccess WHERE busno = ?',
             [merge_id],
             (data) => {
+            console.log(data.code+'----------'+data.result.rows.length);
                 if (data.code === 1) {
                     if(data.result.rows.length==0){
                         this.props.screenProps.showToast('暂无成功数据！');
                     }
                         for (let i = 0; i < data.result.rows.length; i++) {
-                            lists.push(data.result.rows.item(0));
+                            lists.push(data.result.rows.item(i));
                         }
                     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
                     this.setState({
                         dataSource: ds.cloneWithRows(lists),
                     });
-                    return;
                 } else {
                     this.props.screenProps.showToast('暂无成功数据！');
-                    return;
                 }
             });
 
@@ -219,7 +203,6 @@ export  default class CarCheckNoWifiList extends BaseComponent {
                     if (value.rfid == data.result) {
                         that.saveData(value)
                         haveCheck = true;
-                        break;
                     }
                 }
             }
@@ -428,7 +411,7 @@ export  default class CarCheckNoWifiList extends BaseComponent {
                         enableEmptySections = {true}
                     />
 
-                    <TouchableOpacity style={styles.bottomButton} activeOpacity={0.8} onPress={
+                    <TouchableOpacity style={styles.bottomButton} activeOpacity={0.6} onPress={
                         this.checkData
                     }>
                         <Text style={styles.buttonText}>提交已盘车辆</Text>
@@ -450,7 +433,7 @@ export  default class CarCheckNoWifiList extends BaseComponent {
                 modelName={rowData.name}
                 vin={'车架号：'+rowData.vin}
                 address={'监管地：'+rowData.storage}
-                type={rowData.type==null || rowData.type=='' ? '': '盘库中'}
+                type={index1==0 ? '盘库中': '盘库成功'}
             />);
 
     }

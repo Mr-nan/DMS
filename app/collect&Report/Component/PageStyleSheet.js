@@ -17,7 +17,7 @@ const  commenStyle =StyleSheet.create({
     testUI:{
         flex:1,
         backgroundColor:PAGECOLOR.all_background,
-        marginTop:Platform.OS === 'android'?48:68,
+        marginTop:Platform.OS === 'android'?adapeSize(48):adapeSize(68),
     }
 
 })
@@ -27,6 +27,25 @@ const repStyles=StyleSheet.create({
     radioGroup:{
         marginLeft:adapeSize(10),
         marginTop:adapeSize(5)
+    },
+    repToutal:{
+        marginLeft:adapeSize(10),
+        marginTop:adapeSize(8),
+        marginRight:adapeSize(10)
+    },
+    repToutalText:{
+
+        marginBottom:adapeSize(10) ,
+        marginLeft:adapeSize(15),
+        marginTop:adapeSize(10),
+        color:PAGECOLOR.font_blue
+    },
+    rateText:{
+
+        marginLeft:adapeSize(15),
+        color:PAGECOLOR.font_blue,
+        marginTop:adapeSize(10),
+        marginBottom:adapeSize(10)
     }
 
 })

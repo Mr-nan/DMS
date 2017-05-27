@@ -26,16 +26,38 @@ export  default class CarCheckWifiSelect extends BaseComponent {
     constructor() {
         super()
         this.state = {
-            index: 0,
-            wifiStyle: {},
-            noWifiStyle: {display: 'none'}
+            wifiStyle: {display: 'none'},
+            noWifiStyle: {display: 'none'},
+            index1:2
 
         }
         this.onSelect = this.onSelect.bind(this)
+    }
+
+    onSelect(index) {
+        if (index == 0) {
+            this.setState({
+                noWifiStyle: {display: 'none'},
+                wifiStyle: {display: 'flex'},
+                index1: index
+            })
+        } else {
+            this.setState({
+                wifiStyle: {display: 'none'},
+                noWifiStyle: {display: 'flex'},
+                index1: index
+            })
+        }
+    }
+
+    initFinish() {
+        SQLite.createTable();
+        name = this.props.navigation.state.params.name;
+        merge_id = this.props.navigation.state.params.merge_id;
         SQLite.selectData('SELECT * FROM carcheckchoose WHERE busno = ?',
             [merge_id],
             (data) => {
-                console.log(data.result.rows.item(0).busno +'-------'+data.result.rows.item(0).type+'------'+merge_id);
+            console.log(data.result.rows.item(0).busno+'-----'+merge_id+'-------'+data.result.rows.item(0).type);
                 if (data.code == 1) {
                     if(data.result.rows.length>0){
                         for(let i=0; i<data.result.rows.length; i++){
@@ -48,47 +70,25 @@ export  default class CarCheckWifiSelect extends BaseComponent {
             });
     }
 
-    onSelect(index) {
-        if (index == 0) {
-            this.setState({
-                index: index,
-                noWifiStyle: {display: 'none'},
-                wifiStyle: {display: 'flex'}
-            })
-        } else {
-            this.setState({
-                index: index,
-                wifiStyle: {display: 'none'},
-                noWifiStyle: {display: 'flex'},
-            })
-        }
-    }
-
-    initFinish() {
-        SQLite.createTable();
-        name = this.props.navigation.state.params.name;
-        merge_id = this.props.navigation.state.params.merge_id;
-    }
-
     saveData = () => {
         SQLite.selectData('SELECT * FROM carcheckchoose WHERE busno = ?',
-        [merge_id],
-        (data) => {
-            if (data.code === 1) {
-                if(data.result.rows.length==0){
-                    SQLite.changeData('INSERT INTO carcheckchoose (busno,type) VALUES (?,?)', [merge_id, this.state.index]);
-                }else{
-                    for(let i=0; i<data.result.rows.length;i++){
-                        if(data.result.rows.item(i).busno == merge_id){
-                            SQLite.changeData('DELETE From carcheckchoose WHERE busno = ?', [merge_id]);
-                            SQLite.changeData('INSERT INTO carcheckchoose (busno,type) VALUES (?,?)', [merge_id, this.state.index]);
+            [merge_id],
+            (data) => {
+                if (data.code == 1) {
+                    console.log(data.result.rows.length+'-----'+merge_id+'-------');
+                    if(data.result.rows.length>0){
+                        for(let i=0; i<data.result.rows.length; i++){
+                            if(data.result.rows.item(0).busno == merge_id){
+                                SQLite.changeData('UPDATE carcheckchoose SET type = ? WHERE busno = ?', [this.state.index1,merge_id]);
+                                return;
+                            }
                         }
-                        break;
+                        SQLite.changeData('INSERT INTO carcheckchoose (busno,type) VALUES (?,?)', [merge_id, this.state.index1]);
+                    }else{
+                        SQLite.changeData('INSERT INTO carcheckchoose (busno,type) VALUES (?,?)', [merge_id, this.state.index1]);
                     }
-
                 }
-            }
-        });
+            });
 
     }
 
@@ -101,19 +101,18 @@ export  default class CarCheckWifiSelect extends BaseComponent {
                     size={0}
                     thickness={0}
                     color='red'
-                    selectedIndex={0}
                     style={styles.radioGroup}
                     onSelect={(index) => this.onSelect(index)}
                 >
                     <RadioButton style={styles.radioButton}>
                         <Image style={styles.radioButtonImage}
-                               source={this.state.index==1 ? noselect_wifi_open : select_wifi_open}/>
+                               source={this.state.index1==0 ? select_wifi_open : noselect_wifi_open}/>
                         <Text style={styles.radioButtonText}>有网盘库</Text>
                     </RadioButton>
 
                     <RadioButton style={styles.radioButton}>
                         <Image style={styles.radioButtonImage}
-                               source={this.state.index==0 ? noselect_wifi_close : select_wifi_close}/>
+                               source={this.state.index1==1 ? select_wifi_close : noselect_wifi_close}/>
                         <Text style={styles.radioButtonText}>无网盘库</Text>
                     </RadioButton>
 
@@ -137,12 +136,16 @@ export  default class CarCheckWifiSelect extends BaseComponent {
 
                 <View style={{flex:1}}></View>
                 <TouchableOpacity style={styles.bottomButton} activeOpacity={0.8} onPress={()=>{
-                     if(this.state.index ==0){
+                    if(this.state.index1==2){
+                        this.props.screenProps.showToast('请选择网络');
+                        return;
+                    }
+                     if(this.state.index1 ==0){
                             this.toNextPage('CarCheckWifiList',{
                             name: name,
                             merge_id: merge_id,
                         })
-                    }else{
+                    }else if(this.state.index1==1){
                         this.toNextPage('CarCheckNoWifiList',{
                             name: name,
                             merge_id: merge_id,
@@ -154,7 +157,7 @@ export  default class CarCheckWifiSelect extends BaseComponent {
                     <Text style={styles.buttonText}>确定</Text>
                 </TouchableOpacity>
                 <AllNavigationView title={'网络选择'} backIconClick={() => {
-                    this.backPage();
+                        this.backPage();
                 }} parentNavigation={this}/>
 
             </View>
@@ -182,6 +185,7 @@ const styles = StyleSheet.create({
         color: 'black',
         fontSize: Pixel.getPixel(15),
         marginVertical: Pixel.getPixel(10),
+
     },
     radioButtonImage: {
         width: Pixel.getPixel(100),

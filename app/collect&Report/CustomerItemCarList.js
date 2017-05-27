@@ -11,7 +11,7 @@ import  {CustomListSearch} from './Component/SearchBarBlobs'
 import * as apis from '../constant/appUrls'
 import  {request} from '../utils/RequestUtil'
 import {toutalPage,STATECODE} from './Component/MethodComponet'
-import {CollectCarListItem,ListFootComponentNorMore,ListFootComponentMore} from './Component/ListItemComponent'
+import {CollectCarListItem,ListFootComponent} from './Component/ListItemComponent'
 import {commenStyle} from './Component/PageStyleSheet'
 import AllNavigationView from '../component/AllNavigationView';
 
@@ -60,8 +60,10 @@ export  default class CustomerItemCarList extends BaseComponent{
     }
 
 
-    _carItemClick=()=>{
+    _carItemClick=(carFrameNumber)=>{
 
+
+        this.toNextPage('CollectCarInfo',{carFrameNumber:carFrameNumber})
 
     }
     _onEndReached=()=>{
@@ -102,26 +104,31 @@ export  default class CustomerItemCarList extends BaseComponent{
     _renderItem =(data)=>{
         return(
             <CollectCarListItem
-                carFrameNumber={'车架号 ：'+data.item.vin}
+                carFrameNumber={data.item.vin}
                 carType={data.item.brand_name}
                 carDetailType={data.item.model_name}
                 place={'监管地 : '+data.item.storge}
                 base_id={data.item.base_id}
                 type={data.item.type}
-                carListItemClick={()=>{this._carItemClick()}}
+                carListItemClick={this._carItemClick}
             />
         )
     }
+    _renderFootComponent=()=>{
 
+        if(this.state.renderPlaceholderOnly==STATECODE.loading){
+
+            return (<ListFootComponent info="正在加载..."/>)
+        }
+        if (this.state.loadMoreState=='0'){
+
+            return (<ListFootComponent info='加载更多...'/>)
+        }
+        return (<ListFootComponent info='已加载全部数据'/>)
+    }
 
     render(){
-        if(this.state.renderPlaceholderOnly!==STATECODE.loadSuccess){
-            return( <View style={commenStyle.commenPage}>
-                <AllNavigationView title={this.props.navigation.state.params.title} backIconClick={() => {
-                    this.backPage();
-                }} parentNavigation={this}/>
-            </View>)
-        };
+
     return(
         <View style={commenStyle.commenPage}>
            <View style={commenStyle.testUI}>
@@ -135,7 +142,7 @@ export  default class CustomerItemCarList extends BaseComponent{
                    onEndReachedThreshold={0.5}
                    refreshing={this.state.refreshing}
                     onRefresh={this._onRefresh}
-                   ListFooterComponent={this.state.loadMoreState=='0'?ListFootComponentMore:ListFootComponentNorMore}
+                   ListFooterComponent={this._renderFootComponent}
                />
 
            </View>

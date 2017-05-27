@@ -30,7 +30,8 @@ export  default class ObdCheckoutRecordFragment extends BaseComponent {
 
     getData = () => {
         let maps = {
-            merge_threshold_warn_record_id: '20',
+            // merge_threshold_warn_record_id: '20',
+            merge_threshold_warn_record_id: this.props.navigation.state.params.merge_threshold_warn_record_id,
         };
         request(Urls.OBD_CHECKOUT_RECORD, 'Post', maps)
 
@@ -40,7 +41,7 @@ export  default class ObdCheckoutRecordFragment extends BaseComponent {
                         this.props.screenProps.showToast('数据为空！');
                     }
                     if (response.mjson.retdata.list.length <= 0) {
-                        this.setState({renderPlaceholderOnly: 'null'});
+                        this.props.screenProps.showToast('数据为空！');
                     } else {
                         allSouce.push({
                             audit_time: '审核时间',

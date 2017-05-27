@@ -169,7 +169,7 @@ export default class LoginScene extends BaseComponent {
         }
         if (IS_ANDROID === false) {
             params.login_type = '5';
-            params.device_code = 'dycd_dms_manage_ios';
+            params.device_code = 'dycd_dms_manage_android';
         }
 
         let isOk;

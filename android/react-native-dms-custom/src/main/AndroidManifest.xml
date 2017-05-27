@@ -1,5 +1,4 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.dms.custom">
-
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -9,26 +8,9 @@
     <uses-permission android:name="android.permission.MEDIA_CONTENT_CONTROL"/>
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <!-- 获取机型信息权限 -->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-
-    <uses-feature android:name="android.hardware.camera" />
-    <uses-feature android:name="android.hardware.camera.autofocus" />
-
-    <uses-permission android:name="android.permission.FLASHLIGHT" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
-
     <application>
         <activity
             android:name=".qr.scan.ScanCaptureAct"
             android:screenOrientation="portrait" />
-        <activity android:name=".vin.scan.FDScanActivity" />
-        <activity android:name=".vin.scan.VLScanActivity"></activity>
     </application>
 </manifest>
