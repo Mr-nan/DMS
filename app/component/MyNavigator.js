@@ -32,9 +32,11 @@ import OneCarListScene from '../assess/OneCarListScene';
 import StockTopCarScene from '../assess/StockTopCarScene';
 import PurchaseCarScene from '../assess/PurchaseCarScene';
 import CarInfoScene from '../assess/CarInfoScene';
+import AddCarNumberScene from '../assess/AddCarNumberScene';
 import AddCarInfoScene from '../assess/AddCarInfoScene';
 import AddCarPriceScene from '../assess/AddCarPriceScene';
 import AddCarImageScene from '../assess/AddCarImageScene';
+import CarBrandSelectScene from '../assess/CarBrandSelectScene';
 import CollectCarPhoto from '../collect&Report/CollectCarPhoto';
 
 import BluetoothScene from '../main/BluetoothScene';
@@ -70,7 +72,6 @@ export default MyApp = StackNavigator({
         OneCarListScene: {screen: OneCarListScene},
         StockTopCarScene: {screen: StockTopCarScene},
         PurchaseCarScene: {screen: PurchaseCarScene},
-<<<<<<< HEAD
         CarInfoScene: {screen: CarInfoScene},
         AddCarNumberScene: {screen: AddCarNumberScene},
         CarBrandSelectScene: {screen: CarBrandSelectScene},
@@ -78,8 +79,7 @@ export default MyApp = StackNavigator({
         AddCarPriceScene: {screen: AddCarPriceScene},
         AddCarImageScene: {screen: AddCarImageScene},
         VersionInfo: {screen: VersionInfo},
-=======
->>>>>>> dedf1076e40ef471014d7907bc4c161123bdfb79
+
 
         BluetoothScene: {screen: BluetoothScene},
         SelectMaskComponent: {screen: SelectMaskComponent},
