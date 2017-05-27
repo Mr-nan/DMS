@@ -33,7 +33,7 @@ const newTypes = ['二手车', '新车', '平行进口车'];
 const natureTypes = ['营运', '非营运', '租赁非营运'];
 const recordTypes = ['放款入库', '置换入库'];
 
-export default class AddCarInfoScene extends BaseComponent {
+export default class PurchaseAddCarInfoScene extends BaseComponent {
 
     constructor(props) {
         super(props);
@@ -42,19 +42,9 @@ export default class AddCarInfoScene extends BaseComponent {
         this.from = this.props.navigation.state.params.from;
         this.json = this.props.navigation.state.params.json;
         this.number = this.props.navigation.state.params.number;
-        this.engine_number = this.props.navigation.state.params.engine_number;
-        this.init_reg = this.props.navigation.state.params.init_reg;
         this.auto_id = this.props.navigation.state.params.auto_id;
         this.payment_id = this.props.navigation.state.params.payment_id;
-        this.plate_number = this.props.navigation.state.params.plate_number;
-
-        this.model_id = this.props.navigation.state.params.model_id;
-        this.brand_id = this.props.navigation.state.params.brand_id;
-        this.series_id = this.props.navigation.state.params.series_id;
-        this.model_name = this.props.navigation.state.params.model_name;
-
         this.itemList = [];
-
         this.state = {
             renderItems: [],
             carTypePop: false,
@@ -88,7 +78,7 @@ export default class AddCarInfoScene extends BaseComponent {
     initFinish = () => {
 
         this._showLoadingModal();
-        this._getData();
+        this._getJsonData();
 
     };
 
@@ -98,7 +88,7 @@ export default class AddCarInfoScene extends BaseComponent {
         }
         this.itemList.push({
             title: '车架号',
-            value: this.number,
+            value: carD.frame_number,
             dbName: 'frame_number',
             type: 1,
             canNull: false,
@@ -258,62 +248,12 @@ export default class AddCarInfoScene extends BaseComponent {
             carD.is_new, carD.nature_use, carD.record_type,
             carD.storage_id, this.itemList[0].value
         ], () => {
-            // this._setCarRender(true);
-            this._setFirstCarRender();
+            this._setCarRender();
         })
 
     };
 
-    _setFirstCarRender = ()=>{
-        if (this.itemList[11].value == '2' || this.itemList[11].value == '3') {
-            this.itemList[9].title = '发证日期';
-            this.itemList[9].dbName = 'certification';
-            this.itemList[9].value = '';
-            this.itemList[9].canNull = true;
-            this.itemList[6].value = '';
-            this.itemList[6].canNull = true;
-            this.itemList[8].value = '';
-            this.itemList[8].canNull = true;
-            this.itemList[12].value = '';
-            this.itemList[12].canNull = true;
-        }
-        let its = this.itemList.map((dt, index) => {
-            return this._renderItem(dt, index)
-        });
-
-        console.log('its', its);
-        this.setState({
-            renderItems: its
-        });
-    };
-
-    _setCarRender = (carType) => {
-
-        if (carType === true) {
-            if (this.itemList[11].value == '2' || this.itemList[11].value == '3') {
-                this.itemList[9].title = '发证日期';
-                this.itemList[9].dbName = 'certification';
-                this.itemList[9].value = '';
-                this.itemList[9].canNull = true;
-                this.itemList[6].value = '';
-                this.itemList[6].canNull = true;
-                this.itemList[8].value = '';
-                this.itemList[8].canNull = true;
-                this.itemList[12].value = '';
-                this.itemList[12].canNull = true;
-            } else {
-                this.itemList[9].title = '初登日期';
-                this.itemList[9].dbName = 'init_reg';
-                this.itemList[9].value = '';
-                this.itemList[9].canNull = false;
-                this.itemList[6].value = '';
-                this.itemList[6].canNull = false;
-                this.itemList[8].value = '';
-                this.itemList[8].canNull = false;
-                this.itemList[12].value = '';
-                this.itemList[12].canNull = false;
-            }
-        }
+    _setCarRender = () => {
 
         let its = this.itemList.map((dt, index) => {
             return this._renderItem(dt, index)
@@ -326,322 +266,65 @@ export default class AddCarInfoScene extends BaseComponent {
 
     };
 
-    //先请求监管地点数据
-    _getData = () => {
+    _getJsonData = ()=>{
         let maps = {
-            merge_id: this.merge_id
+            auto_id:this.auto_id
         };
-        Net.request(appUrls.AUTOGETRUNPLACE, 'post', maps).then(
-            (response) => {
-                this._closeLoadingModal();
-                this.runPlaces = response.mjson.retdata;
-                if (this.runPlaces.length === 0) {
-                    this._showHint('监管地点为空');
+        this._showLoadingModal();
+        Net.request(appUrls.PURCHA_AUTODETAIL,'post',maps).then(
+            (response)=>{
+                if(response.mjson.retcode == 1){
+
+                    let mapsss = {
+                        merge_id: this.merge_id
+                    };
+
+                    Net.request(appUrls.AUTOGETRUNPLACE, 'post', mapsss).then(
+                        (runRep) => {
+                            this._closeLoadingModal();
+                            this.runPlaces = runRep.mjson.retdata;
+                            if (this.runPlaces.length === 0) {
+                                this._showHint('监管地点为空');
+                                this.backPage();
+                            } else {
+                                if (this.json !== '') {
+                                    //后台有数据
+                                    let carD = response.mjson.retdata;
+                                    SQLite.selectData('select * from newcar where frame_number = ?',
+                                        [this.number],
+                                        (sqlDt) => {
+                                            if (sqlDt.code === 1) {
+                                                if (sqlDt.result.rows.length === 0) {
+                                                    SQLite.changeData('insert into newcar (frame_number) values (?)', [this.number], () => {
+                                                        this._insertSData(carD);
+                                                    });
+                                                } else {
+                                                    this._insertSData(carD);
+                                                }
+                                            }
+                                        });
+                                }
+                            }
+                        },
+                        (error) => {
+                            this._closeLoadingModal();
+                            this._showHint('无法获取监管地点');
+                            this.backPage();
+                        });
+
+
+                }else{
+                    this._closeLoadingModal();
+                    this._showHint('无法获取车辆数据');
                     this.backPage();
-                } else {
-                    if (this.json !== '') {
-                        //后台有数据
-                        let carD = (JSON.parse(this.json)).retdata;
-                        SQLite.selectData('select * from newcar where frame_number = ?',
-                            [this.number],
-                            (sqlDt) => {
-                                if (sqlDt.code === 1) {
-                                    if (sqlDt.result.rows.length === 0) {
-                                        SQLite.changeData('insert into newcar (frame_number) values (?)', [this.number], () => {
-                                            this._insertSData(carD);
-                                        });
-                                    } else {
-                                        this._insertSData(carD);
-                                    }
-                                }
-                            });
-                    } else {
-                        //后台无数据
-                        SQLite.selectData('select * from newcar where frame_number = ?',
-                            [this.number],
-                            (sqlDt) => {
-                                if (sqlDt.code === 1) {
-
-                                    if (sqlDt.result.rows.length > 0) {
-                                        let carD = sqlDt.result.rows.item(0);
-                                        this.itemList.push({
-                                            title: '车架号',
-                                            value: this.number,
-                                            dbName: 'frame_number',
-                                            type: 1,
-                                            canNull: false,
-                                            tag: '',
-                                        });
-                                        this.itemList.push({
-                                            title: '车型',
-                                            value: carD.group_id,
-                                            dbName: 'group_id',
-                                            type: 1,
-                                            canNull: false,
-                                            tag: '',
-                                        });
-                                        this.itemList.push({
-                                            title: '排量',
-                                            value: carD.displacement,
-                                            dbName: 'displacement',
-                                            type: 2,
-                                            canNull: false,
-                                            tag: '',
-                                        });
-                                        this.itemList.push({
-                                            title: '发动机号',
-                                            value: carD.engine_number,
-                                            dbName: 'engine_number',
-                                            type: 3,
-                                            canNull: false,
-                                            tag: '',
-                                        });
-                                        this.itemList.push({
-                                            title: '车身颜色',
-                                            value: carD.car_color,
-                                            dbName: 'car_color',
-                                            type: 2,
-                                            canNull: false,
-                                            tag: '',
-                                        });
-                                        this.itemList.push({
-                                            title: '内饰颜色',
-                                            value: carD.trim_color,
-                                            dbName: 'trim_color',
-                                            type: 2,
-                                            canNull: false,
-                                            tag: '',
-                                        });
-                                        this.itemList.push({
-                                            title: '车牌号',
-                                            value: carD.plate_number,
-                                            dbName: 'plate_number',
-                                            type: 2,
-                                            canNull: false,
-                                            tag: '',
-                                        });
-                                        this.itemList.push({
-                                            title: '行驶里程',
-                                            value: carD.mileage,
-                                            dbName: 'mileage',
-                                            type: 2,
-                                            canNull: false,
-                                            tag: '',
-                                        });
-                                        this.itemList.push({
-                                            title: '过户次数',
-                                            value: carD.transfer_count,
-                                            dbName: 'transfer_count',
-                                            type: 2,
-                                            canNull: false,
-                                            tag: '',
-                                        });
-                                        this.itemList.push({
-                                            title: '初登日期',
-                                            value: carD.init_reg,
-                                            dbName: 'init_reg',
-                                            type: 4,
-                                            canNull: false,
-                                            tag: '',
-                                        });
-                                        this.itemList.push({
-                                            title: '出厂日期',
-                                            value: carD.manufacture,
-                                            dbName: 'manufacture',
-                                            type: 4,
-                                            canNull: false,
-                                            tag: '',
-                                        });
-                                        this.itemList.push({
-                                            title: '车辆类型',
-                                            value: carD.is_new,
-                                            dbName: 'is_new',
-                                            type: 4,
-                                            canNull: false,
-                                            tag: '',
-                                        });
-                                        this.itemList.push({
-                                            title: '使用性质',
-                                            value: carD.nature_use,
-                                            dbName: 'nature_use',
-                                            type: 4,
-                                            canNull: false,
-                                            tag: '',
-                                        });
-                                        this.itemList.push({
-                                            title: '入库类型',
-                                            value: carD.record_type,
-                                            dbName: 'record_type',
-                                            type: 4,
-                                            canNull: false,
-                                            tag: '',
-                                        });
-                                        this.itemList.push({
-                                            title: '监管地点',
-                                            value: carD.storage_id,
-                                            dbName: 'storage_id',
-                                            type: 4,
-                                            canNull: false,
-                                            tag: '',
-                                        });
-                                        this.itemList.push({
-                                            title: '',
-                                            value: '',
-                                            dbName: '',
-                                            type: 5,
-                                            canNull: false,
-                                            tag: '',
-                                        });
-
-                                    } else {
-                                        let iSql = 'insert into newcar (frame_number,'
-                                            + 'engine_number,plate_number,init_reg,model_id,'
-                                            + 'brand_id,series_id,group_id,is_new'
-                                            + ') values (?,?,?,?,?,?,?,?,?)';
-                                        SQLite.changeData(iSql, [this.number, this.engine_number
-                                            , this.plate_number, this.init_reg, this.model_id,
-                                            this.brand_id, this.series_id, this.model_name, '1']);
-
-                                        this.itemList.push({
-                                            title: '车架号',
-                                            value: this.number,
-                                            dbName: 'frame_number',
-                                            type: 1,
-                                            canNull: false,
-                                            tag: '',
-                                        });
-                                        this.itemList.push({
-                                            title: '车型',
-                                            value: this.model_name,
-                                            dbName: 'group_id',
-                                            type: 1,
-                                            canNull: false,
-                                            tag: '',
-                                        });
-                                        this.itemList.push({
-                                            title: '排量',
-                                            value: '',
-                                            dbName: 'displacement',
-                                            type: 2,
-                                            canNull: false,
-                                            tag: '',
-                                        });
-                                        this.itemList.push({
-                                            title: '发动机号',
-                                            value: this.engine_number,
-                                            dbName: 'engine_number',
-                                            type: 3,
-                                            canNull: false,
-                                            tag: '',
-                                        });
-                                        this.itemList.push({
-                                            title: '车身颜色',
-                                            value: '',
-                                            dbName: 'car_color',
-                                            type: 2,
-                                            canNull: false,
-                                            tag: '',
-                                        });
-                                        this.itemList.push({
-                                            title: '内饰颜色',
-                                            value: '',
-                                            dbName: 'trim_color',
-                                            type: 2,
-                                            canNull: false,
-                                            tag: '',
-                                        });
-                                        this.itemList.push({
-                                            title: '车牌号',
-                                            value: this.plate_number,
-                                            dbName: 'plate_number',
-                                            type: 2,
-                                            canNull: false,
-                                            tag: '',
-                                        });
-                                        this.itemList.push({
-                                            title: '行驶里程',
-                                            value: '',
-                                            dbName: 'mileage',
-                                            type: 2,
-                                            canNull: false,
-                                            tag: '',
-                                        });
-                                        this.itemList.push({
-                                            title: '过户次数',
-                                            value: '',
-                                            dbName: 'transfer_count',
-                                            type: 2,
-                                            canNull: false,
-                                            tag: '',
-                                        });
-                                        this.itemList.push({
-                                            title: '初登日期',
-                                            value: this.init_reg,
-                                            dbName: 'init_reg',
-                                            type: 4,
-                                            canNull: false,
-                                            tag: '',
-                                        });
-                                        this.itemList.push({
-                                            title: '出厂日期',
-                                            value: '',
-                                            dbName: 'manufacture',
-                                            type: 4,
-                                            canNull: false,
-                                            tag: '',
-                                        });
-                                        this.itemList.push({
-                                            title: '车辆类型',
-                                            value: 1,
-                                            dbName: 'is_new',
-                                            type: 4,
-                                            canNull: false,
-                                            tag: '',
-                                        });
-                                        this.itemList.push({
-                                            title: '使用性质',
-                                            value: '',
-                                            dbName: 'nature_use',
-                                            type: 4,
-                                            canNull: false,
-                                            tag: '',
-                                        });
-                                        this.itemList.push({
-                                            title: '入库类型',
-                                            value: '',
-                                            dbName: 'record_type',
-                                            type: 4,
-                                            canNull: false,
-                                            tag: '',
-                                        });
-                                        this.itemList.push({
-                                            title: '监管地点',
-                                            value: '',
-                                            dbName: 'storage_id',
-                                            type: 4,
-                                            canNull: false,
-                                            tag: '',
-                                        });
-                                        this.itemList.push({
-                                            title: '',
-                                            value: '',
-                                            dbName: '',
-                                            type: 5,
-                                            canNull: false,
-                                            tag: '',
-                                        });
-                                    }
-                                    this._setFirstCarRender();
-                                }
-                            });
-                    }
                 }
             },
-            (error) => {
+            (error)=>{
                 this._closeLoadingModal();
-                this._showHint('无法获取监管地点');
+                this._showHint('无法获取车辆数据');
                 this.backPage();
-            });
+            }
+        );
     };
 
     _renderItem = (data, index) => {
@@ -654,17 +337,12 @@ export default class AddCarInfoScene extends BaseComponent {
                 }
             }
             return (
-                <TouchableOpacity key={index} style={styles.type_one_wrap}
-                                  activeOpacity={0.6}
-                                  onPress={() => {
-                                      this._onTypeOneClick(data.title)
-                                  }}
-                >
+                <View key={index} style={styles.type_one_wrap}>
                     <Text style={styles.type_one_star_mark}>*</Text>
                     <Text style={styles.type_one_left_title}>{data.title}</Text>
                     <View style={styles.fillSpace}/>
                     <Text style={styles.type_one_right_value}>{rtv}</Text>
-                </TouchableOpacity>
+                </View>
             )
         } else if (data.type === 2) {
             let tP = '请输入' + data.title;
@@ -766,11 +444,11 @@ export default class AddCarInfoScene extends BaseComponent {
         }
     };
 
-    _onTypeOneClick = (title) => {
-        if (title === '车型') {
-            this.toNextPage('CarBrandSelectScene', {checkedCarClick: this._checkedCarClick})
-        }
-    };
+    // _onTypeOneClick = (title) => {
+    //     if (title === '车型') {
+    //         this.toNextPage('CarBrandSelectScene', {checkedCarClick: this._checkedCarClick})
+    //     }
+    // };
 
     _onTypeFourClick = (title) => {
         if (title === '车辆类型') {
@@ -819,7 +497,7 @@ export default class AddCarInfoScene extends BaseComponent {
             SQLite.changeData('update newcar set engine_number = ? where frame_number = ?',
                 [rep.carEngine, this.number], () => {
                     this.itemList[3].value = rep.carEngine;
-                    this._setCarRender(false);
+                    this._setCarRender();
                 });
         }, (error) => {
             this._showHint('扫描失败');
@@ -885,12 +563,12 @@ export default class AddCarInfoScene extends BaseComponent {
         if (dtType === '0') {
             SQLite.changeData('update newcar set is_new = ? where frame_number = ?', [Number.parseInt(rowID) + 1, this.number], () => {
                 this.itemList[11].value = Number.parseInt(rowID) + 1;
-                this._setCarRender(true);
+                this._setCarRender();
             });
         } else if (dtType === '1') {
             SQLite.changeData('update newcar set nature_use = ? where frame_number = ?', [Number.parseInt(rowID) + 1, this.number], () => {
                 this.itemList[12].value = Number.parseInt(rowID) + 1;
-                this._setCarRender(false);
+                this._setCarRender();
             });
         } else if (dtType === '2') {
             let v = 1;
@@ -901,13 +579,13 @@ export default class AddCarInfoScene extends BaseComponent {
             }
             SQLite.changeData('update newcar set record_type = ? where frame_number = ?', [v, this.number], () => {
                 this.itemList[13].value = v;
-                this._setCarRender(false);
+                this._setCarRender();
             });
         } else if (dtType === '3') {
             let r = this.runPlaces[rowID].storage_id;
             SQLite.changeData('update newcar set storage_id = ? where frame_number = ?', [r, this.number], () => {
                 this.itemList[14].value = r;
-                this._setCarRender(false);
+                this._setCarRender();
             });
         }
     };
@@ -938,13 +616,13 @@ export default class AddCarInfoScene extends BaseComponent {
             SQLite.changeData('update newcar set manufacture = ? where frame_number = ?',
                 [d, this.number], () => {
                     this.itemList[10].value = d;
-                    this._setCarRender(false);
+                    this._setCarRender();
                 });
         } else {
             SQLite.changeData('update newcar set ' + this.itemList[9].dbName + ' = ? where frame_number = ?',
                 [d, this.number], () => {
                     this.itemList[9].value = d;
-                    this._setCarRender(false);
+                    this._setCarRender();
                 });
         }
 
@@ -1153,4 +831,3 @@ const styles = StyleSheet.create({
     }
 
 });
-

@@ -64,6 +64,10 @@ export default class PurchaseCarScene extends BaseComponent{
         return(<PurchaseCarItem item={item} />)
     };
 
+    _onItemClick = (type,auto_id)=>{
+
+    };
+
     _onEndReached = ()=>{
 
         if(!this.state.loading && this.allSource.length>0 && this.page !== this.total){

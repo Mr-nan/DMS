@@ -117,7 +117,8 @@ export default class LoginScene extends BaseComponent {
                 let split = auth.split('=');
                 this.imageCode = split[1];
 
-                let base64String = 'data:image/png;base64,' + baseUtil.encode(request.response);;
+                let base64String = 'data:image/png;base64,' + baseUtil.encode(request.response);
+                ;
                 // let base64String = 'data:image/png;base64,' + request.response;
                 this.setState({
                     codeUrl: base64String,

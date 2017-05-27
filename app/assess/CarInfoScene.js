@@ -453,13 +453,14 @@ export default class CarInfoScene extends BaseComponent {
             url = appUrls.INVENTORYFINANCINGGETAUTOINFO;
             maps.auto_id = this.state.auto_id
         } else if (this.state.from_name === 'PurchaseCarScene') {
-            url = appUrls.WHOLESTOCKPILEGETAUTOINFO;
+            url = appUrls.PURCHA_AUTODETAIL;
             maps.auto_base_id = this.state.auto_id
         }
         this._showLoadingModal();
         Net.request(url, 'post', maps).then(
             (response) => {
                 let carInfo = response.mjson.retdata;
+                this.json = JSON.stringify(response.mjson);
                 this._getPrice(carInfo);
             },
             (error) => {
@@ -523,6 +524,20 @@ export default class CarInfoScene extends BaseComponent {
             });
     };
 
+    _onPgBtnClick=()=>{
+        if(this.state.accessText === '评估'){
+            this._openPop();
+        }else if(this.state.accessText === '编辑'){
+            this.toNextPage('AddCarInfoScene',{
+                merge_id:this.state.merge_id,
+                from:'CarInfoScene' + this.state.from_name,
+                number:this.number,
+                payment_id:this.state.payment_id,
+                auto_id:this.state.auto_id,
+                json:this.json
+            })
+        }
+    };
 
     render() {
         return (
@@ -539,13 +554,10 @@ export default class CarInfoScene extends BaseComponent {
                             <Text style={styles.pgdqFont}>{'评估即将到期！请尽快评估'}</Text>
                         </View>
                     }
-
                     <View style={styles.btnWrap}>
                         {
                             this.state.assessFlag &&
-                            <TouchableOpacity style={styles.pgBtn} onPress={() => {
-                                this._openPop();
-                            }}>
+                            <TouchableOpacity style={styles.pgBtn} onPress={this._onPgBtnClick}>
                                 <Text style={styles.btnFont}>{this.state.accessText}</Text>
                             </TouchableOpacity>
                         }

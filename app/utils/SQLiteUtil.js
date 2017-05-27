@@ -52,7 +52,7 @@ const SQLite = React.createClass({
                 + 'dealer_price varchar(20) default "",'
                 + 'displacement varchar(20) default "",'
                 + 'engine_number varchar(20) default "",'
-                + 'viewing_position varchar(200) default "",'
+                + 'view_position varchar(300) default "",'
                 + 'frame_number varchar(20) default "" unique, '
                 + 'gearbox varchar(20) default "",'
                 + 'gearbox_speed varchar(20) default "",'
@@ -86,6 +86,25 @@ const SQLite = React.createClass({
                 + 'user_id varchar(20) default "",'
                 + 'lend_mny varchar(20) default "",'
                 + 'wading varchar(20) default "");'
+                , [], () => {
+                    this._successCB('executeSql');
+                }, (err) => {
+                    this._errorCB('executeSql', err);
+                });
+        }, (err) => {
+            this._errorCB('transaction', err);
+        }, () => {
+            this._successCB('transaction');
+        });
+
+        //新车添加图片
+        db.transaction((tx) => {
+            tx.executeSql('CREATE TABLE IF NOT EXISTS ' + "carimage" + '('
+                + 'file_url varchar(100) default "",'
+                + 'file_id varchar(20) default "",'
+                + 'file_name varchar(100) default "",'
+                + 'syscodedata_id varchar(20) default "",'
+                + 'frame_number varchar(20) default "");'
                 , [], () => {
                     this._successCB('executeSql');
                 }, (err) => {
@@ -174,7 +193,7 @@ const SQLite = React.createClass({
      * 增删改数据
      * params sql:操作语句 array：参数
      **/
-    changeData(sql, array){
+    changeData(sql, array,callBack){
         if (!db) {
             this.open();
         }
@@ -183,9 +202,10 @@ const SQLite = React.createClass({
                 console.log('changeData');
                 tx.executeSql(sql, array);
             }, function (error) {
-                // console.log('shibai' + error.message);
+                console.log('shibai' + error.message);
             }, function () {
-                // console.log('chenggong');
+                callBack();
+                console.log('chenggong');
             }
         );
     }

@@ -180,7 +180,7 @@ export default class CarBrandSelectScene extends BaseComponent {
     // 选择参数回传
     _checkedCarClick = (dt) => {
 
-        this.props.checkedCarClick(dt);
+        this.props.navigation.state.params.checkedCarClick(dt);
         this.backPage();
 
     };
@@ -250,7 +250,7 @@ export default class CarBrandSelectScene extends BaseComponent {
 
                 </View>
                 <ZNListIndexView indexTitleArray={this.state.sectionTitleArray} indexClick={this._indexAndScrollClick}/>
-                <AllNavigationView title={'品牌信息'} backIconClick={() => {
+                <AllNavigationView title={'添加车辆'} backIconClick={() => {
                     this.backPage();
                 }} parentNavigation={this}/>
                 {

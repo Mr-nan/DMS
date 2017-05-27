@@ -39,6 +39,9 @@ export default class FunctionScene extends BaseComponent {
     constructor(props) {
         super(props);
         this.funcs = [];
+        this.state={
+            funcs:[]
+        };
     }
 
     initFinish = () => {
@@ -63,6 +66,9 @@ export default class FunctionScene extends BaseComponent {
                 if (func.auto_assess == '1') {
                     this.funcs.push('OBD监管');
                 }
+                this.setState({
+                    funcs:this.funcs
+                })
             }
         });
 
@@ -144,7 +150,7 @@ export default class FunctionScene extends BaseComponent {
             <View style={styles.container}>
                 <View style={styles.wrapContainer}>
                     <FlatList
-                        data={this.funcs}
+                        data={this.state.funcs}
                         renderItem={this._renderItem}
                         keyExtractor={this._keyExtractor}
                         numColumns={3}

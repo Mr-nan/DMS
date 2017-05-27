@@ -77,18 +77,13 @@ export default class AddCarNumberScene extends BaseComponent {
             (response) => {
                 let rb = response.mjson;
                 if (rb.retcode === 1) {
-                    console.log('11111111111111111');
                     SQLite.selectData('select * from newcar where frame_number = ?',
                         [this.vin_number],
                         (sqlDt) => {
-                            console.log('22222222222222222222');
                             if (sqlDt.code === 1) {
-                                console.log('3333333333333333333');
                                 if (sqlDt.result.rows.length === 0) {
-                                    console.log('444444444444444444444');
                                     this._getCarTypeData();
                                 } else {
-                                    console.log('5555555555555555555');
                                     this._toNextScene('');
                                 }
                             }
@@ -121,9 +116,11 @@ export default class AddCarNumberScene extends BaseComponent {
                         },()=>{
                             this.brandPop.refresh(rb.retdata.data);
                         })
+                    }else{
+                        this._showHint('未匹配出款型，请自行选择');
+                        this._toNextScene('');
                     }
                 }else{
-
                     this._showHint('未匹配出款型，请自行选择');
                     this._toNextScene('');
                 }
@@ -152,6 +149,8 @@ export default class AddCarNumberScene extends BaseComponent {
             model_name:this.model_name,
             json:carJson
         };
+
+        this.toNextPage('AddCarInfoScene',params);
     };
 
     _onFrameChange = (text) => {
