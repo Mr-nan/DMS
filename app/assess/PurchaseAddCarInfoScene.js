@@ -24,7 +24,6 @@ import * as appUrls from '../constant/appUrls';
 import SQLiteUtil from '../utils/SQLiteUtil';
 const {width} = Dimensions.get('window');
 const SQLite = new SQLiteUtil();
-import CarTypeSelectPop from './component/CarTypeSelectPop';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 
 const scan = require('../../images/scan.png');
@@ -47,7 +46,6 @@ export default class PurchaseAddCarInfoScene extends BaseComponent {
         this.itemList = [];
         this.state = {
             renderItems: [],
-            carTypePop: false,
             isDateTimePickerVisible: false
         }
     }
@@ -266,14 +264,14 @@ export default class PurchaseAddCarInfoScene extends BaseComponent {
 
     };
 
-    _getJsonData = ()=>{
+    _getJsonData = () => {
         let maps = {
-            auto_id:this.auto_id
+            auto_id: this.auto_id
         };
         this._showLoadingModal();
-        Net.request(appUrls.PURCHA_AUTODETAIL,'post',maps).then(
-            (response)=>{
-                if(response.mjson.retcode == 1){
+        Net.request(appUrls.PURCHA_AUTODETAIL, 'post', maps).then(
+            (response) => {
+                if (response.mjson.retcode == 1) {
 
                     let mapsss = {
                         merge_id: this.merge_id
@@ -313,13 +311,13 @@ export default class PurchaseAddCarInfoScene extends BaseComponent {
                         });
 
 
-                }else{
+                } else {
                     this._closeLoadingModal();
                     this._showHint('无法获取车辆数据');
                     this.backPage();
                 }
             },
-            (error)=>{
+            (error) => {
                 this._closeLoadingModal();
                 this._showHint('无法获取车辆数据');
                 this.backPage();
@@ -444,12 +442,6 @@ export default class PurchaseAddCarInfoScene extends BaseComponent {
         }
     };
 
-    // _onTypeOneClick = (title) => {
-    //     if (title === '车型') {
-    //         this.toNextPage('CarBrandSelectScene', {checkedCarClick: this._checkedCarClick})
-    //     }
-    // };
-
     _onTypeFourClick = (title) => {
         if (title === '车辆类型') {
             this.setState({
@@ -505,13 +497,22 @@ export default class PurchaseAddCarInfoScene extends BaseComponent {
     };
 
     //下一步
-    _onNextSceneClick = ()=>{
+    _onNextSceneClick = () => {
         let canNext = true;
-        for(let it in this.itemList){
-            if(it.value === ''){
-                if(this.itemList[11].value == 2 || this.itemList[11].value == 3){
+        for (let it in this.itemList) {
+            if (it.value === '') {
+                if (this.itemList[11].value == 2 || this.itemList[11].value == 3) {
+                    if (it.title === '车牌号' ||
+                        it.title === '过户次数' ||
+                        it.title === '发证日期' ||
+                        it.title === '使用性质') {
+                    } else {
+                        canNext = false;
+                        this._showHint(it.title + '数据为空');
+                        break;
+                    }
 
-                }else{
+                } else {
                     canNext = false;
                     this._showHint(it.title + '数据为空');
                     break;
@@ -519,73 +520,14 @@ export default class PurchaseAddCarInfoScene extends BaseComponent {
             }
         }
 
-        if(canNext === true){
-            this.toNextPage('AddCarPriceScene',{
-                merge_id:this.merge_id,
-                from:this.from,
-                json:this.json,
-                number:this.number,
-                payment_id:this.payment_id,
-                auto_id:this.auto_id
-            });
-        }
-    };
-
-    //选择车型
-    _checkedCarClick = (carObject) => {
-
-        let iSql = 'update newcar set '
-            + 'model_id = ?,brand_id = ?,series_id = ?,group_id = ? '
-            + ' where frame_number = ?';
-        SQLite.changeData(iSql, [carObject.model_id,
-            carObject.brand_id, carObject.series_id, carObject.model_name, this.number], () => {
-            this.itemList[1].value = carObject.model_name;
-            let its = this.itemList.map((dt, index) => {
-                return this._renderItem(dt, index)
-            });
-            this.setState({
-                renderItems: its
-            });
-
-        });
-
-
-    };
-
-    _closeCarModal = () => {
-        this.setState({
-            carTypePop: false
-        });
-    };
-
-    //选择列表返回
-    _onCarTypeClick = (rowID, rowData, dtType) => {
-        if (dtType === '0') {
-            SQLite.changeData('update newcar set is_new = ? where frame_number = ?', [Number.parseInt(rowID) + 1, this.number], () => {
-                this.itemList[11].value = Number.parseInt(rowID) + 1;
-                this._setCarRender();
-            });
-        } else if (dtType === '1') {
-            SQLite.changeData('update newcar set nature_use = ? where frame_number = ?', [Number.parseInt(rowID) + 1, this.number], () => {
-                this.itemList[12].value = Number.parseInt(rowID) + 1;
-                this._setCarRender();
-            });
-        } else if (dtType === '2') {
-            let v = 1;
-            if (rowData === '放款入库') {
-                v = 1;
-            } else if (rowData === '置换入库') {
-                v = 2;
-            }
-            SQLite.changeData('update newcar set record_type = ? where frame_number = ?', [v, this.number], () => {
-                this.itemList[13].value = v;
-                this._setCarRender();
-            });
-        } else if (dtType === '3') {
-            let r = this.runPlaces[rowID].storage_id;
-            SQLite.changeData('update newcar set storage_id = ? where frame_number = ?', [r, this.number], () => {
-                this.itemList[14].value = r;
-                this._setCarRender();
+        if (canNext === true) {
+            this.toNextPage('AddCarPriceScene', {
+                merge_id: this.merge_id,
+                from: this.from,
+                json: this.json,
+                number: this.number,
+                payment_id: this.payment_id,
+                auto_id: this.auto_id
             });
         }
     };
@@ -599,7 +541,7 @@ export default class PurchaseAddCarInfoScene extends BaseComponent {
         SQLite.changeData(iSql, [text, this.number])
     };
 
-    _onTypeThreeChange =(text)=>{
+    _onTypeThreeChange = (text) => {
         this.itemList[3].value = text;
         let iSql = 'update newcar set engine_number = ? where frame_number = ?';
         SQLite.changeData(iSql, [text, this.number])
@@ -659,15 +601,6 @@ export default class PurchaseAddCarInfoScene extends BaseComponent {
                 <AllNavigationView title={'添加车辆'} backIconClick={() => {
                     this.backPage();
                 }} parentNavigation={this}/>
-                {
-                    this.state.carTypePop &&
-                    <CarTypeSelectPop ref={(ref) => {
-                        this.carPop = ref
-                    }}
-                                      closeModal={this._closeCarModal}
-                                      onItemClick={this._onCarTypeClick}/>
-
-                }
                 <DateTimePicker
                     titleIOS="请选择日期"
                     confirmTextIOS='确定'

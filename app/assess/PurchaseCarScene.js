@@ -61,11 +61,21 @@ export default class PurchaseCarScene extends BaseComponent{
     };
 
     _renderItem = (item)=>{
-        return(<PurchaseCarItem item={item} />)
+        return(<PurchaseCarItem item={item} onItemClick={this._onItemClick}/>)
     };
 
-    _onItemClick = (type,auto_id)=>{
+    _onItemClick = (type,item)=>{
+        if(type === '2'){
+            this.toNextPage('CarInfoScene',{
+                from_name:'PurchaseCarScene',
+                auto_id:item.auto_id,
+                is_time_out:item.is_time_out,
+                payment_id:this.payment_id,
+                merge_id:this.merge_id
+            })
+        }else{
 
+        }
     };
 
     _onEndReached = ()=>{

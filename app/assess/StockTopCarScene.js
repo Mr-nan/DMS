@@ -30,6 +30,7 @@ export default class StockTopCarScene extends BaseComponent{
         super(props);
 
         this.payment_id = this.props.navigation.state.params.payment_id;
+        this.merge_id = this.props.navigation.state.params.merge_id;
         this.cName = this.props.navigation.state.params.name;
         this.page = 1;
         this.total = 0;
@@ -61,7 +62,17 @@ export default class StockTopCarScene extends BaseComponent{
     };
 
     _renderItem = (item)=>{
-        return(<BottomStockItem item={item} />)
+        return(<BottomStockItem item={item} onItemClick={this._onItemClick}/>)
+    };
+
+    _onItemClick = (item)=>{
+        this.toNextPage('CarInfoScene',{
+            from_name:'StockTopCarScene',
+            auto_id:item.auto_id,
+            is_time_out:item.is_time_out,
+            payment_id:this.payment_id,
+            merge_id:this.merge_id
+        })
     };
 
     _onEndReached = ()=>{

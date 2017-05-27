@@ -55,7 +55,7 @@ export default class PurchaseCarItem extends Component {
                     <TouchableOpacity
                         style={styles.wrapContainer}
                         activeOpacity={0.6}
-                        onPress={()=>{onItemClick('2',item.auto_id)}}>
+                        onPress={()=>{onItemClick('2',item)}}>
                         <View style={styles.leftWrap}>
                             <Text style={styles.carName}>{title}</Text>
                             <View style={styles.leftSubWrap}>
@@ -86,7 +86,7 @@ export default class PurchaseCarItem extends Component {
                         <TouchableOpacity
                             style={styles.pgdqWrap}
                             activeOpacity={0.6}
-                            onPress={()=>{onItemClick(clickType,item.auto_id)}}>
+                            onPress={()=>{onItemClick(clickType,item)}}>
                             <Image resizeMode={'contain'} style={styles.pgdqImg} source={pgdq}>
                                 <Text style={styles.pgdqFont}>{dqHint}</Text>
                             </Image>

@@ -214,7 +214,7 @@ export default class AddCarPriceScene extends BaseComponent {
                         tag: '',
                     });
 
-                    SQLite.update('update newcar set accident = ?,wading = ?,'
+                    SQLite.changeData('update newcar set accident = ?,wading = ?,'
                         + 'view_position = ?,car_condition =?,che300_mny = ?,chechong_mny = ?'
                         + 'where frame_number = ?', [carD.accident + '', carD.wading + '', tempPosition,
                         carD.car_condition + '', this.che300_mny, '0', this.number], () => {

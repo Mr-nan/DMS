@@ -294,9 +294,12 @@ export default class CarInfoScene extends BaseComponent {
             value: car_condition
         });
 
-        if (carInfo.viewing_position === '' || carInfo.viewing_position === {}) {
+        if (carInfo.viewing_position === ''
+            || carInfo.viewing_position === {}
+            || carInfo.viewing_position === null) {
 
         } else {
+
             this.tagViews.map((tag) => {
                 carInfo.viewing_position.map((inner) => {
                     if (tag.syscodedata_id === inner.syscodedata_id) {
@@ -454,7 +457,7 @@ export default class CarInfoScene extends BaseComponent {
             maps.auto_id = this.state.auto_id
         } else if (this.state.from_name === 'PurchaseCarScene') {
             url = appUrls.PURCHA_AUTODETAIL;
-            maps.auto_base_id = this.state.auto_id
+            maps.auto_id = this.state.auto_id
         }
         this._showLoadingModal();
         Net.request(url, 'post', maps).then(
@@ -464,6 +467,7 @@ export default class CarInfoScene extends BaseComponent {
                 this._getPrice(carInfo);
             },
             (error) => {
+                this._closeLoadingModal();
                 this.backPage();
             });
 

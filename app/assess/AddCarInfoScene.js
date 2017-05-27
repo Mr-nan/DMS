@@ -169,9 +169,9 @@ export default class AddCarInfoScene extends BaseComponent {
             tag: '',
         });
         let tReg = carD.init_reg;
-        if (tReg !== '') {
-            tReg = this._dateReversal(tReg);
-        }
+        // if (tReg !== '') {
+        //     tReg = this._dateReversal(tReg);
+        // }
         this.itemList.push({
             title: '初登日期',
             value: tReg,
@@ -182,9 +182,9 @@ export default class AddCarInfoScene extends BaseComponent {
         });
 
         let tManu = carD.manufacture;
-        if (tManu !== '') {
-            tManu = this._dateReversal(tManu);
-        }
+        // if (tManu !== '') {
+        //     tManu = this._dateReversal(tManu);
+        // }
         this.itemList.push({
             title: '出厂日期',
             value: tManu,
@@ -233,9 +233,9 @@ export default class AddCarInfoScene extends BaseComponent {
             canNull: false,
             tag: '',
         });
-        let upSql = 'update newcar set ground_id = ?,'
+        let upSql = 'update newcar set group_id = ?,'
             + 'brand_id = ?,'
-            + 'series_id = ?'
+            + 'series_id = ?,'
             + 'model_id = ?,'
             + 'displacement = ?,'
             + 'engine_number = ?,'
@@ -250,8 +250,11 @@ export default class AddCarInfoScene extends BaseComponent {
             + 'nature_use = ?,'
             + 'record_type = ?,'
             + 'storage_id = ?';
+
+        console.log('carD',carD);
+
         SQLite.changeData(upSql + ' where frame_number=?', [
-            carD.group_id, carD.brand_id, carD.series_id,
+            carD.model_name, carD.brand_id, carD.series_id,
             carD.model_id, carD.displacement, carD.engine_number,
             carD.car_color, carD.trim_color, carD.plate_number,
             carD.mileage, carD.transfer_count, tReg, tManu,
@@ -714,7 +717,7 @@ export default class AddCarInfoScene extends BaseComponent {
             )
         } else if (data.type === 4) {
             let xz = '请选择';
-            if (data.value !== '') {
+            if (data.value !== '' && data.value !== '0') {
                 xz = data.value;
             }
             if (data.title === '车辆类型') {
@@ -933,7 +936,7 @@ export default class AddCarInfoScene extends BaseComponent {
     };
 
     _handleDatePicked = (date) => {
-        let d = this._dateFormat(date, 'yyyy-M-d');
+        let d = this._dateFormat(date, 'yyyy-MM-dd');
         if (this.carDateType === 'factory') {
             SQLite.changeData('update newcar set manufacture = ? where frame_number = ?',
                 [d, this.number], () => {
