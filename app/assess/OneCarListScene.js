@@ -160,6 +160,14 @@ export default class OneCarListScene extends BaseComponent{
         this._getData();
     };
 
+    _onAddCarClick = ()=>{
+        this.props.toNextPage('AddCarNumberScene',{
+            from:'OneCarListScene',
+            payment_id:'',
+            merge_id:this.merge_id
+        })
+    };
+
     render(){
         return(
             <View style={styles.container}>
@@ -189,7 +197,7 @@ export default class OneCarListScene extends BaseComponent{
                         />
                     </View>
                     <AddNewCarBottom waitPrice={this.state.waitPrice}
-                                     onAddClick={()=>{}} addEnable={this.state.addEnable}/>
+                                     onAddClick={this._onAddCarClick} addEnable={this.state.addEnable}/>
                 </View>
                 <AllNavigationView title={this.cName} backIconClick={() => {
                     this.backPage();

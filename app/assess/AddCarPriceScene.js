@@ -149,11 +149,14 @@ export default class AddCarPriceScene extends BaseComponent {
                         tag: '',
                     });
                     let tempPosition = '';
-                    if (carD.viewing_position === '' || carD.viewing_position === {}) {
+                    if (carD.viewing_position === ''
+                        || carD.viewing_position === {}
+                        || carD.viewing_position === null)  {
 
                     } else {
                         tempPosition = carD.viewing_position;
-                        if (typeof  tempPosition === 'string') {
+
+                        if (typeof(tempPosition) === 'string') {
                             tempPosition = JSON.parse(tempPosition);
                         }
 
@@ -215,8 +218,8 @@ export default class AddCarPriceScene extends BaseComponent {
                     });
 
                     SQLite.changeData('update newcar set accident = ?,wading = ?,'
-                        + 'view_position = ?,car_condition =?,che300_mny = ?,chechong_mny = ?'
-                        + 'where frame_number = ?', [carD.accident + '', carD.wading + '', tempPosition,
+                        + 'viewing_position = ?,car_condition =?,che300_mny = ?,chechong_mny = ?'
+                        + 'where frame_number = ?', [carD.accident + '', carD.wading + '', JSON.stringify(tempPosition),
                         carD.car_condition + '', this.che300_mny, '0', this.number], () => {
                         this._closeLoadingModal();
                         this._setCarRender();
@@ -254,17 +257,17 @@ export default class AddCarPriceScene extends BaseComponent {
                                         canNull: false,
                                         tag: '',
                                     });
-                                    if (carD.view_position === '' || carD.view_position === {} || typeof(carD.view_position) === 'undefined') {
-                                        console.log('333333', carD.view_position);
+                                    if (carD.viewing_position === '' || carD.viewing_position === {}
+                                    || typeof(carD.viewing_position) === 'undefined') {
+                                        console.log('333333', carD.viewing_position);
                                     } else {
 
                                         console.log('11111111111111111111111');
-
-                                        let checkeds = carD.view_position;
-                                        if (typeof  checkeds === 'string') {
+                                        let checkeds = carD.viewing_position;
+                                        if (typeof(checkeds) === 'string') {
                                             checkeds = JSON.parse(checkeds);
                                         }
-                                        console.log('22222', checkeds);
+
                                         this.tagViews.map((tag) => {
                                             checkeds.map((inner) => {
                                                 if (tag.syscodedata_id === inner.syscodedata_id) {
@@ -612,7 +615,7 @@ export default class AddCarPriceScene extends BaseComponent {
                 checked.push(m);
             }
         });
-        SQLite.changeData('update newcar set view_position = ? where frame_number = ?',
+        SQLite.changeData('update newcar set viewing_position = ? where frame_number = ?',
             [JSON.stringify(checked), this.number], () => {
             });
 
@@ -672,9 +675,9 @@ export default class AddCarPriceScene extends BaseComponent {
                         this._closePop();
                         let rb = response.mjson;
                         SQLite.changeData('update newcar set lend_mny = ?,region_rebate = ?,region_assess_mny = ? where frame_number = ?'
-                            , [rb.retdata.lend_mny, rb.retdata.region_rebate, price, this.number], () => {
-                                this.tLend_mny = rb.retdata.lend_mny;
-                                this.tRegion_rebate = rb.retdata.region_rebate;
+                            , [rb.retdata.lend_mny+ '', rb.retdata.region_rebate+ '', price, this.number], () => {
+                                this.tLend_mny = rb.retdata.lend_mny + '';
+                                this.tRegion_rebate = rb.retdata.region_rebate+'';
                                 this.tRegion_assess_mny = price;
                                 this._setCarRender();
                             });

@@ -727,9 +727,9 @@ export default class AddCarInfoScene extends BaseComponent {
                     xz = natureTypes[Number.parseInt(data.value) - 1];
                 }
             } else if (data.title === '入库类型') {
-                if (Number.parseInt(data.value) === 1) {
+                if (data.value == '1') {
                     xz = '放款入库';
-                } else if (Number.parseInt(data.value) === 3) {
+                } else if (data.value == '3') {
                     xz = '置换入库';
                 }
             } else if (data.title === '监管地点') {
@@ -885,22 +885,24 @@ export default class AddCarInfoScene extends BaseComponent {
 
     //选择列表返回
     _onCarTypeClick = (rowID, rowData, dtType) => {
+        console.log('rowID',rowID);
+        console.log('rowID2',Number.parseInt(rowID) + 1);
         if (dtType === '0') {
-            SQLite.changeData('update newcar set is_new = ? where frame_number = ?', [Number.parseInt(rowID) + 1, this.number], () => {
-                this.itemList[11].value = Number.parseInt(rowID) + 1;
+            SQLite.changeData('update newcar set is_new = ? where frame_number = ?', [(Number.parseInt(rowID) + 1) + '', this.number], () => {
+                this.itemList[11].value = (Number.parseInt(rowID) + 1) + '';
                 this._setCarRender(true);
             });
         } else if (dtType === '1') {
-            SQLite.changeData('update newcar set nature_use = ? where frame_number = ?', [Number.parseInt(rowID) + 1, this.number], () => {
-                this.itemList[12].value = Number.parseInt(rowID) + 1;
+            SQLite.changeData('update newcar set nature_use = ? where frame_number = ?', [(Number.parseInt(rowID) + 1) + '', this.number], () => {
+                this.itemList[12].value = (Number.parseInt(rowID) + 1) + '';
                 this._setCarRender(false);
             });
         } else if (dtType === '2') {
-            let v = 1;
+            let v = '1';
             if (rowData === '放款入库') {
-                v = 1;
+                v = '1';
             } else if (rowData === '置换入库') {
-                v = 2;
+                v = '3';
             }
             SQLite.changeData('update newcar set record_type = ? where frame_number = ?', [v, this.number], () => {
                 this.itemList[13].value = v;

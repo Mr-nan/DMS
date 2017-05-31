@@ -1,7 +1,7 @@
 /**
  * Created by Administrator on 2017/5/17.
  */
-import React from 'react';
+import React,{Component} from 'react';
 import {
     View,
     StyleSheet,
@@ -9,9 +9,6 @@ import {
     RefreshControl
 }from 'react-native';
 
-import BaseComponent from '../component/BaseComponent';
-import PixelUtil from '../utils/PixelUtil';
-const Pixel = new PixelUtil();
 import * as FontAndColor from '../constant/fontAndColor';
 import SearchTitleView from '../component/SearchTitleView';
 import * as Net from '../utils/RequestUtil';
@@ -22,7 +19,7 @@ import BottomStockItem from './component/BottomStockItem'
 import AddNewCarBottom from './component/AddNewCarBottom';
 
 
-export default class StockBottomScene extends BaseComponent{
+export default class StockBottomScene extends Component{
 
     constructor(props){
         super(props);
@@ -40,7 +37,7 @@ export default class StockBottomScene extends BaseComponent{
         };
     }
 
-    initFinish = ()=>{
+    componentDidMount(){
         this._showLoadingModal();
         this._getData();
     };
@@ -143,6 +140,14 @@ export default class StockBottomScene extends BaseComponent{
         this._getData();
     };
 
+    _onAddCarClick = ()=>{
+        this.props.toNextPage('AddCarNumberScene',{
+            from:'StockBottomScene',
+            payment_id:'',
+            merge_id:this.merge_id
+        })
+    };
+
     render(){
         return(
             <View style={styles.container}>
@@ -164,7 +169,7 @@ export default class StockBottomScene extends BaseComponent{
                         }
                     />
                 </View>
-                <AddNewCarBottom waitPrice={this.state.waitPrice} onAddClick={()=>{}} addEnable={true}/>
+                <AddNewCarBottom waitPrice={this.state.waitPrice} onAddClick={this._onAddCarClick} addEnable={true}/>
             </View>
         );
     }

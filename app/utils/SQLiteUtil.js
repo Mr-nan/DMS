@@ -52,7 +52,7 @@ const SQLite = React.createClass({
                 + 'dealer_price varchar(20) default "",'
                 + 'displacement varchar(20) default "",'
                 + 'engine_number varchar(20) default "",'
-                + 'view_position varchar(300) default "",'
+                + 'viewing_position varchar(300) default "",'
                 + 'frame_number varchar(20) default "" unique, '
                 + 'gearbox varchar(20) default "",'
                 + 'gearbox_speed varchar(20) default "",'

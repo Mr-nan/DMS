@@ -51,8 +51,10 @@ const request = (url, method, params,backToLogin) => {
                         console.log("success----------" + JSON.stringify(responseData));
                         if (responseData.retcode == 1) {
                             resolve({mjson: responseData, mycode: 1});
+                        }else if(responseData.retcode == 2){
+                            resolve({mjson: responseData, mycode: 2});
                         } else {
-                            if(responseData.code==7040011){
+                            if(responseData.retcode==-4000006 || responseData.retcode == -2){
                                 backToLogin();
                             }else{
                                 reject({mycode: responseData.code, mjson: responseData});

@@ -1,7 +1,7 @@
 /**
  * Created by Administrator on 2017/5/17.
  */
-import React from 'react';
+import React,{Component} from 'react';
 import {
     View,
     StyleSheet,
@@ -9,9 +9,6 @@ import {
     RefreshControl
 }from 'react-native';
 
-import BaseComponent from '../component/BaseComponent';
-import PixelUtil from '../utils/PixelUtil';
-const Pixel = new PixelUtil();
 import * as FontAndColor from '../constant/fontAndColor';
 import SearchTitleView from '../component/SearchTitleView';
 import * as Net from '../utils/RequestUtil';
@@ -20,7 +17,7 @@ import * as appUrls from '../constant/appUrls';
 import OrderItem from './component/OrderItem';
 
 
-export default class PurchaseOrderScene extends BaseComponent{
+export default class PurchaseOrderScene extends Component{
 
     constructor(props){
         super(props);
@@ -37,7 +34,7 @@ export default class PurchaseOrderScene extends BaseComponent{
         };
     }
 
-    initFinish = ()=>{
+    componentDidMount(){
         this._showLoadingModal();
         this._getData();
     };

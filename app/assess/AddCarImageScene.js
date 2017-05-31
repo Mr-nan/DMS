@@ -55,10 +55,9 @@ export default class CarUpImageScene extends BaseComponent {
             //后台有数据
             let carD = (JSON.parse(this.json)).retdata;
             if (carD.files !== '' && carD.files.length > 0) {
-
                 carD.files.map((dt) => {
 
-                    let sql = 'select * from carimage where' +
+                    let sql = 'select * from carimage where ' +
                         'frame_number = ? and syscodedata_id = ? and file_id = ?';
                     SQLite.selectData(sql, [this.number, dt.syscodedata_id, dt.file_id],
                         (sqlDt) => {
@@ -66,11 +65,11 @@ export default class CarUpImageScene extends BaseComponent {
                                 if (sqlDt.result.rows.length > 0) {
                                     SQLite.changeData('update carimage set file_url = ?,file_name = ? where '
                                         + 'frame_number = ? and syscodedata_id = ? and file_id = ?',
-                                        [dt.file_url, dt.name, this.number, dt.syscodedata_id, dt.file_id]);
+                                        [dt.fileurl, dt.name, this.number, dt.syscodedata_id, dt.file_id]);
                                 } else {
                                     SQLite.changeData('insert into carimage (file_url,file_name,'
                                         + 'frame_number,syscodedata_id,file_id) values (?,?,?,?,?)',
-                                        [dt.file_url, dt.name, this.number, dt.syscodedata_id, dt.file_id])
+                                        [dt.fileurl, dt.name, this.number, dt.syscodedata_id, dt.file_id])
                                 }
                             }
                         });
@@ -219,19 +218,19 @@ export default class CarUpImageScene extends BaseComponent {
 
 
 
-    _requestData = ()=>{
-        // console.log('from',this.from);
-        // this.backPage2('key12');
-        // this.toNextPage('AssessmentSelectScene',{});
-        // this.backPage();
-        // this.backPage();
-        // this.backPage();
+    // _requestData = ()=>{
+    //     // console.log('from',this.from);
+    //     // this.backPage2('key12');
+    //     // this.toNextPage('AssessmentSelectScene',{});
+    //     // this.backPage();
+    //     // this.backPage();
+    //     // this.backPage();
+    //
+    //     this.placePage('AssessmentSelectScene');
+    // };
 
-        this.placePage('AssessmentSelectScene');
-    };
 
-
-    _requestData2 = () => {
+    _requestData = () => {
         let maps = {
             merge_id: this.merge_id,
             payment_id: this.payment_id
@@ -322,6 +321,7 @@ export default class CarUpImageScene extends BaseComponent {
                             }
 
                         }
+
 
                         maps.viewing_position = viewing_position;
                         maps.trim_color = carD.trim_color;
