@@ -216,20 +216,6 @@ export default class CarUpImageScene extends BaseComponent {
         this._requestData();
     };
 
-
-
-    // _requestData = ()=>{
-    //     // console.log('from',this.from);
-    //     // this.backPage2('key12');
-    //     // this.toNextPage('AssessmentSelectScene',{});
-    //     // this.backPage();
-    //     // this.backPage();
-    //     // this.backPage();
-    //
-    //     this.placePage('AssessmentSelectScene');
-    // };
-
-
     _requestData = () => {
         let maps = {
             merge_id: this.merge_id,
@@ -322,7 +308,6 @@ export default class CarUpImageScene extends BaseComponent {
 
                         }
 
-
                         maps.viewing_position = viewing_position;
                         maps.trim_color = carD.trim_color;
                         maps.wading = carD.wading;
@@ -345,31 +330,41 @@ export default class CarUpImageScene extends BaseComponent {
                         if (this.from === 'StockTopCarScene' && this._isEmpty(this.json) === false) {
                             requestUrl = AppUrls.INVENTORYFINANCINGADDWHOLESTOCKPILEAUTO;
                             maps.auto_base_id = this.auto_id;
+                            this.backRoute = 'StockTopCarScene';
                         } else if (this.from === 'OneCarListScene' && this._isEmpty(this.json) === false) {
                             requestUrl = AppUrls.ONECARADDWHOLESTOCKPILEAUTO;
                             maps.auto_base_id = this.auto_id;
+                            this.backRoute = 'StockTopCarScene';
                         } else if (this.from === 'StockBottomScene' && this._isEmpty(this.json) === false) {
                             requestUrl = AppUrls.INVENTORYFINANCINGADDWHOLESTOCKPILEAUTO;
                             maps.auto_base_id = this.auto_id;
+                            this.backRoute = 'AssessmentSelectScene';
                         } else if (this.from === 'StockTopCarScene') {
                             requestUrl = AppUrls.INVENTORYFINANCINGADDAUTO;
+                            this.backRoute = 'StockTopCarScene';
                         } else if (this.from === 'OneCarListScene') {
                             requestUrl = AppUrls.ONECARADDAUTO;
+                            this.backRoute = 'OneCarListScene';
                         } else if (this.from === 'StockBottomScene') {
                             requestUrl = AppUrls.INVENTORYFINANCINGADDAUTO;
+                            this.backRoute = 'AssessmentSelectScene';
                         } else if (this.from === ('CarInfoScene' + 'StockTopCarScene')) {
                             requestUrl = AppUrls.INVENTORYFINANCINGEDITAUTO;
                             maps.auto_id = this.auto_id;
+                            this.backRoute = 'CarInfoScene';
                         } else if (this.from === ('CarInfoScene' + 'OneCarListScene')) {
                             requestUrl = AppUrls.ONECAREDITAUTO;
                             maps.auto_id = this.auto_id;
+                            this.backRoute = 'CarInfoScene';
                         } else if (this.from === ('CarInfoScene' + 'StockBottomScene')) {
                             requestUrl = AppUrls.INVENTORYFINANCINGEDITAUTO;
                             maps.auto_id = this.auto_id;
+                            this.backRoute = 'CarInfoScene';
                         } else if (this.from === 'PurchaseCarScene') {
                             requestUrl = AppUrls.PURCHA_AUTOASSESS;
                             maps.auto_id = this.auto_id;
                             maps.purchas_price = this.purchas_price;
+                            this.backRoute = 'PurchaseCarScene';
                         }
 
                         Net.request(requestUrl, 'post', maps).then(
@@ -384,12 +379,13 @@ export default class CarUpImageScene extends BaseComponent {
                                     try {
                                         this._closeLoading();
                                         this.showToast('添加成功');
-                                        // SQLite.changeData('delete from carimage where ' + 'frame_number = ?',
-                                        //     [this.number]);
-                                        // SQLite.changeData('delete from newcar where ' + 'frame_number = ?',
-                                        //     [this.number]);
+                                        SQLite.changeData('delete from carimage where ' + 'frame_number = ?',
+                                            [this.number]);
+                                        SQLite.changeData('delete from newcar where ' + 'frame_number = ?',
+                                            [this.number]);
                                         //返回到初始页并刷新
-                                        this.backPage2(this.from);
+                                        this.props.navigation.state.params.refreshMethod();
+                                        this.backPage2(this.backRoute);
 
                                     } catch (error) {
                                         this._closeLoading();
@@ -440,11 +436,13 @@ export default class CarUpImageScene extends BaseComponent {
                         try {
                             this._closeLoading();
                             this.showToast('编辑成功');
-                            // SQLite.changeData('delete from carimage where ' + 'frame_number = ?',
-                            //     [this.number]);
-                            // SQLite.changeData('delete from newcar where ' + 'frame_number = ?',
-                            //     [this.number]);
+                            SQLite.changeData('delete from carimage where ' + 'frame_number = ?',
+                                [this.number]);
+                            SQLite.changeData('delete from newcar where ' + 'frame_number = ?',
+                                [this.number]);
                             //返回到初始页并刷新
+                            this.props.navigation.state.params.refreshMethod();
+                            this.backPage2(this.backRoute);
                         } catch (error) {
                             this._closeLoading();
                             this.showToast('服务器请求失败，请重新请求！');

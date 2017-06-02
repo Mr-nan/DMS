@@ -14,15 +14,16 @@ import * as fontAndColor from "../constant/fontAndColor";
 import MyButton from "./MyButton";
 const {width, height} = Dimensions.get('window');
 const Pixel = new PixelUtil();
-import ConsoleUtils from "../utils/ConsoleUtils";
-const Console = new ConsoleUtils();
 
 import { NavigationActions } from 'react-navigation'
 
 export default class BaseComponent extends Component {
 
+    constructor(props){
+        super(props);
+    }
+
     handleBack = () => {
-        console.log('11111111111111111');
         this.backPage();
         return true;
     };
@@ -44,21 +45,44 @@ export default class BaseComponent extends Component {
         navigate(mPage,mParam);
     };
 
-    backToLogin = (mProps) => {
-        const navigator = this.props.navigator;
-        if (navigator) {
-            navigator.immediatelyResetRouteStack([{
-                ...mProps
-            }])
-        }
+    backToLogin = () => {
+        this.placePage('LoginScene');
     };
 
     backPage = () => {
-        const { dispatch } = this.props.navigation;
-        const backAction = NavigationActions.back({
-            key: null
+
+        let routes = this.props.screenProps.getRoute();
+        if(routes[routes.length - 1].routeName === 'FunctionScene'){
+            BackHandler.exitApp();
+        }else{
+            const { dispatch } = this.props.navigation;
+            const backAction = NavigationActions.back({
+                key: null
+            });
+            dispatch(backAction);
+        }
+    };
+
+    backPage2 = (routeName) => {
+
+        console.log('Routes',this.props.screenProps.getRoute());
+
+        let routes = this.props.screenProps.getRoute();
+        let iRoute = null;
+        routes.map((r,index)=>{
+            if(r.routeName === routeName){
+                iRoute = index
+            }
         });
-        dispatch(backAction);
+
+        if(iRoute !== null){
+            let key = routes[iRoute + 1].key;
+            const { dispatch } = this.props.navigation;
+            const backAction = NavigationActions.back({
+                key: key
+            });
+            dispatch(backAction);
+        }
     };
 
     placePage = (name)=> {
@@ -70,18 +94,6 @@ export default class BaseComponent extends Component {
             ]
         });
         dispatch(resetAction)
-    };
-
-    backToTop = () => {
-        const navigator = this.props.navigator;
-        if (navigator) {
-            navigator.popToTop();
-        }
-    };
-
-
-    showConsole = (content) => {
-        Console.showConsole(content);
     };
 
     componentWillUnmount() {

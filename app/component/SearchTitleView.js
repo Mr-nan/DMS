@@ -56,11 +56,10 @@ const styles = StyleSheet.create({
         height:Pixel.getPixel(50),
         backgroundColor:FontAndColor.all_background,
         paddingHorizontal:Pixel.getPixel(15),
-        paddingVertical:Pixel.getPixel(7),
         justifyContent:'center',
     },
     editWrap:{
-        height:Pixel.getPixel(36),
+        height:Pixel.getPixel(40),
         borderRadius:Pixel.getPixel(18),
         paddingLeft:Pixel.getPixel(20),
         backgroundColor:FontAndColor.white,

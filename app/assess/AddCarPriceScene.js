@@ -576,7 +576,8 @@ export default class AddCarPriceScene extends BaseComponent {
                 number:this.number,
                 auto_id:this.auto_id,
                 payment_id:this.payment_id,
-                purchas_price:this.purchas_price
+                purchas_price:this.purchas_price,
+                refreshMethod:this.props.navigation.state.params.refreshMethod
             });
         }
     };

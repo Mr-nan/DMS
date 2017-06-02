@@ -6,6 +6,7 @@ import {
     View,
     StyleSheet,
     ListView,
+    Platform,
     RefreshControl
 }from 'react-native';
 
@@ -22,6 +23,8 @@ import BottomStockItem from './component/BottomStockItem'
 
 import AddNewCarBottom from './component/AddNewCarBottom';
 import OrderTitleItem from './component/OrderTitleItem';
+import LoadMoreFooter from '../component/LoadMoreFooter';
+const IS_ANDROID = Platform.OS === 'android';
 
 
 export default class StockTopCarScene extends BaseComponent{
@@ -40,7 +43,8 @@ export default class StockTopCarScene extends BaseComponent{
         this.state= {
             loading: false,
             dataSource: this.ds.cloneWithRows(this.allSource),
-            waitPrice:'库容待评估车辆金额：'
+            waitPrice:'库容待评估车辆金额：',
+            isFirst:true
         };
     }
 
@@ -77,14 +81,9 @@ export default class StockTopCarScene extends BaseComponent{
 
     _onEndReached = ()=>{
 
-        if(!this.state.loading && this.allSource.length>0 && this.page !== this.total){
-            if (this.page < this.total) {
-                this.page++;
-                this._getData();
-                this._showHint("加载中......");
-            } else {
-                this._showHint("没有更多数据");
-            }
+        if(!this.state.loading && this.allSource.length>0 &&  this.page < this.total){
+            this.page++;
+            this._getData();
         }
     };
 
@@ -122,7 +121,8 @@ export default class StockTopCarScene extends BaseComponent{
                 this.setState({
                     dataSource:this.ds.cloneWithRows(this.allSource),
                     loading:false,
-                    waitPrice:'库容待评估车辆金额：' + rep.wait_mny_str
+                    waitPrice:'库容待评估车辆金额：' + rep.wait_mny_str,
+                    isFirst:false
                 });
 
                 console.log('response data',{rep});
@@ -133,9 +133,36 @@ export default class StockTopCarScene extends BaseComponent{
                 this.setState({
                     loading:false
                 });
+                this._delayShowHint(error);
             });
 
     };
+
+    _delayShowHint = (error) => {
+        if(error.mycode === -300 || error.mycode === -500){
+            if(IS_ANDROID === true){
+                this.props.screenProps.showToast('网络请求失败');
+            }else {
+                this.timer = setTimeout(
+                    () => { this.props.screenProps.showToast('网络请求失败'); },
+                    500
+                );
+            }
+        }else{
+            if(IS_ANDROID === true){
+                this.props.screenProps.showToast(error.mjson.retmsg);
+            }else {
+                this.timer = setTimeout(
+                    () => {this.props.screenProps.showToast(error.mjson.retmsg); },
+                    500
+                );
+            }
+        }
+    };
+
+    componentWillUnmount(){
+        this.timer && clearTimeout(this.timer);
+    }
 
     _onSearchClick=(searchValue)=>{
         console.log('搜索');
@@ -151,8 +178,17 @@ export default class StockTopCarScene extends BaseComponent{
         this.props.toNextPage('AddCarNumberScene',{
             from:'StockTopCarScene',
             payment_id:'',
-            merge_id:this.merge_id
+            merge_id:this.merge_id,
+            refreshMethod:this._onRefresh
         })
+    };
+
+    renderListFooter = () => {
+        if (this.state.isFirst) {
+            return null;
+        } else {
+            return (<LoadMoreFooter isLoadAll={this.page >= this.total ? true : false}/>)
+        }
     };
 
     render(){
@@ -173,6 +209,7 @@ export default class StockTopCarScene extends BaseComponent{
                             onEndReached={this._onEndReached}
                             onEndReachedThreshold={1}
                             enableEmptySections={true}
+                            renderFooter={this.renderListFooter}
                             refreshControl={
                                 <RefreshControl
                                     refreshing={this.state.loading}
