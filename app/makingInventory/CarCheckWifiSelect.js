@@ -57,7 +57,7 @@ export  default class CarCheckWifiSelect extends BaseComponent {
         SQLite.selectData('SELECT * FROM carcheckchoose WHERE busno = ?',
             [merge_id],
             (data) => {
-            console.log(data.result.rows.item(0).busno+'-----'+merge_id+'-------'+data.result.rows.item(0).type);
+            console.log(data);
                 if (data.code == 1) {
                     if(data.result.rows.length>0){
                         for(let i=0; i<data.result.rows.length; i++){
@@ -75,7 +75,7 @@ export  default class CarCheckWifiSelect extends BaseComponent {
             [merge_id],
             (data) => {
                 if (data.code == 1) {
-                    console.log(data.result.rows.length+'-----'+merge_id+'-------');
+                    console.log('-----'+merge_id+'-------');
                     if(data.result.rows.length>0){
                         for(let i=0; i<data.result.rows.length; i++){
                             if(data.result.rows.item(0).busno == merge_id){
