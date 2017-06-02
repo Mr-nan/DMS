@@ -851,7 +851,8 @@ export default class AddCarInfoScene extends BaseComponent {
                 json:this.json,
                 number:this.number,
                 payment_id:this.payment_id,
-                auto_id:this.auto_id
+                auto_id:this.auto_id,
+                refreshMethod:this.props.navigation.state.params.refreshMethod
             });
         }
     };

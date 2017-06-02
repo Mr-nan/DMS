@@ -32,6 +32,7 @@ const car_log = require('../../images/car_log.png');
 export default class AddCarNumberScene extends BaseComponent {
 
     constructor(props) {
+
         super(props);
         this.merge_id = this.props.navigation.state.params.merge_id;
         this.from = this.props.navigation.state.params.from;
@@ -147,7 +148,8 @@ export default class AddCarNumberScene extends BaseComponent {
             brand_id:this.brand_id,
             series_id:this.series_id,
             model_name:this.model_name,
-            json:carJson
+            json:carJson,
+            refreshMethod:this.props.navigation.state.params.refreshMethod
         };
 
         this.toNextPage('AddCarInfoScene',params);

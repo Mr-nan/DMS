@@ -24,10 +24,12 @@ export default class root extends Component {
         return (
             <View style={{flex: 1}}>
                 <MyNavigator
+                    ref = {(ref)=>{this.myNav = ref}}
                     screenProps={{
                         showModal: this.showModal,
                         showToast: this.showToast,
-                        showMenu:this.showMenu
+                        showMenu:this.showMenu,
+                        getRoute:this.getRoutes
                     }}/>
                 <ShowToast ref={(toast)=>{this.toast = toast}} msg={''}></ShowToast>
             </View>
@@ -41,5 +43,9 @@ export default class root extends Component {
     showModal = (value) => {
         this.toast.showModal(value);
     };
+
+    getRoutes = ()=>{
+        return this.myNav.state.nav.routes;
+    }
 
 }

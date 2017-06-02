@@ -6,6 +6,7 @@ import {
     View,
     StyleSheet,
     ListView,
+    Platform,
     RefreshControl
 }from 'react-native';
 
@@ -15,6 +16,8 @@ import * as Net from '../utils/RequestUtil';
 import * as appUrls from '../constant/appUrls';
 
 import OrderItem from './component/OrderItem';
+import LoadMoreFooter from '../component/LoadMoreFooter';
+const IS_ANDROID = Platform.OS === 'android';
 
 
 export default class PurchaseOrderScene extends Component{
@@ -31,6 +34,7 @@ export default class PurchaseOrderScene extends Component{
         this.state= {
             loading: false,
             dataSource: this.ds.cloneWithRows(this.allSource),
+            isFirst:true
         };
     }
 
@@ -70,14 +74,9 @@ export default class PurchaseOrderScene extends Component{
 
     _onEndReached = ()=>{
 
-        if(!this.state.loading && this.allSource.length>0 && this.page !== this.total){
-            if (this.page < this.total) {
-                this.page++;
-                this._getData();
-                this._showHint("加载中......");
-            } else {
-                this._showHint("没有更多数据");
-            }
+        if(!this.state.loading && this.allSource.length>0 &&  this.page < this.total){
+            this.page++;
+            this._getData();
         }
     };
 
@@ -114,7 +113,8 @@ export default class PurchaseOrderScene extends Component{
                 this.allSource.push(...rep.list);
                 this.setState({
                     dataSource:this.ds.cloneWithRows(this.allSource),
-                    loading:false
+                    loading:false,
+                    isFirst:false
                 });
 
                 console.log('response data',{rep});
@@ -125,9 +125,36 @@ export default class PurchaseOrderScene extends Component{
                 this.setState({
                     loading:false
                 });
+                this._delayShowHint(error);
             });
 
     };
+
+    _delayShowHint = (error) => {
+        if(error.mycode === -300 || error.mycode === -500){
+            if(IS_ANDROID === true){
+                this.props.showHint('网络请求失败');
+            }else {
+                this.timer = setTimeout(
+                    () => { this.props.showHint('网络请求失败'); },
+                    500
+                );
+            }
+        }else{
+            if(IS_ANDROID === true){
+                this.props.showHint(error.mjson.retmsg);
+            }else {
+                this.timer = setTimeout(
+                    () => {this.props.showHint(error.mjson.retmsg); },
+                    500
+                );
+            }
+        }
+    };
+
+    componentWillUnmount(){
+        this.timer && clearTimeout(this.timer);
+    }
 
     _onSearchClick=(searchValue)=>{
         console.log('搜索');
@@ -139,6 +166,13 @@ export default class PurchaseOrderScene extends Component{
         this._getData();
     };
 
+    renderListFooter = () => {
+        if (this.state.isFirst) {
+            return null;
+        } else {
+            return (<LoadMoreFooter isLoadAll={this.page >= this.total ? true : false}/>)
+        }
+    };
 
     render(){
         return(
@@ -151,6 +185,7 @@ export default class PurchaseOrderScene extends Component{
                         onEndReached={this._onEndReached}
                         onEndReachedThreshold={1}
                         enableEmptySections={true}
+                        renderFooter={this.renderListFooter}
                         refreshControl={
                             <RefreshControl
                                 refreshing={this.state.loading}

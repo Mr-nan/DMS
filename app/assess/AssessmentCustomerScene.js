@@ -6,6 +6,7 @@ import {
     View,
     StyleSheet,
     ListView,
+    Platform,
     RefreshControl
 }from 'react-native';
 
@@ -19,6 +20,9 @@ import * as Net from '../utils/RequestUtil';
 import * as appUrls from '../constant/appUrls';
 
 import CustomerItem from './component/CustomerItem';
+import LoadMoreFooter from '../component/LoadMoreFooter';
+
+const IS_ANDROID = Platform.OS === 'android';
 
 export default class AssessCustomerScene extends BaseComponent{
 
@@ -32,7 +36,8 @@ export default class AssessCustomerScene extends BaseComponent{
         this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state= {
             loading: false,
-            customers: this.ds.cloneWithRows(this.allSource)
+            customers: this.ds.cloneWithRows(this.allSource),
+            isFirst:true
         };
 
     }
@@ -104,31 +109,60 @@ export default class AssessCustomerScene extends BaseComponent{
                 this.allSource.push(...rep.list);
                 this.setState({
                     customers:this.ds.cloneWithRows(this.allSource),
-                    loading:false
+                    loading:false,
+                    isFirst:false
                 });
 
-                console.log('response data',{rep});
-                console.log('response total',this.total);
             },
             (error)=>{
                 this._closeLoadingModal();
                 this.setState({
                     loading:false
                 });
+                this._delayShowHint(error);
             });
 
     };
 
+    _delayShowHint = (error) => {
+        if(error.mycode === -300 || error.mycode === -500){
+            if(IS_ANDROID === true){
+                this.props.screenProps.showToast('网络请求失败');
+            }else {
+                this.timer = setTimeout(
+                    () => { this.props.screenProps.showToast('网络请求失败'); },
+                    500
+                );
+            }
+        }else{
+            if(IS_ANDROID === true){
+                this.props.screenProps.showToast(error.mjson.retmsg);
+            }else {
+                this.timer = setTimeout(
+                    () => {this.props.screenProps.showToast(error.mjson.retmsg); },
+                    500
+                );
+            }
+        }
+    };
+
+    componentWillUnmount(){
+        this.timer && clearTimeout(this.timer);
+    }
+
     _onEndReached = ()=>{
 
-        if(!this.state.loading && this.allSource.length>0 && this.page !== this.total){
-            if (this.page < this.total) {
-                this.page++;
-                this._getData();
-                this._showHint("加载中......");
-            } else {
-                this._showHint("没有更多数据");
-            }
+        if(!this.state.loading && this.allSource.length>0 &&  this.page < this.total){
+            this.page++;
+            this._getData();
+        }
+    };
+
+    renderListFooter = () => {
+        if (this.state.isFirst) {
+            return null;
+        } else {
+            return (<LoadMoreFooter isLoadAll={this.page >= this.total ? true : false}/>)
         }
     };
 
@@ -144,6 +178,7 @@ export default class AssessCustomerScene extends BaseComponent{
                         onEndReached={this._onEndReached}
                         onEndReachedThreshold={1}
                         enableEmptySections={true}
+                        renderFooter={this.renderListFooter}
                         refreshControl={
                             <RefreshControl
                                 refreshing={this.state.loading}
