@@ -167,7 +167,11 @@ export  default class CarCheckNoWifiList extends BaseComponent {
     saveData = (value) => {
         SQLite.changeData('INSERT INTO carchecksuccess (vin,busno,excecode,execinfo,rfid_img_id,chkno,newrfid,brand,chk_time,name,storage,type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)', [value.vin,merge_id, '1205', '正常', '', value.chkno, ''
             , value.brand, value.chk_time, value.name, value.storage, value.type]);
-        that.findData();
+        if (index1 == 0) {
+            this.findData();
+        } else {
+            this.readData();
+        }
 
     }
 
