@@ -96,7 +96,6 @@ export default class PurchaseOrderScene extends Component{
     };
 
     _getData = ()=>{
-        console.log('请求数据');
         let maps = {
             p:this.page,
             payment_number:this.payment_number,
@@ -106,19 +105,17 @@ export default class PurchaseOrderScene extends Component{
         Net.request(appUrls.PURCHA_PAYMENTLIST,'post',maps).then(
             (response)=>{
                 this._closeLoadingModal();
+                if(response.mycode === 1){
+                    let rep = response.mjson.retdata;
+                    this.total = Math.ceil(Number.parseInt(rep.total)/Number.parseInt(rep.listRows));
 
-                let rep = response.mjson.retdata;
-                this.total = Math.ceil(Number.parseInt(rep.total)/Number.parseInt(rep.listRows));
-
-                this.allSource.push(...rep.list);
-                this.setState({
-                    dataSource:this.ds.cloneWithRows(this.allSource),
-                    loading:false,
-                    isFirst:false
-                });
-
-                console.log('response data',{rep});
-                console.log('response total',this.total);
+                    this.allSource.push(...rep.list);
+                    this.setState({
+                        dataSource:this.ds.cloneWithRows(this.allSource),
+                        loading:false,
+                        isFirst:false
+                    });
+                }
             },
             (error)=>{
                 this._closeLoadingModal();

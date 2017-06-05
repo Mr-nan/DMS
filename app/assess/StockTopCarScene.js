@@ -113,20 +113,18 @@ export default class StockTopCarScene extends BaseComponent{
         Net.request(appUrls.INVENTORYFINANCINGLOANAUTOLIST,'post',maps).then(
             (response)=>{
                 this._closeLoadingModal();
+                if(response.mycode === 1){
+                    let rep = response.mjson.retdata;
+                    this.total = Math.ceil(Number.parseInt(rep.total)/Number.parseInt(rep.listRows));
 
-                let rep = response.mjson.retdata;
-                this.total = Math.ceil(Number.parseInt(rep.total)/Number.parseInt(rep.listRows));
-
-                this.allSource.push(...rep.list);
-                this.setState({
-                    dataSource:this.ds.cloneWithRows(this.allSource),
-                    loading:false,
-                    waitPrice:'库容待评估车辆金额：' + rep.wait_mny_str,
-                    isFirst:false
-                });
-
-                console.log('response data',{rep});
-                console.log('response total',this.total);
+                    this.allSource.push(...rep.list);
+                    this.setState({
+                        dataSource:this.ds.cloneWithRows(this.allSource),
+                        loading:false,
+                        waitPrice:'库容待评估车辆金额：' + rep.wait_mny_str,
+                        isFirst:false
+                    });
+                }
             },
             (error)=>{
                 this._closeLoadingModal();

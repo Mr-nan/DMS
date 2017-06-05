@@ -116,7 +116,6 @@ export default class PurchaseCarScene extends BaseComponent{
     };
 
     _getData = ()=>{
-        console.log('请求数据');
         let maps = {
             p:this.page,
             frame_number:this.frame_number,
@@ -126,18 +125,18 @@ export default class PurchaseCarScene extends BaseComponent{
         Net.request(appUrls.PURCHAAUTOLIST,'post',maps).then(
             (response)=>{
                 this._closeLoadingModal();
+                if(response.mycode === 1){
+                    let rep = response.mjson.retdata;
+                    this.total = Math.ceil(Number.parseInt(rep.total)/Number.parseInt(rep.listRows));
 
-                let rep = response.mjson.retdata;
-                this.total = Math.ceil(Number.parseInt(rep.total)/Number.parseInt(rep.listRows));
-
-                this.allSource.push(...rep.list);
-                this.setState({
-                    dataSource:this.ds.cloneWithRows(this.allSource),
-                    loading:false,
-                    waitPrice:'采购贷待评估车辆金额：' + rep.wait_mny_str,
-                    isFirst:false
-                });
-
+                    this.allSource.push(...rep.list);
+                    this.setState({
+                        dataSource:this.ds.cloneWithRows(this.allSource),
+                        loading:false,
+                        waitPrice:'采购贷待评估车辆金额：' + rep.wait_mny_str,
+                        isFirst:false
+                    });
+                }
             },
             (error)=>{
                 this._closeLoadingModal();
