@@ -191,7 +191,7 @@ export default class OneCarListScene extends BaseComponent{
             from:'OneCarListScene',
             payment_id:'',
             merge_id:this.merge_id,
-            refreshMethod:this._onRefresh
+            refreshMethod:this.initFinish
         })
     };
 

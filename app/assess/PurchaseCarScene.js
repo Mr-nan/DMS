@@ -33,6 +33,7 @@ export default class PurchaseCarScene extends BaseComponent{
         super(props);
 
         this.payment_id = this.props.navigation.state.params.payment_id;
+        this.merge_id = this.props.navigation.state.params.merge_id;
         this.cName = this.props.navigation.state.params.name;
         this.page = 1;
         this.total = 0;
@@ -69,16 +70,25 @@ export default class PurchaseCarScene extends BaseComponent{
     };
 
     _onItemClick = (type,item)=>{
+
         if(type === '2'){
             this.toNextPage('CarInfoScene',{
                 from_name:'PurchaseCarScene',
                 auto_id:item.auto_id,
-                is_time_out:item.is_time_out,
+                is_time_out:type,
                 payment_id:this.payment_id,
                 merge_id:this.merge_id
             })
         }else{
 
+            this.toNextPage('PurchaseAddCarInfoScene',{
+                from_name:'PurchaseCarScene',
+                auto_id:item.auto_id,
+                is_time_out:type,
+                payment_id:this.payment_id,
+                merge_id:this.merge_id,
+                refreshMethod:this.initFinish()
+            })
         }
     };
 
@@ -166,7 +176,6 @@ export default class PurchaseCarScene extends BaseComponent{
     }
 
     _onSearchClick=(searchValue)=>{
-        console.log('搜索');
         this.page = 1;
         this.total = 0;
         this.frame_number = searchValue;

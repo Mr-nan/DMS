@@ -167,8 +167,13 @@ export default class StockBottomScene extends Component {
             from: 'StockBottomScene',
             payment_id: '',
             merge_id: this.merge_id,
-            refreshMethod:this._onRefresh
+            refreshMethod:this._refreshMethod
         })
+    };
+
+    _refreshMethod = ()=>{
+        this._showLoadingModal();
+        this._getData();
     };
 
     renderListFooter = () => {

@@ -31,11 +31,13 @@ import AssessmentSelectScene from '../assess/AssessmentSelectScene';
 import OneCarListScene from '../assess/OneCarListScene';
 import StockTopCarScene from '../assess/StockTopCarScene';
 import PurchaseCarScene from '../assess/PurchaseCarScene';
+import PurchaseAddCarInfoScene from '../assess/PurchaseAddCarInfoScene';
 import CarInfoScene from '../assess/CarInfoScene';
 import AddCarNumberScene from '../assess/AddCarNumberScene';
 import AddCarInfoScene from '../assess/AddCarInfoScene';
 import AddCarPriceScene from '../assess/AddCarPriceScene';
 import AddCarImageScene from '../assess/AddCarImageScene';
+import CarZoomImagScene from '../assess/CarZoomImagScene';
 import CarBrandSelectScene from '../assess/CarBrandSelectScene';
 import CollectCarPhoto from '../collect&Report/CollectCarPhoto';
 
@@ -72,14 +74,15 @@ export default MyApp = StackNavigator({
         OneCarListScene: {screen: OneCarListScene},
         StockTopCarScene: {screen: StockTopCarScene},
         PurchaseCarScene: {screen: PurchaseCarScene},
+        PurchaseAddCarInfoScene: {screen: PurchaseAddCarInfoScene},
         CarInfoScene: {screen: CarInfoScene},
         AddCarNumberScene: {screen: AddCarNumberScene},
         CarBrandSelectScene: {screen: CarBrandSelectScene},
         AddCarInfoScene: {screen: AddCarInfoScene},
         AddCarPriceScene: {screen: AddCarPriceScene},
         AddCarImageScene: {screen: AddCarImageScene},
+        CarZoomImagScene: {screen: CarZoomImagScene},
         VersionInfo: {screen: VersionInfo},
-
 
         BluetoothScene: {screen: BluetoothScene},
         SelectMaskComponent: {screen: SelectMaskComponent},

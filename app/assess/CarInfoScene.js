@@ -334,7 +334,9 @@ export default class CarInfoScene extends BaseComponent {
             type: '2',
             value: carInfo.che300_mny_str + '万元'
         });
+        this.imgFiles = null;
         if (carInfo.files !== null) {
+            this.imgFiles = carInfo.files;
             renderSource.push({
                 title: '',
                 type: '4',
@@ -435,12 +437,31 @@ export default class CarInfoScene extends BaseComponent {
         }
     };
 
-    _renderImagePage = (data) => {
+    _renderImagePage = (data,index) => {
         return (
-            <View style={styles.content_image_btn}>
+            <TouchableOpacity
+                style={styles.content_image_btn}
+                activeOpacity={1}
+                onPress={()=>{
+                    this._onImageTouch(index)
+                }}
+            >
                 <Image style={styles.content_image_btn} source={{uri: data.fileurl}}/>
-            </View>
+            </TouchableOpacity>
         )
+    };
+
+    _onImageTouch = (imageIndex)=>{
+        let imgSrc = [];
+        this.imgFiles.map((m)=>{
+            imgSrc.push({
+                url:m.fileurl
+            })
+        });
+        this.toNextPage('CarZoomImagScene',{
+            images:imgSrc,
+            index:parseInt(imageIndex)
+        });
     };
 
     _getData = () => {
@@ -538,7 +559,8 @@ export default class CarInfoScene extends BaseComponent {
                 number:this.number,
                 payment_id:this.state.payment_id,
                 auto_id:this.state.auto_id,
-                json:this.json
+                json:this.json,
+                refreshMethod:this._getData
             })
         }
     };

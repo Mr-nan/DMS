@@ -22,8 +22,6 @@ export  default class CarUpImageCell extends PureComponent {
 
     constructor(props) {
         super(props);
-
-        console.log(this.props.childList.length);
         this.state = {
             childMovie: this.props.childList
         };
@@ -47,7 +45,11 @@ export  default class CarUpImageCell extends PureComponent {
                     <CarImagePickerItem
                         fileId={this.state.childMovie[i]}
                         imgUrl={this.state.childMovie[i]}
-                        showOnPress={() => {
+                        showOnPress={(imgUrl) => {
+                            this.props.toNextPage('CarZoomImagScene',{
+                                images:[{url:imgUrl}],
+                                index:0
+                            });
                         }}
                         deleteOnPress={(index, fileId) => {
                             let news = [];

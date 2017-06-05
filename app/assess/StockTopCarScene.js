@@ -179,7 +179,7 @@ export default class StockTopCarScene extends BaseComponent{
             from:'StockTopCarScene',
             payment_id:'',
             merge_id:this.merge_id,
-            refreshMethod:this._onRefresh
+            refreshMethod:this.initFinish
         })
     };
 
