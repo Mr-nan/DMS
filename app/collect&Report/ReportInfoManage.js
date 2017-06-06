@@ -63,8 +63,6 @@ export default class ReportInfoManage extends BaseComponent{
      tempResult={}
      dataSource=[];
 
-
-
     initFinish(){
 
         let tempDataSource=[];

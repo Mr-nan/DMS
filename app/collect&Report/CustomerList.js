@@ -18,6 +18,7 @@ import AllNavigationView from '../component/AllNavigationView';
 const  sourceControl ={
     currentPage :1,
     total:0,
+    tempuserName:''
 }
 export default  class CustomerList extends BaseComponent{
     // loadMoreState 0是可以加载更多，1是没了
@@ -33,9 +34,10 @@ export default  class CustomerList extends BaseComponent{
     componentWillUnmount() {
         sourceControl.currentPage=1;
         sourceControl.total=0;
+        sourceControl.tempuserName='';
     }
     _getCustonList=()=>{
-        let maps = { p:sourceControl.currentPage};
+        let maps = {p: sourceControl.currentPage,user_name: sourceControl.tempuserName};
         request(apis.CARREVGETUSERLIST, 'Post', maps)
             .then((response) => {
 
@@ -64,7 +66,7 @@ export default  class CustomerList extends BaseComponent{
         else {
           sourceControl.currentPage=sourceControl.currentPage + 1;
 
-            let maps = {p: sourceControl.currentPage };
+            let maps ={p: sourceControl.currentPage,user_name: sourceControl.tempuserName};
 
             request(apis.CARREVGETUSERLIST, 'Post', maps)
                 .then((response) => {
@@ -105,7 +107,12 @@ export default  class CustomerList extends BaseComponent{
 
     _onSearchBarClick=(searchValue)=>{
 
-        alert(searchValue)
+
+        sourceControl.currentPage='1'
+        sourceControl.tempuserName=searchValue
+        this._getCustonList()
+
+
     }
 
     _renderItem =(data)=>{

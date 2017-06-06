@@ -18,6 +18,7 @@ import AllNavigationView from '../component/AllNavigationView';
 const  pageControl ={
     currentPage :1,
     total:0,
+    tempSearchValue:''
 }
 export  default class CustomerItemCarList extends BaseComponent{
 
@@ -30,6 +31,7 @@ export  default class CustomerItemCarList extends BaseComponent{
     componentWillUnmount() {
         pageControl.currentPage=1;
         pageControl.total=0;
+        pageControl.tempSearchValue=''
     }
 
     initFinish(){this._getCarList()}
@@ -38,7 +40,8 @@ export  default class CustomerItemCarList extends BaseComponent{
 
         let maps = {
             p:pageControl.currentPage,
-            merge_id:this.props.navigation.state.params.merge_id
+            merge_id:this.props.navigation.state.params.merge_id,
+            vin:pageControl.tempSearchValue
         };
         request(apis.CARREVGETREVLIST, 'Post', maps)
             .then((response) => {
@@ -56,9 +59,14 @@ export  default class CustomerItemCarList extends BaseComponent{
                 },
                 (error) => {
 
+
                 });
     }
+    _onSearchBarClick=(tempvalue)=>{
 
+        pageControl.currentPage='1'
+        pageControl.tempSearchValue=tempvalue
+    }
 
     _carItemClick=(carFrameNumber)=>{
 
@@ -74,7 +82,11 @@ export  default class CustomerItemCarList extends BaseComponent{
         else {
             pageControl.currentPage=pageControl.currentPage + 1;
 
-            let maps = {p: pageControl.currentPage };
+            let maps = {
+                p: pageControl.currentPage,
+                merge_id:this.props.navigation.state.params.merge_id,
+                vin:pageControl.tempSearchValue
+            };
 
             request(apis.CARREVGETREVLIST, 'Post', maps)
                 .then((response) => {
@@ -132,7 +144,7 @@ export  default class CustomerItemCarList extends BaseComponent{
     return(
         <View style={commenStyle.commenPage}>
            <View style={commenStyle.testUI}>
-            <CustomListSearch placehoder="车架号后6位"/>
+            <CustomListSearch placehoder="车架号后6位" onPress={this._onSearchBarClick}/>
                <FlatList
                    style={{flex:1}}
                    data={this.state.data}

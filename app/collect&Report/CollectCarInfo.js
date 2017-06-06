@@ -30,7 +30,8 @@ export  default  class CollectCarInfo extends BaseComponent{
     cttBlobs={}
     state={
         isdatePikershow:false,
-        data:[]
+        data:[],
+        renderModel:STATECODE.loading
     }
 
 
@@ -59,7 +60,8 @@ export  default  class CollectCarInfo extends BaseComponent{
                             {title:'扫描行驶证',type:click,showValue:cacheData.runbr,placeholder:'请扫描行驶证',key:'runbr'},
                             {title:'扫描身份证',type:click,showValue:cacheData.carid,placeholder:'请扫描身份证',key:'carid'},
                             {title:['扫描标签','扫描OBD'],type:doubleClick,showValue:'',placeholder:'请扫描标签',key:'obd_numberrfid'},
-                        ]
+                        ],
+                        renderModel:STATECODE.loadSuccess
                     })
                 }
             })
@@ -159,10 +161,7 @@ export  default  class CollectCarInfo extends BaseComponent{
                 break;
             case click:
                 return <CollectButtonInput title={tempdata.title} value={tempdata.showValue} placeholder={tempdata.placeholder} ref={(button)=>{this.cttBlobs[tempdata.key]=button}} onPress={()=>{
-                    this.tempTimeKeyType=key;
-                    this.setState({
-                        isdatePikershow:true
-                    })
+                    this._scanItemClick(tempdata.key)
                     }
                 }/>
              break;
@@ -179,12 +178,21 @@ export  default  class CollectCarInfo extends BaseComponent{
 
     render(){
 
+        if(this.state.renderModel==STATECODE.loading){
 
+            return (
+                <View style={commenStyle.commenPage}>
+                    <AllNavigationView title={'收车'} backIconClick={() => {
+                        this.backPage();
+                    }} parentNavigation={this}/>
+                </View>
+            )
+        }
 
         return(
             <View style={commenStyle.commenPage}>
 
-                <KeyboardAvoidingView behavior={'position'} keyboardVerticalOffset={-140} style={commenStyle.testUI}>
+                <View style={commenStyle.testUI}>
 
                     <FlatList
                         style={{height:height-getTopdistance()}}
@@ -195,7 +203,7 @@ export  default  class CollectCarInfo extends BaseComponent{
                         ItemSeparatorComponent={SeparatorComponent}
                         initialNumToRender={11}
                     />
-                </KeyboardAvoidingView>
+                </View>
                 <CollectNestTep onPress={()=>{
 
                     this.toNextPage('CollectCarPhoto',{'vin':this.props.navigation.state.params.carFrameNumber});
