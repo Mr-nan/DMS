@@ -7,7 +7,7 @@ import {
     Text,
     StyleSheet,
     TextInput,
-    Image,
+    Platform,
     TouchableOpacity,
     Dimensions,
     ScrollView
@@ -28,6 +28,7 @@ import * as StorageKeyNames from '../constant/storageKeyNames';
 import {RadioGroup, RadioButton} from 'react-native-flexi-radio-button';
 import TagSelectView from './component/TagSelectView';
 import AddCarPricePop from './component/AddCarPricePop';
+const IS_ANDROID = Platform.OS === 'android';
 
 export default class AddCarPriceScene extends BaseComponent {
 
@@ -684,10 +685,32 @@ export default class AddCarPriceScene extends BaseComponent {
                             });
                     },
                     (error) => {
-                        this._showHint('服务器请求失败，请重新请求');
+                        this._delayShowHint(error);
                     });
             });
 
+    };
+
+    _delayShowHint = (error) => {
+        if(error.mycode === -300 || error.mycode === -500){
+            if(IS_ANDROID === true){
+                this.props.screenProps.showToast('网络请求失败');
+            }else {
+                this.timer = setTimeout(
+                    () => { this.props.screenProps.showToast('网络请求失败'); },
+                    500
+                );
+            }
+        }else{
+            if(IS_ANDROID === true){
+                this.props.screenProps.showToast(error.mjson.retmsg);
+            }else {
+                this.timer = setTimeout(
+                    () => { this.props.screenProps.showToast(error.mjson.retmsg); },
+                    500
+                );
+            }
+        }
     };
 
     render() {

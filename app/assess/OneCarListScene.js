@@ -113,32 +113,30 @@ export default class OneCarListScene extends BaseComponent{
         Net.request(appUrls.ONECARGETAUTOLIST,'post',maps).then(
             (response)=>{
                 this._closeLoadingModal();
+                if(response.mycode === 1){
+                    let rep = response.mjson.retdata;
+                    this.total = Math.ceil(Number.parseInt(rep.total)/Number.parseInt(rep.listRows));
+                    let sum = 0;
+                    try {
+                        sum = Number.parseFloat(rep.loan_mny_sum);
+                    } catch (error) {
+                        sum = 0;
+                    }
+                    let money = Number.parseFloat(this.props.navigation.state.params.loanmny);
+                    let addE = true;
+                    if(sum >= money){
+                        addE = false;
+                    }
 
-                let rep = response.mjson.retdata;
-                this.total = Math.ceil(Number.parseInt(rep.total)/Number.parseInt(rep.listRows));
-                let sum = 0;
-                try {
-                    sum = Number.parseFloat(rep.loan_mny_sum);
-                } catch (error) {
-                    sum = 0;
+                    this.allSource.push(...rep.list);
+                    this.setState({
+                        dataSource:this.ds.cloneWithRows(this.allSource),
+                        loading:false,
+                        waitPrice:'单车待评估车辆金额：' + rep.wait_mny_str,
+                        addEnable:addE,
+                        isFirst:false
+                    });
                 }
-                let money = Number.parseFloat(this.props.navigation.state.params.loanmny);
-                let addE = true;
-                if(sum >= money){
-                    addE = false;
-                }
-
-                this.allSource.push(...rep.list);
-                this.setState({
-                    dataSource:this.ds.cloneWithRows(this.allSource),
-                    loading:false,
-                    waitPrice:'单车待评估车辆金额：' + rep.wait_mny_str,
-                    addEnable:addE,
-                    isFirst:false
-                });
-
-                console.log('response data',{rep});
-                console.log('response total',this.total);
             },
             (error)=>{
                 this._closeLoadingModal();

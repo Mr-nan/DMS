@@ -93,7 +93,8 @@ export default class AddCarInfoScene extends BaseComponent {
     };
 
     _insertSData = (carD) => {
-        if (carD.auto_base_id !== '') {
+
+        if (typeof(carD.auto_base_id) !== 'undefined' && carD.auto_base_id !== '') {
             this.auto_id = carD.auto_base_id;
         }
         this.itemList.push({

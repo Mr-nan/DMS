@@ -83,13 +83,15 @@ export default class CarUpImageScene extends BaseComponent {
     };
 
     _getData = () => {
+        this._showLoading();
         Net.request(AppUrls.AUTOGETATTACHMENTLIST, 'post', {}).then(
             (response) => {
+                this._closeLoading();
                 let rb = response.mjson.retdata;
                 this._setFirstRender(rb);
             },
             () => {
-
+                this._closeLoading();
             });
     };
 
@@ -190,6 +192,7 @@ export default class CarUpImageScene extends BaseComponent {
                 showToast={(value) => {
                     this.props.screenProps.showToast(value)
                 }}
+                toNextPage={this.toNextPage}
                 items={data}
                 childList={data.imgArray}
             />
@@ -408,7 +411,7 @@ export default class CarUpImageScene extends BaseComponent {
 
     _changeMoney = (url) => {
         let maps = {
-            auto_id: auto_id,
+            auto_id: this.auto_id,
         };
         SQLite.selectData('select * from newcar where frame_number = ?',
             [this.number],
@@ -424,7 +427,7 @@ export default class CarUpImageScene extends BaseComponent {
                         }
                         maps.certification = certification;
                         maps.is_new = carD.is_new;
-                        maps.merge_id = carD.merge_id;
+                        maps.merge_id = this.merge_id;
                         maps.model_id = carD.model_id;
                         maps.region_assess_mny = carD.region_assess_mny;
                         maps.payment_id = this.payment_id;

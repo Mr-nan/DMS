@@ -101,7 +101,6 @@ export default class StockTopOrderScene extends Component{
     };
 
     _getData = ()=>{
-        console.log('请求数据');
         let maps = {
             p:this.page,
             payment_number:this.payment_number,
@@ -111,17 +110,17 @@ export default class StockTopOrderScene extends Component{
         Net.request(appUrls.INVENTORYFINANCINGLOANLIST,'post',maps).then(
             (response)=>{
                 this._closeLoadingModal();
+                if(response.mycode === 1){
+                    let rep = response.mjson.retdata;
+                    this.total = Math.ceil(Number.parseInt(rep.total)/Number.parseInt(rep.listRows));
 
-                let rep = response.mjson.retdata;
-                this.total = Math.ceil(Number.parseInt(rep.total)/Number.parseInt(rep.listRows));
-
-                this.allSource.push(...rep.list);
-                this.setState({
-                    dataSource:this.ds.cloneWithRows(this.allSource),
-                    loading:false,
-                    isFirst:false
-                });
-
+                    this.allSource.push(...rep.list);
+                    this.setState({
+                        dataSource:this.ds.cloneWithRows(this.allSource),
+                        loading:false,
+                        isFirst:false
+                    });
+                }
             },
             (error)=>{
                 this._closeLoadingModal();

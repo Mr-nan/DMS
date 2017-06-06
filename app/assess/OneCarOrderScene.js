@@ -113,23 +113,23 @@ export default class OneCarOrderScene extends Component{
         Net.request(appUrls.ONECARGETPAYMENTLIST,'post',maps).then(
             (response)=>{
                 this._closeLoadingModal();
-
-                let rep = response.mjson.retdata;
-                this.total = Math.ceil(Number.parseInt(rep.total)/Number.parseInt(rep.listRows));
-
-                this.allSource.push(...rep.list);
-                this.setState({
-                    dataSource:this.ds.cloneWithRows(this.allSource),
-                    loading:false,
-                    isFirst:false
-                });
-
+                if(response.mycode === 1){
+                    let rep = response.mjson.retdata;
+                    this.total = Math.ceil(Number.parseInt(rep.total)/Number.parseInt(rep.listRows));
+                    this.allSource.push(...rep.list);
+                    this.setState({
+                        dataSource:this.ds.cloneWithRows(this.allSource),
+                        loading:false,
+                        isFirst:false
+                    });
+                }
             },
             (error)=>{
                 this._closeLoadingModal();
                 this.setState({
                     loading:false
                 });
+                this._delayShowHint(error);
             });
 
     };

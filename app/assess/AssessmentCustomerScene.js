@@ -93,7 +93,7 @@ export default class AssessCustomerScene extends BaseComponent{
     };
 
     _getData = ()=>{
-        console.log('请求数据');
+
         let maps = {
             p:this.page,
             name:this.name
@@ -102,17 +102,17 @@ export default class AssessCustomerScene extends BaseComponent{
         Net.request(appUrls.USERCUSTOMERLIST,'post',maps).then(
             (response)=>{
                 this._closeLoadingModal();
+                if(response.mycode === 1){
+                    let rep = response.mjson.retdata;
+                    this.total = Math.ceil(Number.parseInt(rep.total)/Number.parseInt(rep.listRows));
 
-                let rep = response.mjson.retdata;
-                this.total = Math.ceil(Number.parseInt(rep.total)/Number.parseInt(rep.listRows));
-
-                this.allSource.push(...rep.list);
-                this.setState({
-                    customers:this.ds.cloneWithRows(this.allSource),
-                    loading:false,
-                    isFirst:false
-                });
-
+                    this.allSource.push(...rep.list);
+                    this.setState({
+                        customers:this.ds.cloneWithRows(this.allSource),
+                        loading:false,
+                        isFirst:false
+                    });
+                }
             },
             (error)=>{
                 this._closeLoadingModal();
@@ -151,7 +151,6 @@ export default class AssessCustomerScene extends BaseComponent{
     }
 
     _onEndReached = ()=>{
-
         if(!this.state.loading && this.allSource.length>0 &&  this.page < this.total){
             this.page++;
             this._getData();

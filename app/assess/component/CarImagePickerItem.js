@@ -48,7 +48,7 @@ export  default class CarImagePickerItem extends PureComponent {
                                       marginLeft: Pixel.getPixel(7),
                                       marginTop: Pixel.getPixel(7)
                                   }} onPress={() => {
-                    this.props.showOnPress(this.props.index);
+                    this.props.showOnPress(this.props.imgUrl.file_url);
                 }}>
                     <Image style={{
                         width: childWidth,

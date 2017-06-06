@@ -71,6 +71,6 @@ const request = (url, method, params,backToLogin) => {
                 });
         })
     });
-}
+};
 
 export {request};

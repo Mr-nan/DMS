@@ -13,17 +13,13 @@ const Pixel = new PixelUtil();
 import * as fontAndColor from '../../constant/fontAndColor';
 import  CarImagePickerItem from './CarImagePickerItem';
 import ImagePicker from "react-native-image-picker";
-import * as appUrls from '../../constant/appUrls';
-import StorageUtil from '../../utils/StorageUtil';
-import * as StorageKeyNames from '../../constant/storageKeyNames';
+import * as Net from '../../utils/UpLoadFileUtil';
 
 
 export  default class CarUpImageCell extends PureComponent {
 
     constructor(props) {
         super(props);
-
-        console.log(this.props.childList.length);
         this.state = {
             childMovie: this.props.childList
         };
@@ -47,7 +43,11 @@ export  default class CarUpImageCell extends PureComponent {
                     <CarImagePickerItem
                         fileId={this.state.childMovie[i]}
                         imgUrl={this.state.childMovie[i]}
-                        showOnPress={() => {
+                        showOnPress={(imgUrl) => {
+                            this.props.toNextPage('CarZoomImagScene',{
+                                images:[{url:imgUrl}],
+                                index:0
+                            });
                         }}
                         deleteOnPress={(index, fileId) => {
                             let news = [];
@@ -121,39 +121,63 @@ export  default class CarUpImageCell extends PureComponent {
             }
             else {
                 this.props.showModal(true);
-                StorageUtil.mGetItem(StorageKeyNames.TOKEN, (data) => {
-                    if (data.code === 1) {
-                        let token = data.result;
-                        NativeModules.DmsCustom.uploadFile(appUrls.FILEUPLOAD, token, response.path,
-                            (response) => {
 
-                                this.props.showModal(false);
-                                let rep = JSON.parse(response);
-                                console.log('success', rep.retdata);
-                                if(rep.retcode === 1){
-                                    this.props.showToast('上传成功');
-                                    let news =[];
-                                    news.push(...this.state.childMovie);
-                                    news.push({
-                                        file_url: rep.retdata[0].file_url,
-                                        file_id:rep.retdata[0].file_id
-                                    });
-                                    this.props.results.push({file_url: rep.retdata[0].file_url,
-                                        file_id:rep.retdata[0].file_id,syscodedata_id:this.props.items.syscodedata_id});
-                                    this.props.retureSaveAction('1',rep.retdata[0].file_id,rep.retdata[0].file_url);
-                                    this.setState({
-                                        childMovie:news,
-                                    });
-                                }else{
-                                    this.props.showToast('上传失败');
-                                }
+                Net.request(response.uri).then(
+                    (response)=>{
+                        this.props.showModal(false);
+                        this.props.showToast('上传成功');
+                        let news =[];
+                        let rep = response.mjson;
+                        news.push(...this.state.childMovie);
+                        news.push({
+                            file_url: rep.retdata[0].file_url,
+                            file_id:rep.retdata[0].file_id
+                        });
+                        this.props.results.push({file_url: rep.retdata[0].file_url,
+                            file_id:rep.retdata[0].file_id,syscodedata_id:this.props.items.syscodedata_id});
+                        this.props.retureSaveAction('1',rep.retdata[0].file_id,rep.retdata[0].file_url);
+                        this.setState({
+                            childMovie:news,
+                        });
+                    },
+                    (error)=>{
+                        this.props.showModal(false);
+                        this.props.showToast('上传失败');
+                    });
 
-                            }, (error) => {
-                                this.props.showModal(false);
-                                this.props.showToast('上传失败');
-                            });
-                    }
-                });
+                // StorageUtil.mGetItem(StorageKeyNames.TOKEN, (data) => {
+                //     if (data.code === 1) {
+                //         let token = data.result;
+                //         NativeModules.DmsCustom.uploadFile(appUrls.FILEUPLOAD, token, response.path,
+                //             (response) => {
+                //
+                //                 this.props.showModal(false);
+                //                 let rep = JSON.parse(response);
+                //                 console.log('success', rep.retdata);
+                //                 if(rep.retcode === 1){
+                //                     this.props.showToast('上传成功');
+                //                     let news =[];
+                //                     news.push(...this.state.childMovie);
+                //                     news.push({
+                //                         file_url: rep.retdata[0].file_url,
+                //                         file_id:rep.retdata[0].file_id
+                //                     });
+                //                     this.props.results.push({file_url: rep.retdata[0].file_url,
+                //                         file_id:rep.retdata[0].file_id,syscodedata_id:this.props.items.syscodedata_id});
+                //                     this.props.retureSaveAction('1',rep.retdata[0].file_id,rep.retdata[0].file_url);
+                //                     this.setState({
+                //                         childMovie:news,
+                //                     });
+                //                 }else{
+                //                     this.props.showToast('上传失败');
+                //                 }
+                //
+                //             }, (error) => {
+                //                 this.props.showModal(false);
+                //                 this.props.showToast('上传失败');
+                //             });
+                //     }
+                // });
             }
         });
     };
