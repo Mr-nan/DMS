@@ -18,7 +18,8 @@ import DateTimePicker from 'react-native-modal-datetime-picker'
 const  pageControl ={
     currentPage :1,
     total:0,
-    month:''
+    month:'',
+    tempSearchValue:''
 }
 export  default class ReportCustomerList extends BaseComponent{
 
@@ -38,6 +39,7 @@ export  default class ReportCustomerList extends BaseComponent{
     componentWillUnmount() {
         pageControl.currentPage=1;
         pageControl.total=0;
+        pageControl.tempSearchValue=''
     }
 
     initFinish(){
@@ -50,6 +52,7 @@ export  default class ReportCustomerList extends BaseComponent{
         let maps = {
             month:pageControl.month,
             pageNo:pageControl.currentPage,
+            keyword:pageControl.tempSearchValue
         };
         request(apis.PATROLEVALGETMERGELIST, 'Post', maps)
             .then((response) => {
@@ -76,6 +79,7 @@ export  default class ReportCustomerList extends BaseComponent{
         this.setState({
             isDateTimePickerVisible:false
         })
+        this._getRepoCustomList()
     }
     _hideDateimePicker=()=>{
         this.setState({
@@ -111,7 +115,11 @@ export  default class ReportCustomerList extends BaseComponent{
         else {
             pageControl.currentPage=pageControl.currentPage + 1;
 
-            let maps = {pageNo: pageControl.currentPage , month:pageControl.month};
+            let maps = {
+                pageNo: pageControl.currentPage ,
+                month:pageControl.month,
+                keyword:pageControl.tempSearchValue
+            };
 
             request(apis.PATROLEVALGETMERGELIST, 'Post', maps)
                 .then((response) => {
@@ -151,6 +159,12 @@ export  default class ReportCustomerList extends BaseComponent{
         }
 
     }
+    _searchClick=(searchValue)=>{
+
+        pageControl.tempSearchValue=searchValue;
+        pageControl.currentPage='1';
+        this._getRepoCustomList();
+    }
 
     _onRefresh=()=>{
 
@@ -186,7 +200,7 @@ export  default class ReportCustomerList extends BaseComponent{
 
         <View style={commenStyle.commenPage}>
             <View style={commenStyle.testUI}>
-                <RepListSearch ref={(sear)=>{this.searchBar=sear}} timeButtonClick={()=>{this.setState({isDateTimePickerVisible:true})}} onPress={(searchVale)=>{alert(searchVale)}}/>
+                <RepListSearch ref={(sear)=>{this.searchBar=sear}} timeButtonClick={()=>{this.setState({isDateTimePickerVisible:true})}} onPress={this._searchClick}/>
                 <FlatList
                     data={this.state.data}
                     renderItem={this._renderItem}

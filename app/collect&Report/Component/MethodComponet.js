@@ -70,7 +70,7 @@ const fontadapeSize = (size)=> {
 }
 const getDefaultValue=(value)=>{
 
-    return value==0?null:value.toString();
+    return value==0?null:value;
 }
 
 const toutalPage =(toutal,rows)=>{

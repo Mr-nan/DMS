@@ -9,6 +9,7 @@ import {
     StyleSheet,
     ScrollView,
     Dimensions,
+    Platform,
     TouchableOpacity
 }from 'react-native';
 
@@ -26,6 +27,7 @@ import * as StorageKeyNames from '../constant/storageKeyNames';
 import ImageViewPage from 'react-native-viewpager';
 import TagSelectView from './component/TagSelectView';
 import AddCarPricePop from './component/AddCarPricePop';
+const IS_ANDROID = Platform.OS === 'android';
 
 export default class CarInfoScene extends BaseComponent {
 
@@ -334,7 +336,9 @@ export default class CarInfoScene extends BaseComponent {
             type: '2',
             value: carInfo.che300_mny_str + '万元'
         });
+        this.imgFiles = null;
         if (carInfo.files !== null) {
+            this.imgFiles = carInfo.files;
             renderSource.push({
                 title: '',
                 type: '4',
@@ -374,13 +378,62 @@ export default class CarInfoScene extends BaseComponent {
         Net.request(url, 'post', maps).then(
             (response) => {
                 this._closeLoadingModal();
-                this._showHint('删除成功');
-                this.backPage();
-                this.props.refreshLastPage;
+                if (IS_ANDROID === true) {
+                    this._showHint('删除成功');
+                    this.timer = setTimeout(
+                        () => {
+                            this.backPage();
+                            this.props.navigation.state.params.refreshLastPage();
+                        },
+                        300
+                    );
+                } else {
+                    this.timer = setTimeout(
+                        () => {
+                            this._showHint('删除成功');
+                            this.timer = setTimeout(
+                                () => {
+                                    this.backPage();
+                                    this.props.navigation.state.params.refreshLastPage();
+                                },
+                                300
+                            );
+                        },
+                        400
+                    );
+                }
+
             },
             (error) => {
                 this._closeLoadingModal();
+                this._delayShowHint(error);
             });
+    };
+
+    _delayShowHint = (error) => {
+        if (error.mycode === -300 || error.mycode === -500) {
+            if (IS_ANDROID === true) {
+                this.props.showHint('网络请求失败');
+            } else {
+                this.timer = setTimeout(
+                    () => {
+                        this.props.showHint('网络请求失败');
+                    },
+                    400
+                );
+            }
+        } else {
+            if (IS_ANDROID === true) {
+                this.props.showHint(error.mjson.retmsg);
+            } else {
+                this.timer = setTimeout(
+                    () => {
+                        this.props.showHint(error.mjson.retmsg);
+                    },
+                    400
+                );
+            }
+        }
     };
 
     _renderItem = (data, index) => {
@@ -435,12 +488,31 @@ export default class CarInfoScene extends BaseComponent {
         }
     };
 
-    _renderImagePage = (data) => {
+    _renderImagePage = (data, index) => {
         return (
-            <View style={styles.content_image_btn}>
+            <TouchableOpacity
+                style={styles.content_image_btn}
+                activeOpacity={1}
+                onPress={() => {
+                    this._onImageTouch(index)
+                }}
+            >
                 <Image style={styles.content_image_btn} source={{uri: data.fileurl}}/>
-            </View>
+            </TouchableOpacity>
         )
+    };
+
+    _onImageTouch = (imageIndex) => {
+        let imgSrc = [];
+        this.imgFiles.map((m) => {
+            imgSrc.push({
+                url: m.fileurl
+            })
+        });
+        this.toNextPage('CarZoomImagScene', {
+            images: imgSrc,
+            index: parseInt(imageIndex)
+        });
     };
 
     _getData = () => {
@@ -528,17 +600,18 @@ export default class CarInfoScene extends BaseComponent {
             });
     };
 
-    _onPgBtnClick=()=>{
-        if(this.state.accessText === '评估'){
+    _onPgBtnClick = () => {
+        if (this.state.accessText === '评估') {
             this._openPop();
-        }else if(this.state.accessText === '编辑'){
-            this.toNextPage('AddCarInfoScene',{
-                merge_id:this.state.merge_id,
-                from:'CarInfoScene' + this.state.from_name,
-                number:this.number,
-                payment_id:this.state.payment_id,
-                auto_id:this.state.auto_id,
-                json:this.json
+        } else if (this.state.accessText === '编辑') {
+            this.toNextPage('AddCarInfoScene', {
+                merge_id: this.state.merge_id,
+                from: 'CarInfoScene' + this.state.from_name,
+                number: this.number,
+                payment_id: this.state.payment_id,
+                auto_id: this.state.auto_id,
+                json: this.json,
+                refreshMethod: this._getData
             })
         }
     };

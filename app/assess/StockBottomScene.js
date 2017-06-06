@@ -67,7 +67,8 @@ export default class StockBottomScene extends Component {
             auto_id: item.auto_id,
             is_time_out: item.is_time_out,
             payment_id: '',
-            merge_id: this.merge_id
+            merge_id: this.merge_id,
+            refreshLastPage:this._refreshMethod
         })
     };
 
@@ -104,17 +105,18 @@ export default class StockBottomScene extends Component {
         Net.request(appUrls.INVENTORYFINANCINGGETAUTOLIST, 'post', maps).then(
             (response) => {
                 this._closeLoadingModal();
+                if(response.mycode === 1){
+                    let rep = response.mjson.retdata;
+                    this.total = Math.ceil(Number.parseInt(rep.total) / Number.parseInt(rep.listRows));
 
-                let rep = response.mjson.retdata;
-                this.total = Math.ceil(Number.parseInt(rep.total) / Number.parseInt(rep.listRows));
-
-                this.allSource.push(...rep.list);
-                this.setState({
-                    dataSource: this.ds.cloneWithRows(this.allSource),
-                    loading: false,
-                    waitPrice: '待评估车辆金额：' + rep.wait_mny_str,
-                    isFirst: false
-                });
+                    this.allSource.push(...rep.list);
+                    this.setState({
+                        dataSource: this.ds.cloneWithRows(this.allSource),
+                        loading: false,
+                        waitPrice: '待评估车辆金额：' + rep.wait_mny_str,
+                        isFirst: false
+                    });
+                }
             },
             (error) => {
                 this._closeLoadingModal();
@@ -167,8 +169,13 @@ export default class StockBottomScene extends Component {
             from: 'StockBottomScene',
             payment_id: '',
             merge_id: this.merge_id,
-            refreshMethod:this._onRefresh
+            refreshMethod:this._refreshMethod
         })
+    };
+
+    _refreshMethod = ()=>{
+        this._showLoadingModal();
+        this._getData();
     };
 
     renderListFooter = () => {

@@ -25,7 +25,7 @@ import SQLiteUtil from '../utils/SQLiteUtil';
 const {width} = Dimensions.get('window');
 const SQLite = new SQLiteUtil();
 import DateTimePicker from 'react-native-modal-datetime-picker';
-
+import CarTypeSelectPop from './component/CarTypeSelectPop';
 const scan = require('../../images/scan.png');
 const arrow = require('../../images/list_select.png');
 const newTypes = ['二手车', '新车', '平行进口车'];
@@ -37,15 +37,15 @@ export default class PurchaseAddCarInfoScene extends BaseComponent {
     constructor(props) {
         super(props);
 
-        this.merge_id = this.props.navigation.state.params.merge_id;
-        this.from = this.props.navigation.state.params.from;
-        this.json = this.props.navigation.state.params.json;
-        this.number = this.props.navigation.state.params.number;
+        this.from = this.props.navigation.state.params.from_name;
         this.auto_id = this.props.navigation.state.params.auto_id;
         this.payment_id = this.props.navigation.state.params.payment_id;
+        this.merge_id = this.props.navigation.state.params.merge_id;
+
         this.itemList = [];
         this.state = {
             renderItems: [],
+            carTypePop: false,
             isDateTimePickerVisible: false
         }
     }
@@ -81,7 +81,7 @@ export default class PurchaseAddCarInfoScene extends BaseComponent {
     };
 
     _insertSData = (carD) => {
-        if (carD.auto_base_id !== '') {
+        if (typeof(carD.auto_base_id) !== 'undefined' && carD.auto_base_id !== '') {
             this.auto_id = carD.auto_base_id;
         }
         this.itemList.push({
@@ -157,9 +157,9 @@ export default class PurchaseAddCarInfoScene extends BaseComponent {
             tag: '',
         });
         let tReg = carD.init_reg;
-        if (tReg !== '') {
-            tReg = this._dateReversal(tReg);
-        }
+        // if (tReg !== '') {
+        //     tReg = this._dateReversal(tReg);
+        // }
         this.itemList.push({
             title: '初登日期',
             value: tReg,
@@ -170,9 +170,9 @@ export default class PurchaseAddCarInfoScene extends BaseComponent {
         });
 
         let tManu = carD.manufacture;
-        if (tManu !== '') {
-            tManu = this._dateReversal(tManu);
-        }
+        // if (tManu !== '') {
+        //     tManu = this._dateReversal(tManu);
+        // }
         this.itemList.push({
             title: '出厂日期',
             value: tManu,
@@ -221,9 +221,9 @@ export default class PurchaseAddCarInfoScene extends BaseComponent {
             canNull: false,
             tag: '',
         });
-        let upSql = 'update newcar set ground_id = ?,'
+        let upSql = 'update newcar set group_id = ?,'
             + 'brand_id = ?,'
-            + 'series_id = ?'
+            + 'series_id = ?,'
             + 'model_id = ?,'
             + 'displacement = ?,'
             + 'engine_number = ?,'
@@ -285,23 +285,23 @@ export default class PurchaseAddCarInfoScene extends BaseComponent {
                                 this._showHint('监管地点为空');
                                 this.backPage();
                             } else {
-                                if (this.json !== '') {
-                                    //后台有数据
-                                    let carD = response.mjson.retdata;
-                                    SQLite.selectData('select * from newcar where frame_number = ?',
-                                        [this.number],
-                                        (sqlDt) => {
-                                            if (sqlDt.code === 1) {
-                                                if (sqlDt.result.rows.length === 0) {
-                                                    SQLite.changeData('insert into newcar (frame_number) values (?)', [this.number], () => {
-                                                        this._insertSData(carD);
-                                                    });
-                                                } else {
+                                //后台有数据
+                                let carD = response.mjson.retdata;
+                                this.number = carD.frame_number;
+                                this.json = JSON.stringify(response.mjson);
+                                SQLite.selectData('select * from newcar where frame_number = ?',
+                                    [this.number],
+                                    (sqlDt) => {
+                                        if (sqlDt.code === 1) {
+                                            if (sqlDt.result.rows.length === 0) {
+                                                SQLite.changeData('insert into newcar (frame_number) values (?)', [this.number], () => {
                                                     this._insertSData(carD);
-                                                }
+                                                });
+                                            } else {
+                                                this._insertSData(carD);
                                             }
-                                        });
-                                }
+                                        }
+                                    });
                             }
                         },
                         (error) => {
@@ -390,7 +390,7 @@ export default class PurchaseAddCarInfoScene extends BaseComponent {
             )
         } else if (data.type === 4) {
             let xz = '请选择';
-            if (data.value !== '') {
+            if (data.value !== '' && data.value !== '0') {
                 xz = data.value;
             }
             if (data.title === '车辆类型') {
@@ -400,9 +400,9 @@ export default class PurchaseAddCarInfoScene extends BaseComponent {
                     xz = natureTypes[Number.parseInt(data.value) - 1];
                 }
             } else if (data.title === '入库类型') {
-                if (Number.parseInt(data.value) === 1) {
+                if (data.value == '1') {
                     xz = '放款入库';
-                } else if (Number.parseInt(data.value) === 3) {
+                } else if (data.value == '3') {
                     xz = '置换入库';
                 }
             } else if (data.title === '监管地点') {
@@ -547,6 +547,44 @@ export default class PurchaseAddCarInfoScene extends BaseComponent {
         SQLite.changeData(iSql, [text, this.number])
     };
 
+    _closeCarModal = () => {
+        this.setState({
+            carTypePop: false
+        });
+    };
+
+    //选择列表返回
+    _onCarTypeClick = (rowID, rowData, dtType) => {
+        if (dtType === '0') {
+            SQLite.changeData('update newcar set is_new = ? where frame_number = ?', [(Number.parseInt(rowID) + 1) + '', this.number], () => {
+                this.itemList[11].value = (Number.parseInt(rowID) + 1) + '';
+                this._setCarRender(true);
+            });
+        } else if (dtType === '1') {
+            SQLite.changeData('update newcar set nature_use = ? where frame_number = ?', [(Number.parseInt(rowID) + 1) + '', this.number], () => {
+                this.itemList[12].value = (Number.parseInt(rowID) + 1) + '';
+                this._setCarRender(false);
+            });
+        } else if (dtType === '2') {
+            let v = '1';
+            if (rowData === '放款入库') {
+                v = '1';
+            } else if (rowData === '置换入库') {
+                v = '3';
+            }
+            SQLite.changeData('update newcar set record_type = ? where frame_number = ?', [v, this.number], () => {
+                this.itemList[13].value = v;
+                this._setCarRender(false);
+            });
+        } else if (dtType === '3') {
+            let r = this.runPlaces[rowID].storage_id;
+            SQLite.changeData('update newcar set storage_id = ? where frame_number = ?', [r, this.number], () => {
+                this.itemList[14].value = r;
+                this._setCarRender(false);
+            });
+        }
+    };
+
     //时间选择关闭
     _hideDateTimePicker = () => {
         this.setState({isDateTimePickerVisible: false});
@@ -601,6 +639,15 @@ export default class PurchaseAddCarInfoScene extends BaseComponent {
                 <AllNavigationView title={'添加车辆'} backIconClick={() => {
                     this.backPage();
                 }} parentNavigation={this}/>
+                {
+                    this.state.carTypePop &&
+                    <CarTypeSelectPop ref={(ref) => {
+                        this.carPop = ref
+                    }}
+                                      closeModal={this._closeCarModal}
+                                      onItemClick={this._onCarTypeClick}/>
+
+                }
                 <DateTimePicker
                     titleIOS="请选择日期"
                     confirmTextIOS='确定'

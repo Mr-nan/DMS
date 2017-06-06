@@ -9,10 +9,13 @@ import android.util.Log;
 import com.dms.custom.bluetooths.BluetoothControl;
 import com.dms.custom.bluetooths.IBluetoothCallBack;
 import com.dms.custom.bluetooths.ItemBluetoothDevice;
+import com.dms.custom.idcard.IDCardActivity;
 import com.dms.custom.qr.scan.ScanCaptureAct;
 import com.dms.custom.utils.IUpLoadImageResult;
 import com.dms.custom.utils.SoundUtil;
 import com.dms.custom.utils.UpLoadFile;
+import com.dms.custom.vin.scan.FDScanActivity;
+import com.dms.custom.vin.scan.VLScanActivity;
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
@@ -22,10 +25,6 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.RCTNativeAppEventEmitter;
 
-import java.io.Console;
-
-import rtzltech.cn.jni.RFIDUtils;
-
 /**
  * Created by Administrator on 2017/5/11.
  */
@@ -34,8 +33,20 @@ public class DmsCustomModule extends ReactContextBaseJavaModule implements Activ
 
 
     private final int QR_REQUEST = 0;
+    private final int VIN_REQUEST = 1;
+    private final int VL_REQUEST = 2;
+    private final int SD_REQUEST = 3;
     private Callback qr_success_ck;
     private Callback qr_fail_ck;
+    private Callback vin_success_ck;
+    private Callback vin_fail_ck;
+    private Callback vl_success_ck;
+    private Callback vl_fail_ck;
+    private Callback sd_success_ck;
+    private Callback sd_fail_ck;
+
+
+
     private Context mContext;
 
     public DmsCustomModule(ReactApplicationContext reactContext) {
@@ -98,6 +109,42 @@ public class DmsCustomModule extends ReactContextBaseJavaModule implements Activ
                 qr_success_ck.invoke(map);
                 qr_success_ck = null;
             }
+        }else if(requestCode == VIN_REQUEST){
+            if(resultCode == Activity.RESULT_CANCELED){
+                vin_fail_ck.invoke("Result_Canceled");
+            }else if(resultCode == Activity.RESULT_OK){
+                String vin = data.getStringExtra("vin");
+                WritableMap map = Arguments.createMap();
+                map.putString("vin",vin);
+                vin_success_ck.invoke(map);
+                vin_success_ck = null;
+            }
+        }else if(requestCode == VL_REQUEST){
+            if(resultCode == Activity.RESULT_CANCELED){
+                vl_fail_ck.invoke("Result_Canceled");
+            }else if(resultCode == Activity.RESULT_OK){
+                WritableMap map = Arguments.createMap();
+                map.putString("carPlate",data.getStringExtra("carPlate"));
+                map.putString("carType",data.getStringExtra("carType"));
+                map.putString("carOwner",data.getStringExtra("carOwner"));
+                map.putString("carAddress",data.getStringExtra("carAddress"));
+                map.putString("carNature",data.getStringExtra("carNature"));
+                map.putString("carBrand",data.getStringExtra("carBrand"));
+                map.putString("carVl",data.getStringExtra("carVl"));
+                map.putString("carEngine",data.getStringExtra("carEngine"));
+                map.putString("carReg",data.getStringExtra("carReg"));
+                map.putString("carCert",data.getStringExtra("carCert"));
+
+                vl_success_ck.invoke(map);
+                vl_success_ck = null;
+            }
+        }else if(requestCode == SD_REQUEST){
+            if(resultCode == Activity.RESULT_CANCELED){
+                sd_fail_ck.invoke("Result_Canceled");
+            }else if(resultCode == Activity.RESULT_OK){
+                vl_success_ck.invoke(data.getStringExtra("recogResult"));
+                vl_success_ck = null;
+            }
         }
 
     }
@@ -119,6 +166,76 @@ public class DmsCustomModule extends ReactContextBaseJavaModule implements Activ
         return "DmsCustom";
     }
 
+
+    /********************************************
+     * 身份证扫描
+     *******************************************/
+    @ReactMethod
+    public void scanID(Callback dsCallback,Callback dfCallback){
+        sd_success_ck = dsCallback;
+        sd_fail_ck = dfCallback;
+        Activity currentActivity = getCurrentActivity();
+
+        if (currentActivity == null) {
+            sd_fail_ck.invoke("扫描失败_01");
+            sd_fail_ck = null;
+            return;
+        }
+        try{
+            Intent vlIntent = new Intent(currentActivity, IDCardActivity.class);
+            currentActivity.startActivityForResult(vlIntent,SD_REQUEST);
+        }catch (Exception e){
+            sd_fail_ck.invoke(e.toString());
+            sd_fail_ck = null;
+        }
+    }
+
+    /********************************************
+     * 行驶证扫描
+     *******************************************/
+    @ReactMethod
+    public void scanVL(Callback lsCallback,Callback lfCallback){
+        vl_success_ck = lsCallback;
+        vl_fail_ck = lfCallback;
+        Activity currentActivity = getCurrentActivity();
+
+        if (currentActivity == null) {
+            vl_fail_ck.invoke("扫描失败_01");
+            vl_fail_ck = null;
+            return;
+        }
+        try{
+            Intent vlIntent = new Intent(currentActivity,VLScanActivity.class);
+            currentActivity.startActivityForResult(vlIntent,VL_REQUEST);
+        }catch (Exception e){
+            vl_fail_ck.invoke(e.toString());
+            vl_fail_ck = null;
+        }
+    }
+
+
+    /********************************************
+     * 前风挡扫描
+     *******************************************/
+    @ReactMethod
+    public void scanVin(Callback vsCallback,Callback vfCallback){
+        vin_success_ck = vsCallback;
+        vin_fail_ck = vfCallback;
+        Activity currentActivity = getCurrentActivity();
+
+        if (currentActivity == null) {
+            vin_fail_ck.invoke("扫描失败_01");
+            vin_fail_ck = null;
+            return;
+        }
+        try{
+            Intent vlIntent = new Intent(currentActivity,FDScanActivity.class);
+            currentActivity.startActivityForResult(vlIntent,VIN_REQUEST);
+        }catch (Exception e){
+            vin_fail_ck.invoke(e.toString());
+            vin_fail_ck = null;
+        }
+    }
 
     /********************************************
      * 文件上传
