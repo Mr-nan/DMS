@@ -9,6 +9,7 @@ import {
     StyleSheet,
     ScrollView,
     Dimensions,
+    Platform,
     TouchableOpacity
 }from 'react-native';
 
@@ -26,6 +27,7 @@ import * as StorageKeyNames from '../constant/storageKeyNames';
 import ImageViewPage from 'react-native-viewpager';
 import TagSelectView from './component/TagSelectView';
 import AddCarPricePop from './component/AddCarPricePop';
+const IS_ANDROID = Platform.OS === 'android';
 
 export default class CarInfoScene extends BaseComponent {
 
@@ -376,13 +378,62 @@ export default class CarInfoScene extends BaseComponent {
         Net.request(url, 'post', maps).then(
             (response) => {
                 this._closeLoadingModal();
-                this._showHint('删除成功');
-                this.backPage();
-                this.props.refreshLastPage;
+                if (IS_ANDROID === true) {
+                    this._showHint('删除成功');
+                    this.timer = setTimeout(
+                        () => {
+                            this.backPage();
+                            this.props.navigation.state.params.refreshLastPage();
+                        },
+                        300
+                    );
+                } else {
+                    this.timer = setTimeout(
+                        () => {
+                            this._showHint('删除成功');
+                            this.timer = setTimeout(
+                                () => {
+                                    this.backPage();
+                                    this.props.navigation.state.params.refreshLastPage();
+                                },
+                                300
+                            );
+                        },
+                        400
+                    );
+                }
+
             },
             (error) => {
                 this._closeLoadingModal();
+                this._delayShowHint(error);
             });
+    };
+
+    _delayShowHint = (error) => {
+        if (error.mycode === -300 || error.mycode === -500) {
+            if (IS_ANDROID === true) {
+                this.props.showHint('网络请求失败');
+            } else {
+                this.timer = setTimeout(
+                    () => {
+                        this.props.showHint('网络请求失败');
+                    },
+                    400
+                );
+            }
+        } else {
+            if (IS_ANDROID === true) {
+                this.props.showHint(error.mjson.retmsg);
+            } else {
+                this.timer = setTimeout(
+                    () => {
+                        this.props.showHint(error.mjson.retmsg);
+                    },
+                    400
+                );
+            }
+        }
     };
 
     _renderItem = (data, index) => {
@@ -437,12 +488,12 @@ export default class CarInfoScene extends BaseComponent {
         }
     };
 
-    _renderImagePage = (data,index) => {
+    _renderImagePage = (data, index) => {
         return (
             <TouchableOpacity
                 style={styles.content_image_btn}
                 activeOpacity={1}
-                onPress={()=>{
+                onPress={() => {
                     this._onImageTouch(index)
                 }}
             >
@@ -451,16 +502,16 @@ export default class CarInfoScene extends BaseComponent {
         )
     };
 
-    _onImageTouch = (imageIndex)=>{
+    _onImageTouch = (imageIndex) => {
         let imgSrc = [];
-        this.imgFiles.map((m)=>{
+        this.imgFiles.map((m) => {
             imgSrc.push({
-                url:m.fileurl
+                url: m.fileurl
             })
         });
-        this.toNextPage('CarZoomImagScene',{
-            images:imgSrc,
-            index:parseInt(imageIndex)
+        this.toNextPage('CarZoomImagScene', {
+            images: imgSrc,
+            index: parseInt(imageIndex)
         });
     };
 
@@ -549,18 +600,18 @@ export default class CarInfoScene extends BaseComponent {
             });
     };
 
-    _onPgBtnClick=()=>{
-        if(this.state.accessText === '评估'){
+    _onPgBtnClick = () => {
+        if (this.state.accessText === '评估') {
             this._openPop();
-        }else if(this.state.accessText === '编辑'){
-            this.toNextPage('AddCarInfoScene',{
-                merge_id:this.state.merge_id,
-                from:'CarInfoScene' + this.state.from_name,
-                number:this.number,
-                payment_id:this.state.payment_id,
-                auto_id:this.state.auto_id,
-                json:this.json,
-                refreshMethod:this._getData
+        } else if (this.state.accessText === '编辑') {
+            this.toNextPage('AddCarInfoScene', {
+                merge_id: this.state.merge_id,
+                from: 'CarInfoScene' + this.state.from_name,
+                number: this.number,
+                payment_id: this.state.payment_id,
+                auto_id: this.state.auto_id,
+                json: this.json,
+                refreshMethod: this._getData
             })
         }
     };

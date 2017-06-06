@@ -67,7 +67,8 @@ export default class StockBottomScene extends Component {
             auto_id: item.auto_id,
             is_time_out: item.is_time_out,
             payment_id: '',
-            merge_id: this.merge_id
+            merge_id: this.merge_id,
+            refreshLastPage:this._refreshMethod
         })
     };
 
