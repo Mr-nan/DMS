@@ -154,7 +154,7 @@ let styles = StyleSheet.create({
     wainingExplain: {
         backgroundColor: 'white',
         flexDirection: 'row',
-        marginTop: Pixel.getPixel(60),
+        marginTop: Pixel.getTitlePixel(78),
         marginBottom: Pixel.getPixel(10),
         alignItems: 'center',
         paddingVertical: Pixel.getPixel(12)

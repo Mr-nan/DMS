@@ -345,13 +345,14 @@ export  default class CarCheckWarning extends BaseComponent {
 let styles = StyleSheet.create({
     contain: {
         flex: 1,
+        marginTop: Pixel.getPixel(0),
         backgroundColor: '#F0F0F0',
     },
     blueTooth: {
         flexDirection: 'row',
         backgroundColor: '#F6F693',
         paddingVertical: 5,
-        marginTop: Pixel.getPixel(48)
+        marginTop: Pixel.getTitlePixel(68)
     },
     wainingExplain: {
         backgroundColor: 'white',

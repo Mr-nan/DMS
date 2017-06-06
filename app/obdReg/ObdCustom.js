@@ -157,6 +157,6 @@ const styles = StyleSheet.create({
         backgroundColor: fontAndColor.COLORA3,
     },
     listStyle: {
-        marginTop: Pixel.getPixel(48)
+        marginTop: Pixel.getTitlePixel(68)
     },
 });

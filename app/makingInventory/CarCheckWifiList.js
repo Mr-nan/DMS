@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         backgroundColor: '#F6F693',
         paddingVertical: 5,
-        marginTop: Pixel.getPixel(48),
+        marginTop: Pixel.getTitlePixel(68),
     },
     radioGroup: {
         flexDirection: 'row',
