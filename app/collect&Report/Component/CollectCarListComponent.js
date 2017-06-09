@@ -15,7 +15,6 @@ import  {PAGECOLOR,width,height,adapeSize,fontadapeSize} from './MethodComponet'
 
 
 
-
 class CustomButton extends  PureComponent{
 
     state={
@@ -263,26 +262,35 @@ class NetWorkingImage extends PureComponent{
         loading: false,
         progress: 0
     }
-
+// <Text>{this.state.progress}%</Text>
     render(){
 
         let loader=this.state.loading?
             <View>
-                <Text>{this.state.progress}%</Text>
                 <ActivityIndicator style={{marginLeft:5}} />
             </View>:null;
        return this.state.error?<Text>{this.state.error}</Text>:
-          <TouchableOpacity>
-           <Image
-               source={this.props.source}
-               style={[photoStyles.imagadd]}
-               onLoadStart={(e) => this.setState({loading: true})}
-               onError={(e) => this.setState({error: e.nativeEvent.error, loading: false})}
-               onProgress={(e) => this.setState({progress: Math.round(100 * e.nativeEvent.loaded / e.nativeEvent.total)})}
-               onLoad={() => this.setState({loading: false, error: false})}>
-               {loader}
-           </Image>
-          </TouchableOpacity>
+           <View>
+
+               <TouchableOpacity onPress={this.props.imagePress}>
+                   <Image
+                       source={this.props.source}
+                       style={[photoStyles.imagadd]}
+                       onLoadStart={(e) => this.setState({loading: true})}
+                       onError={(e) => this.setState({error: e.nativeEvent.error, loading: false})}
+                       onProgress={(e) => this.setState({progress: Math.round(100 * e.nativeEvent.loaded / e.nativeEvent.total)})}
+                       onLoad={() => this.setState({loading: false, error: false})}>
+                       {loader}
+                   </Image>
+               </TouchableOpacity>
+               <TouchableOpacity style={photoStyles.deleteWarp} onPress={this.props.deleteOnpress}>
+                   <Image
+                       source={require('../../../images/deleteIcon.png')}
+                       style={photoStyles.imageDelet}
+                   />
+               </TouchableOpacity>
+           </View>
+
     }
 }
 
@@ -290,7 +298,7 @@ class NetWorkingImage extends PureComponent{
 
 
 
- class  CollectPhotoSelect extends PureComponent{
+ class   CollectPhotoSelect extends PureComponent{
 
 
     state={
@@ -308,13 +316,25 @@ class NetWorkingImage extends PureComponent{
         addCarClick(this.state.photoItem,index);
      }
 
+     imagePress=(url)=>{
+        const {imagePress}=this.props;
+        imagePress(url);
+     }
+
+
+     deleteIndex=(itemindex,file_id)=>{
+
+        const {imageDetele,index}=this.props;
+        imageDetele(this.state.photoItem,file_id,index,itemindex)
+     }
+
     render(){
 
         const {title}=this.props;
         let temp=[]
         this.state.photoItem.map((item,index)=>{
 
-            temp.push(<NetWorkingImage key={index} source={{uri:item}}/>)
+            temp.push(<NetWorkingImage key={index} source={{uri:item.file_url}} imagePress={()=>{this.imagePress(item)}} deleteOnpress={()=>{this.deleteIndex(index,item.file_id)}}/>)
         })
 
         const {addCarClick}=this.props;
@@ -464,6 +484,17 @@ const photoStyles=StyleSheet.create({
         width:(width-adapeSize(70))/5,
         height:(width-adapeSize(70))/5,
         marginLeft:adapeSize(10)
+
+    },
+    imageDelet:{
+
+        width:adapeSize(20),
+        height:adapeSize(20),
+
+    },
+    deleteWarp:{
+        position:'absolute',
+        top:-5,
 
     },
     uploaposWarp:{

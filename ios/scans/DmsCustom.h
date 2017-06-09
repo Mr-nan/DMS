@@ -9,6 +9,9 @@
 #import <Foundation/Foundation.h>
 #import <React/RCTBridgeModule.h>
 #import <React/RCTLog.h>
+#import <React/RCTBridge.h>
+#import <React/RCTEventDispatcher.h>
+#import <React/RCTConvert.h>
 @interface DmsCustom : NSObject<RCTBridgeModule>
 
 

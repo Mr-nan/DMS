@@ -59,7 +59,7 @@ export default class CollectCarPhoto extends BaseComponent{
                               dataS.map((item)=>{
 
                                   if(item.key==cacheRow.syscodedata_id){
-                                      item.default.push(cacheRow.file_url);
+                                      item.default.push({file_url:cacheRow.file_url,file_id:cacheRow.file_id});
                                   }
                               })
 
@@ -106,9 +106,23 @@ export default class CollectCarPhoto extends BaseComponent{
             alert('最多可以传4张照片')
         }
 
-
-
     }
+    _deleteImage=(dataSouce,file_id,index,itemIndex)=>{
+
+        let tempdataSouce=[...dataSouce];
+        tempdataSouce.splice(itemIndex,1);
+        SQLite.changeData('DELETE FROM carImageInfo where vin = ? AND file_id = ?',[this.state.vin,file_id]);
+        this.tempCellBlobs[index]._setPhphoto(tempdataSouce);
+    }
+    _imagePress=(url)=>{
+
+        this.toNextPage('CarZoomImagScene',{
+            images:[{url:url}],
+            index:0
+        });
+    }
+
+
     _uploadPicture=(response,index, dataSource)=>{
         this.props.screenProps.showModal(true);
         StorageUtil.mGetItem(StorageKeyNames.TOKEN, (data) => {
@@ -156,11 +170,21 @@ export default class CollectCarPhoto extends BaseComponent{
 
     _renderItem=(data)=>{
 
-        return <CollectPhotoSelect ref={(photo)=>{this.tempCellBlobs[data.index]=photo}} index={data.index} addCarClick={this._addImagePiker}title={data.item.title} cacheRows={data.item.default}/>
+        return <CollectPhotoSelect
+            ref={(photo)=>{this.tempCellBlobs[data.index]=photo}}
+            index={data.index}
+            addCarClick={this._addImagePiker}
+            title={data.item.title}
+            cacheRows={data.item.default}
+            imageDetele={this._deleteImage}
+            imagePress={this._imagePress}
+        />
     }
     render(){
 
-
+        // getItemLayout={(data, index) => (
+        //     {length: 40, offset: 40 * index, index}
+        // )}
         return(
             <View style={commenStyle.commenPage}>
                 <View style={commenStyle.testUI}>
@@ -169,9 +193,6 @@ export default class CollectCarPhoto extends BaseComponent{
                     renderItem={this._renderItem}
                     keyExtractor={(item, index) => item.key}
                     ItemSeparatorComponent={SeparatorComponent}
-                    getItemLayout={(data, index) => (
-                        {length: 40, offset: 40 * index, index}
-                    )}
                 />
                 </View>
                 <AllNavigationView title={'收车'} backIconClick={() => {
