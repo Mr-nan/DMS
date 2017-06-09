@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
         marginTop: Pixel.getPixel(10)
     },
     textStyle: {
-        marginTop: Pixel.getPixel(58),
+        marginTop: Pixel.getTitlePixel(68),
         marginLeft: Pixel.getPixel(10),
         fontSize: Pixel.getPixel(15),
     },

@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 10,
         paddingHorizontal: 10,
         alignItems: 'center',
-        marginTop: Pixel.getPixel(58),
+        marginTop: Pixel.getTitlePixel(78),
         backgroundColor: 'white',
         borderRadius: 92,
         height: Pixel.getPixel(40)

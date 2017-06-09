@@ -52,7 +52,8 @@ export  default class CarCheckWarning extends BaseComponent {
             scanObdText:'',
             labelText:'扫描标签',
             imageSource: login_logs,
-            labelStyle: {}
+            labelStyle: {},
+            blueToothText:'设备未连接'
         };
         that = this;
     }
@@ -351,7 +352,7 @@ let styles = StyleSheet.create({
         flexDirection: 'row',
         backgroundColor: '#F6F693',
         paddingVertical: 5,
-        marginTop: Pixel.getPixel(48)
+        marginTop: Pixel.getTitlePixel(68)
     },
     wainingExplain: {
         backgroundColor: 'white',
