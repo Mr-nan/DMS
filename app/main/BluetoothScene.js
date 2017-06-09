@@ -89,18 +89,28 @@ export default class BluetoothScene extends BaseComponent {
     };
 
     _onBleConnection = (data) => {
-        if (data.can == '1') {
-            NativeModules.DmsCustom.scanSound(1);
-            NativeModules.DmsCustom.stopFind();
+        if(IS_ANDROID === true){
+            if (data.can == '1') {
+                NativeModules.DmsCustom.scanSound(1);
+                NativeModules.DmsCustom.stopFind();
+                this.setState({
+                    deviceName: this.deviceN,
+                    scan: '搜索设备'
+                });
+                this.props.navigation.state.params.onBlueConnection();
+            } else {
+                NativeModules.DmsCustom.scanSound(0);
+                console.log('连接失败');
+            }
+        }else{
             this.setState({
                 deviceName: this.deviceN,
                 scan: '搜索设备'
             });
             this.props.navigation.state.params.onBlueConnection();
-        } else {
-            NativeModules.DmsCustom.scanSound(0);
-            console.log('连接失败');
         }
+
+
     };
 
     _startConnection = (item) => {
