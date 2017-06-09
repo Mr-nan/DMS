@@ -10,6 +10,7 @@ import {
     Image,
     TouchableOpacity,
     Dimensions,
+    Platform,
     NativeModules
 }from 'react-native';
 
@@ -27,6 +28,7 @@ const SQLite = new SQLiteUtil();
 
 const scan_img = require('../../images/scan.png');
 const car_log = require('../../images/car_log.png');
+const IS_ANDROID = Platform.OS === 'android';
 
 
 export default class AddCarNumberScene extends BaseComponent {
@@ -58,6 +60,10 @@ export default class AddCarNumberScene extends BaseComponent {
         SQLite.createTable();
     };
 
+    componentWillUnmount(){
+        this.timer && clearTimeout(this.timer);
+    }
+
     _onNextClick = () => {
 
         if (this.vin_number !== '' && this.vin_number.trim().length === 17) {
@@ -76,8 +82,8 @@ export default class AddCarNumberScene extends BaseComponent {
         };
         Net.request(appUrls.AUTOCHECKVIM, 'post', maps).then(
             (response) => {
-                let rb = response.mjson;
-                if (rb.retcode === 1) {
+
+                if(response.mycode === 1){
                     SQLite.selectData('select * from newcar where frame_number = ?',
                         [this.vin_number],
                         (sqlDt) => {
@@ -89,15 +95,41 @@ export default class AddCarNumberScene extends BaseComponent {
                                 }
                             }
                         });
-                } else if (rb.retcode === 2) {
+                }else if(response.mycode === 2){
                     this._toNextScene(JSON.stringify(response.mjson));
                 }
             },
             (error) => {
                 this._closeLoadingModal();
-                this._showHint(error.mjson.retmsg);
+                this._delayShowHint(error);
             }
         );
+    };
+
+    _delayShowHint = (error) => {
+        if (error.mycode === -300 || error.mycode === -500) {
+            if (IS_ANDROID === true) {
+                this.props.screenProps.showToast('网络请求失败');
+            } else {
+                this.timer = setTimeout(
+                    () => {
+                        this.props.screenProps.showToast('网络请求失败');
+                    },
+                    400
+                );
+            }
+        } else {
+            if (IS_ANDROID === true) {
+                this.props.screenProps.showToast(error.mjson.retmsg);
+            } else {
+                this.timer = setTimeout(
+                    () => {
+                        this.props.screenProps.showToast(error.mjson.retmsg);
+                    },
+                    400
+                );
+            }
+        }
     };
 
     _getCarTypeData = ()=> {
@@ -107,9 +139,10 @@ export default class AddCarNumberScene extends BaseComponent {
         };
         Net.request(appUrls.GETCARMODELBYVIN,'post',maps).then(
             (response)=>{
-                let rb = response.mjson;
+
                 this._closeLoadingModal();
-                if(rb.retcode === 1){
+                if(response.mycode === 1){
+                    let rb = response.mjson;
                     if(rb.retdata !== ''){
                         console.log('retdat',rb);
                         this.setState({
@@ -119,17 +152,47 @@ export default class AddCarNumberScene extends BaseComponent {
                         })
                     }else{
                         this._showHint('未匹配出款型，请自行选择');
-                        this._toNextScene('');
+                        this.timer = setTimeout(
+                            () => {
+                                this._toNextScene('');
+                            },
+                            500
+                        );
                     }
                 }else{
                     this._showHint('未匹配出款型，请自行选择');
-                    this._toNextScene('');
+                    this.timer = setTimeout(
+                        () => {
+                            this._toNextScene('');
+                        },
+                        500
+                    );
                 }
             },
             (error)=>{
                 this._closeLoadingModal();
-                this._showHint('未匹配出款型，请自行选择');
-                this._toNextScene('');
+                if(IS_ANDROID === true){
+                    this._showHint('未匹配出款型，请自行选择');
+                    this.timer = setTimeout(
+                        () => {
+                            this._toNextScene('');
+                        },
+                        500
+                    );
+                }else{
+                    this.timer = setTimeout(
+                        () => {
+                            this._showHint('未匹配出款型，请自行选择');
+                            this.timer = setTimeout(
+                                ()=>{
+                                    this._toNextScene('');
+                                },
+                                500
+                            )
+                        },
+                        500
+                    );
+                }
             }
         );
     };
@@ -173,16 +236,19 @@ export default class AddCarNumberScene extends BaseComponent {
 
     _onScanClick = () => {
         NativeModules.DmsCustom.scanVL((rep) => {
+
             console.log('scan result', rep);
-            this.vin_number = rep.carVl;
-            this.engine_number = rep.carEngine;
-            this.init_reg = rep.carReg;
-            this.plate_number = rep.carPlate;
-            this.frameInput.setNativeProps({
-                text: this.vin_number
-            });
-        }, (error) => {
-            this._showHint('扫描失败');
+            if(typeof(rep.suc) === 'undefined' || rep.suc === null){
+                this._showHint('扫描失败');
+            }else{
+                this.vin_number = rep.suc.carVl;
+                this.engine_number = rep.suc.carEngine;
+                this.init_reg = rep.suc.carReg;
+                this.plate_number = rep.suc.carPlate;
+                this.frameInput.setNativeProps({
+                    text: this.vin_number
+                });
+            }
         })
     };
 

@@ -11,7 +11,8 @@ import {
     Dimensions,
     ScrollView,
     TouchableOpacity,
-    NativeModules
+    NativeModules,
+    Platform
 }from 'react-native';
 
 import BaseComponent from '../component/BaseComponent';
@@ -26,6 +27,7 @@ const {width} = Dimensions.get('window');
 const SQLite = new SQLiteUtil();
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import CarTypeSelectPop from './component/CarTypeSelectPop';
+const IS_ANDROID = Platform.OS === 'android';
 const scan = require('../../images/scan.png');
 const arrow = require('../../images/list_select.png');
 const newTypes = ['二手车', '新车', '平行进口车'];
@@ -48,6 +50,10 @@ export default class PurchaseAddCarInfoScene extends BaseComponent {
             carTypePop: false,
             isDateTimePickerVisible: false
         }
+    }
+
+    componentWillUnmount(){
+        this.timer && clearTimeout(this.timer);
     }
 
     _showLoadingModal = () => {
@@ -282,8 +288,22 @@ export default class PurchaseAddCarInfoScene extends BaseComponent {
                             this._closeLoadingModal();
                             this.runPlaces = runRep.mjson.retdata;
                             if (this.runPlaces.length === 0) {
-                                this._showHint('监管地点为空');
-                                this.backPage();
+                                if(IS_ANDROID === true){
+                                    this._showHint('监管地点为空');
+                                    this.timer = setTimeout(() => {
+                                            this.backPage();
+                                        },
+                                        500);
+                                }else{
+                                    this.timer = setTimeout(() => {
+                                            this._showHint('监管地点为空');
+                                            this.timer = setTimeout(() => {
+                                                    this.backPage();
+                                                },
+                                                500);
+                                        },
+                                        500);
+                                }
                             } else {
                                 //后台有数据
                                 let carD = response.mjson.retdata;
@@ -306,21 +326,63 @@ export default class PurchaseAddCarInfoScene extends BaseComponent {
                         },
                         (error) => {
                             this._closeLoadingModal();
-                            this._showHint('无法获取监管地点');
-                            this.backPage();
+                            if(IS_ANDROID === true){
+                                this._showHint('无法获取监管地点');
+                                this.timer = setTimeout(() => {
+                                        this.backPage();
+                                    },
+                                    500);
+                            }else{
+                                this.timer = setTimeout(() => {
+                                        this._showHint('无法获取监管地点');
+                                        this.timer = setTimeout(() => {
+                                                this.backPage();
+                                            },
+                                            500);
+                                    },
+                                    500);
+                            }
                         });
 
 
                 } else {
                     this._closeLoadingModal();
-                    this._showHint('无法获取车辆数据');
-                    this.backPage();
+                    if(IS_ANDROID === true){
+                        this._showHint('无法获取车辆数据');
+                        this.timer = setTimeout(() => {
+                                this.backPage();
+                            },
+                            500);
+                    }else{
+                        this.timer = setTimeout(() => {
+                                this._showHint('无法获取车辆数据');
+                                this.timer = setTimeout(() => {
+                                        this.backPage();
+                                    },
+                                    500);
+                            },
+                            500);
+                    }
                 }
             },
             (error) => {
                 this._closeLoadingModal();
-                this._showHint('无法获取车辆数据');
-                this.backPage();
+                if(IS_ANDROID === true){
+                    this._showHint('无法获取车辆数据');
+                    this.timer = setTimeout(() => {
+                            this.backPage();
+                        },
+                        500);
+                }else{
+                    this.timer = setTimeout(() => {
+                            this._showHint('无法获取车辆数据');
+                            this.timer = setTimeout(() => {
+                                    this.backPage();
+                                },
+                                500);
+                        },
+                        500);
+                }
             }
         );
     };
@@ -344,8 +406,13 @@ export default class PurchaseAddCarInfoScene extends BaseComponent {
             )
         } else if (data.type === 2) {
             let tP = '请输入' + data.title;
+            let keyboardType = 'default';
             if (data.title === '行驶里程') {
-                tP += '(万公里)'
+                tP += '(万公里)';
+                keyboardType = 'numeric';
+            }else if(data.title === '排量'
+                || data.title === '过户次数'){
+                keyboardType = 'numeric';
             }
             return (
                 <View key={index} style={styles.type_two_wrap}>
@@ -356,6 +423,7 @@ export default class PurchaseAddCarInfoScene extends BaseComponent {
                                defaultValue={data.value}
                                underlineColorAndroid='transparent'
                                placeholder={tP}
+                               keyboardType={keyboardType}
                                onChangeText={(text) => {
                                    this._onTypeTwoChange(text, index)
                                }}
@@ -389,7 +457,7 @@ export default class PurchaseAddCarInfoScene extends BaseComponent {
                 </View>
             )
         } else if (data.type === 4) {
-            let xz = '请选择';
+            let xz = null;
             if (data.value !== '' && data.value !== '0') {
                 xz = data.value;
             }
@@ -398,12 +466,16 @@ export default class PurchaseAddCarInfoScene extends BaseComponent {
             } else if (data.title === '使用性质') {
                 if (data.value > 0) {
                     xz = natureTypes[Number.parseInt(data.value) - 1];
+                }else{
+                    xz = null;
                 }
             } else if (data.title === '入库类型') {
                 if (data.value == '1') {
                     xz = '放款入库';
                 } else if (data.value == '3') {
                     xz = '置换入库';
+                }else{
+                    xz = null;
                 }
             } else if (data.title === '监管地点') {
                 this.runPlaces.map((rp) => {
@@ -422,7 +494,12 @@ export default class PurchaseAddCarInfoScene extends BaseComponent {
                                       activeOpacity={0.6} onPress={() => {
                         this._onTypeFourClick(data.title)
                     }}>
-                        <Text style={styles.type_four_right_value}>{xz}</Text>
+                        <TextInput style={styles.type_four_right_value}
+                                   ref={(ref)=>{data.tag = ref}}
+                                   defaultValue={xz}
+                                   editable={false}
+                                   placeholder={'请选择'}
+                                   underlineColorAndroid='transparent'/>
                         <Image style={styles.type_four_right_img} source={arrow}/>
                     </TouchableOpacity>
                 </View>
@@ -486,13 +563,16 @@ export default class PurchaseAddCarInfoScene extends BaseComponent {
     //扫描
     _onScanClick = () => {
         NativeModules.DmsCustom.scanVL((rep) => {
-            SQLite.changeData('update newcar set engine_number = ? where frame_number = ?',
-                [rep.carEngine, this.number], () => {
-                    this.itemList[3].value = rep.carEngine;
-                    this._setCarRender();
-                });
-        }, (error) => {
-            this._showHint('扫描失败');
+            if(typeof(rep.suc) === 'undefined' || rep.suc === null){
+                this._showHint('扫描失败');
+            }else{
+                SQLite.changeData('update newcar set engine_number = ? where frame_number = ?',
+                    [rep.suc.carEngine, this.number], () => {
+                        this.itemList[3].value = rep.suc.carEngine;
+                        this._setCarRender();
+                    });
+            }
+
         })
     };
 
@@ -563,7 +643,10 @@ export default class PurchaseAddCarInfoScene extends BaseComponent {
         } else if (dtType === '1') {
             SQLite.changeData('update newcar set nature_use = ? where frame_number = ?', [(Number.parseInt(rowID) + 1) + '', this.number], () => {
                 this.itemList[12].value = (Number.parseInt(rowID) + 1) + '';
-                this._setCarRender(false);
+                this.itemList[12].tag.setNativeProps({
+                    text:rowData
+                });
+                // this._setCarRender(false);
             });
         } else if (dtType === '2') {
             let v = '1';
@@ -574,13 +657,19 @@ export default class PurchaseAddCarInfoScene extends BaseComponent {
             }
             SQLite.changeData('update newcar set record_type = ? where frame_number = ?', [v, this.number], () => {
                 this.itemList[13].value = v;
-                this._setCarRender(false);
+                this.itemList[13].tag.setNativeProps({
+                    text:rowData
+                });
+                // this._setCarRender(false);
             });
         } else if (dtType === '3') {
             let r = this.runPlaces[rowID].storage_id;
             SQLite.changeData('update newcar set storage_id = ? where frame_number = ?', [r, this.number], () => {
                 this.itemList[14].value = r;
-                this._setCarRender(false);
+                this.itemList[14].tag.setNativeProps({
+                    text:rowData
+                });
+                // this._setCarRender(false);
             });
         }
     };
@@ -595,14 +684,22 @@ export default class PurchaseAddCarInfoScene extends BaseComponent {
         if (this.carDateType === 'factory') {
             SQLite.changeData('update newcar set manufacture = ? where frame_number = ?',
                 [d, this.number], () => {
+                    // this.itemList[10].value = d;
+                    // this._setCarRender();
                     this.itemList[10].value = d;
-                    this._setCarRender();
+                    this.itemList[10].tag.setNativeProps({
+                        text:d
+                    });
                 });
         } else {
             SQLite.changeData('update newcar set ' + this.itemList[9].dbName + ' = ? where frame_number = ?',
                 [d, this.number], () => {
+                    // this.itemList[9].value = d;
+                    // this._setCarRender();
                     this.itemList[9].value = d;
-                    this._setCarRender();
+                    this.itemList[9].tag.setNativeProps({
+                        text:d
+                    });
                 });
         }
 
@@ -781,7 +878,7 @@ const styles = StyleSheet.create({
     },
     type_four_right_value: {
         width: Pixel.getPixel(240),
-        color: FontAndColor.txt_gray,
+        color: FontAndColor.black,
         fontSize: Pixel.getFontPixel(14),
         textAlign: 'right'
     },

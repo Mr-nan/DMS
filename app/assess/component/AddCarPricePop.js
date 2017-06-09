@@ -43,6 +43,7 @@ export default class AddCarPricePop extends Component{
                         <View style={styles.box_input_wrap}>
                             <TextInput style={styles.box_input_input}
                                        placeholder={'评估定价'}
+                                       keyboardType={'numeric'}
                                        underlineColorAndroid='transparent'
                                        onChangeText={this._onPriceChange}
                             />

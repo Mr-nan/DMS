@@ -39,6 +39,10 @@ export default class AssessmentSelectScene extends BaseComponent{
         this._getData();
     };
 
+    componentWillUnmount(){
+        this.timer && clearTimeout(this.timer);
+    }
+
     _showLoadingModal = ()=>{
         this.props.screenProps.showModal(true);
     };

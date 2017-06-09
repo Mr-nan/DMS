@@ -175,6 +175,9 @@ export default class StockBottomScene extends Component {
 
     _refreshMethod = ()=>{
         this._showLoadingModal();
+        this.page = 1;
+        this.total = 0;
+        this.allSource = [];
         this._getData();
     };
 

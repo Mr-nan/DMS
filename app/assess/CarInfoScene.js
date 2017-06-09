@@ -89,6 +89,10 @@ export default class CarInfoScene extends BaseComponent {
         });
     };
 
+    componentWillUnmount(){
+        this.timer && clearTimeout(this.timer);
+    }
+
     _showLoadingModal = () => {
         this.props.screenProps.showModal(true);
     };
@@ -385,7 +389,7 @@ export default class CarInfoScene extends BaseComponent {
                             this.backPage();
                             this.props.navigation.state.params.refreshLastPage();
                         },
-                        300
+                        600
                     );
                 } else {
                     this.timer = setTimeout(
@@ -399,7 +403,7 @@ export default class CarInfoScene extends BaseComponent {
                                 300
                             );
                         },
-                        400
+                        600
                     );
                 }
 

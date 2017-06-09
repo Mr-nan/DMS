@@ -50,6 +50,9 @@ export default class PurchaseCarScene extends BaseComponent{
 
     initFinish = ()=>{
         this._showLoadingModal();
+        this.page = 1;
+        this.total = 0;
+        this.allSource = [];
         this._getData();
     };
 
@@ -101,8 +104,6 @@ export default class PurchaseCarScene extends BaseComponent{
     };
 
     _onRefresh = ()=>{
-
-        console.log('下拉刷新');
         this.page = 1;
         this.total = 0;
         this.frame_number = '';

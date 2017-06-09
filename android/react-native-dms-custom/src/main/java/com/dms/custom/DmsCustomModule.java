@@ -3,6 +3,7 @@ package com.dms.custom;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -12,6 +13,7 @@ import com.dms.custom.bluetooths.ItemBluetoothDevice;
 import com.dms.custom.idcard.IDCardActivity;
 import com.dms.custom.qr.scan.ScanCaptureAct;
 import com.dms.custom.utils.IUpLoadImageResult;
+import com.dms.custom.utils.ImageUtil;
 import com.dms.custom.utils.SoundUtil;
 import com.dms.custom.utils.UpLoadFile;
 import com.dms.custom.vin.scan.FDScanActivity;
@@ -22,7 +24,10 @@ import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.modules.core.RCTNativeAppEventEmitter;
 
 /**
@@ -37,14 +42,9 @@ public class DmsCustomModule extends ReactContextBaseJavaModule implements Activ
     private final int VL_REQUEST = 2;
     private final int SD_REQUEST = 3;
     private Callback qr_success_ck;
-    private Callback qr_fail_ck;
     private Callback vin_success_ck;
-    private Callback vin_fail_ck;
     private Callback vl_success_ck;
-    private Callback vl_fail_ck;
     private Callback sd_success_ck;
-    private Callback sd_fail_ck;
-
 
 
     private Context mContext;
@@ -61,9 +61,9 @@ public class DmsCustomModule extends ReactContextBaseJavaModule implements Activ
             @Override
             public void findCallBack(ItemBluetoothDevice item) {
                 WritableMap map = Arguments.createMap();
-                map.putString("name",item.getName());
-                map.putString("rssi",item.getRssi());
-                map.putString("address",item.getAddress());
+                map.putString("name", item.getName());
+                map.putString("rssi", item.getRssi());
+                map.putString("address", item.getAddress());
                 sendEvent("findBluetooth", map);
             }
 
@@ -71,7 +71,7 @@ public class DmsCustomModule extends ReactContextBaseJavaModule implements Activ
             @Override
             public void connectionCallBack(boolean can) {
                 WritableMap map = Arguments.createMap();
-                map.putString("can",can ? "1" : "0");
+                map.putString("can", can ? "1" : "0");
                 sendEvent("onBleConnection", map);
             }
 
@@ -79,7 +79,7 @@ public class DmsCustomModule extends ReactContextBaseJavaModule implements Activ
             @Override
             public void readCallBack(String result) {
                 WritableMap map = Arguments.createMap();
-                map.putString("result",result);
+                map.putString("result", result);
                 sendEvent("onReadData", map);
             }
 
@@ -97,53 +97,70 @@ public class DmsCustomModule extends ReactContextBaseJavaModule implements Activ
 
     @Override
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
-        if(requestCode == QR_REQUEST){
-            if(resultCode == Activity.RESULT_CANCELED){
-                qr_fail_ck.invoke("Result_Canceled");
-            }else if(resultCode == Activity.RESULT_OK){
-                boolean scan_hand = data.getBooleanExtra("SCAN_HAND",false);
+        if (requestCode == QR_REQUEST) {
+            WritableMap map = Arguments.createMap();
+            if (resultCode == Activity.RESULT_CANCELED) {
+                map.putString("fail","Result_Canceled");
+                qr_success_ck.invoke(map);
+                qr_success_ck = null;
+            } else if (resultCode == Activity.RESULT_OK) {
+                boolean scan_hand = data.getBooleanExtra("SCAN_HAND", false);
                 String scan_result = data.getStringExtra("SCAN_RESULT");
-                WritableMap map = Arguments.createMap();
-                map.putString("scan_hand",scan_hand ? "input" : "scan");
-                map.putString("scan_result",scan_result);
+                WritableMap map2 = Arguments.createMap();
+                map2.putString("scan_hand", scan_hand ? "input" : "scan");
+                map2.putString("scan_result", scan_result);
+
+                map.putMap("suc",map2);
                 qr_success_ck.invoke(map);
                 qr_success_ck = null;
             }
-        }else if(requestCode == VIN_REQUEST){
-            if(resultCode == Activity.RESULT_CANCELED){
-                vin_fail_ck.invoke("Result_Canceled");
-            }else if(resultCode == Activity.RESULT_OK){
+        } else if (requestCode == VIN_REQUEST) {
+            WritableMap map = Arguments.createMap();
+            if (resultCode == Activity.RESULT_CANCELED) {
+                map.putString("fail", "Result_Canceled");
+                vin_success_ck.invoke(map);
+                vin_success_ck = null;
+            } else if (resultCode == Activity.RESULT_OK) {
                 String vin = data.getStringExtra("vin");
-                WritableMap map = Arguments.createMap();
-                map.putString("vin",vin);
+                WritableMap map2 = Arguments.createMap();
+                map2.putString("vin", vin);
+                map.putMap("suc",map2);
                 vin_success_ck.invoke(map);
                 vin_success_ck = null;
             }
-        }else if(requestCode == VL_REQUEST){
-            if(resultCode == Activity.RESULT_CANCELED){
-                vl_fail_ck.invoke("Result_Canceled");
-            }else if(resultCode == Activity.RESULT_OK){
-                WritableMap map = Arguments.createMap();
-                map.putString("carPlate",data.getStringExtra("carPlate"));
-                map.putString("carType",data.getStringExtra("carType"));
-                map.putString("carOwner",data.getStringExtra("carOwner"));
-                map.putString("carAddress",data.getStringExtra("carAddress"));
-                map.putString("carNature",data.getStringExtra("carNature"));
-                map.putString("carBrand",data.getStringExtra("carBrand"));
-                map.putString("carVl",data.getStringExtra("carVl"));
-                map.putString("carEngine",data.getStringExtra("carEngine"));
-                map.putString("carReg",data.getStringExtra("carReg"));
-                map.putString("carCert",data.getStringExtra("carCert"));
+        } else if (requestCode == VL_REQUEST) {
+            WritableMap map = Arguments.createMap();
+            if (resultCode == Activity.RESULT_CANCELED) {
+                map.putString("fail", "Result_Canceled");
+                vl_success_ck.invoke(map);
+                vl_success_ck = null;
+            } else if (resultCode == Activity.RESULT_OK) {
+                WritableMap map2 = Arguments.createMap();
+                map2.putString("carPlate", data.getStringExtra("carPlate"));
+                map2.putString("carType", data.getStringExtra("carType"));
+                map2.putString("carOwner", data.getStringExtra("carOwner"));
+                map2.putString("carAddress", data.getStringExtra("carAddress"));
+                map2.putString("carNature", data.getStringExtra("carNature"));
+                map2.putString("carBrand", data.getStringExtra("carBrand"));
+                map2.putString("carVl", data.getStringExtra("carVl"));
+                map2.putString("carEngine", data.getStringExtra("carEngine"));
+                map2.putString("carReg", data.getStringExtra("carReg"));
+                map2.putString("carCert", data.getStringExtra("carCert"));
+                map.putMap("suc", map2);
 
                 vl_success_ck.invoke(map);
                 vl_success_ck = null;
             }
-        }else if(requestCode == SD_REQUEST){
-            if(resultCode == Activity.RESULT_CANCELED){
-                sd_fail_ck.invoke("Result_Canceled");
-            }else if(resultCode == Activity.RESULT_OK){
-                vl_success_ck.invoke(data.getStringExtra("recogResult"));
-                vl_success_ck = null;
+        } else if (requestCode == SD_REQUEST) {
+            WritableMap map = Arguments.createMap();
+            if (resultCode == Activity.RESULT_CANCELED) {
+                map.putString("fail","Result_Canceled");
+                sd_success_ck.invoke(map);
+                sd_success_ck = null;
+            } else if (resultCode == Activity.RESULT_OK) {
+                map.putString("suc",data.getStringExtra("recogResult"));
+                sd_success_ck.invoke(map);
+                sd_success_ck = null;
             }
         }
 
@@ -166,27 +183,35 @@ public class DmsCustomModule extends ReactContextBaseJavaModule implements Activ
         return "DmsCustom";
     }
 
+    /********************************************
+     * 评估照片压缩
+     *******************************************/
+    @ReactMethod
+    public void assessCompress(String uri,Callback callback){
+        String filePath = ImageUtil.getRealPathFromURI(mContext,Uri.parse(uri));
+    }
 
     /********************************************
      * 身份证扫描
      *******************************************/
     @ReactMethod
-    public void scanID(Callback dsCallback,Callback dfCallback){
+    public void scanID(Callback dsCallback) {
         sd_success_ck = dsCallback;
-        sd_fail_ck = dfCallback;
         Activity currentActivity = getCurrentActivity();
-
+        WritableMap map = Arguments.createMap();
         if (currentActivity == null) {
-            sd_fail_ck.invoke("扫描失败_01");
-            sd_fail_ck = null;
+            map.putString("fail","扫描失败_01");
+            sd_success_ck.invoke(map);
+            sd_success_ck = null;
             return;
         }
-        try{
+        try {
             Intent vlIntent = new Intent(currentActivity, IDCardActivity.class);
-            currentActivity.startActivityForResult(vlIntent,SD_REQUEST);
-        }catch (Exception e){
-            sd_fail_ck.invoke(e.toString());
-            sd_fail_ck = null;
+            currentActivity.startActivityForResult(vlIntent, SD_REQUEST);
+        } catch (Exception e) {
+            map.putString("fail",e.toString());
+            sd_success_ck.invoke(map);
+            sd_success_ck = null;
         }
     }
 
@@ -194,22 +219,23 @@ public class DmsCustomModule extends ReactContextBaseJavaModule implements Activ
      * 行驶证扫描
      *******************************************/
     @ReactMethod
-    public void scanVL(Callback lsCallback,Callback lfCallback){
+    public void scanVL(Callback lsCallback) {
         vl_success_ck = lsCallback;
-        vl_fail_ck = lfCallback;
         Activity currentActivity = getCurrentActivity();
-
+        WritableMap map = Arguments.createMap();
         if (currentActivity == null) {
-            vl_fail_ck.invoke("扫描失败_01");
-            vl_fail_ck = null;
+            map.putString("fail", "扫描失败_01");
+            vl_success_ck.invoke(map);
+            vl_success_ck = null;
             return;
         }
-        try{
-            Intent vlIntent = new Intent(currentActivity,VLScanActivity.class);
-            currentActivity.startActivityForResult(vlIntent,VL_REQUEST);
-        }catch (Exception e){
-            vl_fail_ck.invoke(e.toString());
-            vl_fail_ck = null;
+        try {
+            Intent vlIntent = new Intent(currentActivity, VLScanActivity.class);
+            currentActivity.startActivityForResult(vlIntent, VL_REQUEST);
+        } catch (Exception e) {
+            map.putString("fail", e.toString());
+            vl_success_ck.invoke(map);
+            vl_success_ck = null;
         }
     }
 
@@ -218,31 +244,33 @@ public class DmsCustomModule extends ReactContextBaseJavaModule implements Activ
      * 前风挡扫描
      *******************************************/
     @ReactMethod
-    public void scanVin(Callback vsCallback,Callback vfCallback){
+    public void scanVin(Callback vsCallback) {
         vin_success_ck = vsCallback;
-        vin_fail_ck = vfCallback;
         Activity currentActivity = getCurrentActivity();
-
+        WritableMap map = Arguments.createMap();
         if (currentActivity == null) {
-            vin_fail_ck.invoke("扫描失败_01");
-            vin_fail_ck = null;
+            map.putString("fail", "扫描失败_01");
+            vin_success_ck.invoke(map);
+            vin_success_ck = null;
             return;
         }
-        try{
-            Intent vlIntent = new Intent(currentActivity,FDScanActivity.class);
-            currentActivity.startActivityForResult(vlIntent,VIN_REQUEST);
-        }catch (Exception e){
-            vin_fail_ck.invoke(e.toString());
-            vin_fail_ck = null;
+        try {
+            Intent vlIntent = new Intent(currentActivity, FDScanActivity.class);
+            currentActivity.startActivityForResult(vlIntent, VIN_REQUEST);
+        } catch (Exception e) {
+            map.putString("fail", e.toString());
+            vin_success_ck.invoke(map);
+            vin_success_ck = null;
         }
     }
+
 
     /********************************************
      * 文件上传
      *******************************************/
     @ReactMethod
     public void uploadFile(String url, String token, String filePath,
-                           final Callback up_s_ck, final Callback up_e_ck){
+                           final Callback up_s_ck, final Callback up_e_ck) {
 
         UpLoadFile.upload(url, token, filePath, new IUpLoadImageResult() {
             @Override
@@ -258,8 +286,8 @@ public class DmsCustomModule extends ReactContextBaseJavaModule implements Activ
             @Override
             public void progress(int count) {
                 WritableMap map = Arguments.createMap();
-                map.putString("progress",count + "");
-                sendEvent("onProgress",map);
+                map.putString("progress", count + "");
+                sendEvent("onProgress", map);
             }
         });
     }
@@ -269,10 +297,10 @@ public class DmsCustomModule extends ReactContextBaseJavaModule implements Activ
      * 扫描声音
      *******************************************/
     @ReactMethod
-    public void scanSound(int type){
-        if(type == 1){
+    public void scanSound(int type) {
+        if (type == 1) {
             SoundUtil.getInstance(mContext).soundSuccess();
-        }else{
+        } else {
             SoundUtil.getInstance(mContext).soundError();
         }
     }
@@ -282,23 +310,24 @@ public class DmsCustomModule extends ReactContextBaseJavaModule implements Activ
      * 扫描条形码
      *******************************************/
     @ReactMethod
-    public void qrScan(Callback qsCallback,Callback qfCallback){
+    public void qrScan(Callback qsCallback) {
 
         qr_success_ck = qsCallback;
-        qr_fail_ck = qfCallback;
         Activity currentActivity = getCurrentActivity();
-
+        WritableMap map = Arguments.createMap();
         if (currentActivity == null) {
-            qr_fail_ck.invoke("扫描失败_01");
-            qr_fail_ck = null;
+            map.putString("fail","扫描失败_01");
+            qr_success_ck.invoke(map);
+            qr_success_ck = null;
             return;
         }
-        try{
-            Intent vlIntent = new Intent(currentActivity,ScanCaptureAct.class);
-            currentActivity.startActivityForResult(vlIntent,QR_REQUEST);
-        }catch (Exception e){
-            qr_fail_ck.invoke(e.toString());
-            qr_fail_ck = null;
+        try {
+            Intent vlIntent = new Intent(currentActivity, ScanCaptureAct.class);
+            currentActivity.startActivityForResult(vlIntent, QR_REQUEST);
+        } catch (Exception e) {
+            map.putString("fail",e.toString());
+            qr_success_ck.invoke(map);
+            qr_success_ck = null;
         }
     }
 
@@ -310,46 +339,54 @@ public class DmsCustomModule extends ReactContextBaseJavaModule implements Activ
 
     //开启蓝牙
     @ReactMethod
-    public void startBluetooth(){
+    public void startBluetooth() {
         mBluetoothControl.startBluetooth();
     }
 
     //扫描蓝牙
     @ReactMethod
-    public void startFind(Callback successRep,Callback errorRep){
-        if(mBluetoothControl.startFind()){
-            successRep.invoke("正在扫描");
-        }else{
-            errorRep.invoke("请先开启蓝牙");
+    public void startFind(Callback successRep) {
+        WritableMap map = Arguments.createMap();
+        if (mBluetoothControl.startFind()) {
+            map.putString("suc","正在扫描");
+            successRep.invoke(map);
+        } else {
+            map.putString("fail","请先开启蓝牙");
+            successRep.invoke(map);
         }
     }
 
     //停止扫描
     @ReactMethod
-    public void stopFind(){
+    public void stopFind() {
         mBluetoothControl.stopFind();
     }
 
     //连接设备
     @ReactMethod
-    public void startConnection(String names,String address){
-        mBluetoothControl.startConnection(names,address);
+    public void startConnection(String names, String address) {
+        mBluetoothControl.startConnection(names, address);
     }
 
     //是否已连接设备
     @ReactMethod
-    public void isConnection(Callback callback){
-        if(mBluetoothControl.isConnection()){
-            callback.invoke("1");
-        }else{
-            callback.invoke("0");
+    public void isConnection(Callback callback) {
+        WritableMap map = Arguments.createMap();
+        if (mBluetoothControl.isConnection()) {
+            map.putString("suc","1");
+            callback.invoke(map);
+        } else {
+            map.putString("suc","0");
+            callback.invoke(map);
         }
     }
 
     //已连接的设备名称
     @ReactMethod
-    public void getConnectionDevice(Callback callback){
-        callback.invoke(mBluetoothControl.getConnectionDevice());
+    public void getConnectionDevice(Callback callback) {
+        WritableMap map = Arguments.createMap();
+        map.putString("suc",mBluetoothControl.getConnectionDevice());
+        callback.invoke(map);
     }
 
 
