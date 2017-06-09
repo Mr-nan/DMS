@@ -42,6 +42,7 @@
 		12183DA51ED426150098B610 /* OBDScanController.m in Sources */ = {isa = PBXBuildFile; fileRef = 12183DA41ED426150098B610 /* OBDScanController.m */; };
 		12183DA81ED42DBD0098B610 /* IDCardCameraViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 12183DA71ED42DBD0098B610 /* IDCardCameraViewController.mm */; };
 		12183DAE1ED42DCA0098B610 /* SIDTopView.m in Sources */ = {isa = PBXBuildFile; fileRef = 12183DAC1ED42DCA0098B610 /* SIDTopView.m */; };
+		123BAB411EE8EBA200F7FE57 /* libBLE.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 123BAB401EE8EBA200F7FE57 /* libBLE.a */; };
 		12B049D31ED446C40051CD56 /* libSIDCard.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 12B049D21ED446C40051CD56 /* libSIDCard.a */; };
 		12DD7AEE1EE5568400BB7BBC /* 4D39F52BD46AC7CD8470.lic in Resources */ = {isa = PBXBuildFile; fileRef = 12DD7AED1EE5568400BB7BBC /* 4D39F52BD46AC7CD8470.lic */; };
 		133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C398B91ACF4ADC00677621 /* libRCTLinking.a */; };
@@ -288,7 +289,7 @@
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* DMSTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DMSTests.m; sourceTree = "<group>"; };
 		12183D431ED419400098B610 /* DmsCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DmsCustom.h; sourceTree = "<group>"; };
-		12183D441ED419400098B610 /* DmsCustom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DmsCustom.m; sourceTree = "<group>"; };
+		12183D441ED419400098B610 /* DmsCustom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DmsCustom.m; sourceTree = "<group>"; wrapsLines = 0; };
 		12183D471ED41A350098B610 /* libSVehicleLicense.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libSVehicleLicense.a; sourceTree = "<group>"; };
 		12183D481ED41A350098B610 /* libvinTyper.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libvinTyper.a; sourceTree = "<group>"; };
 		12183D4C1ED41A480098B610 /* VLCameraViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VLCameraViewController.h; sourceTree = "<group>"; };
@@ -326,6 +327,8 @@
 		12183DAA1ED42DCA0098B610 /* SIDCard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SIDCard.h; sourceTree = "<group>"; };
 		12183DAB1ED42DCA0098B610 /* SIDTopView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SIDTopView.h; sourceTree = "<group>"; };
 		12183DAC1ED42DCA0098B610 /* SIDTopView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SIDTopView.m; sourceTree = "<group>"; };
+		123BAB401EE8EBA200F7FE57 /* libBLE.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libBLE.a; sourceTree = "<group>"; };
+		123BAB5D1EE8EBAA00F7FE57 /* BLERFID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BLERFID.h; sourceTree = "<group>"; };
 		12B049D21ED446C40051CD56 /* libSIDCard.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libSIDCard.a; sourceTree = "<group>"; };
 		12DD7AED1EE5568400BB7BBC /* 4D39F52BD46AC7CD8470.lic */ = {isa = PBXFileReference; lastKnownFileType = file; path = 4D39F52BD46AC7CD8470.lic; sourceTree = "<group>"; };
 		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
@@ -374,6 +377,7 @@
 				00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */,
 				139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */,
 				832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */,
+				123BAB411EE8EBA200F7FE57 /* libBLE.a in Frameworks */,
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
 				12183D4A1ED41A350098B610 /* libSVehicleLicense.a in Frameworks */,
@@ -499,6 +503,7 @@
 				12183DA71ED42DBD0098B610 /* IDCardCameraViewController.mm */,
 				12183DA31ED426150098B610 /* OBDScanController.h */,
 				12183DA41ED426150098B610 /* OBDScanController.m */,
+				123BAB5D1EE8EBAA00F7FE57 /* BLERFID.h */,
 			);
 			path = scans;
 			sourceTree = "<group>";
@@ -535,6 +540,7 @@
 				12183D471ED41A350098B610 /* libSVehicleLicense.a */,
 				12183D481ED41A350098B610 /* libvinTyper.a */,
 				12B049D21ED446C40051CD56 /* libSIDCard.a */,
+				123BAB401EE8EBA200F7FE57 /* libBLE.a */,
 			);
 			name = lib;
 			sourceTree = "<group>";

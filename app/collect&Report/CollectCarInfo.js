@@ -8,7 +8,8 @@ import {
     Text,
     FlatList,
     KeyboardAvoidingView,
-    NativeModules
+    NativeModules,
+    NativeAppEventEmitter
 } from 'react-native';
 import BaseComponent from '../component/BaseComponent'
 import {CollectTitle,CollectDate,CollectTitelInput,CollectButtonInput,CollectSelect,CollectOBDRFID,CollectNestTep} from './Component/CollectCarListComponent'
@@ -27,6 +28,8 @@ export  default  class CollectCarInfo extends BaseComponent{
 
 
     tempTimeKeyType='';
+    blueToolConect=false;
+
     cttBlobs={}
     state={
         isdatePikershow:false,
@@ -35,7 +38,26 @@ export  default  class CollectCarInfo extends BaseComponent{
     }
 
 
+
+
+
     initFinish(){
+
+        NativeAppEventEmitter.addListener(
+            'onBleConnection',
+            (reminder) =>this.blueToolConect=true
+        );
+
+        NativeAppEventEmitter.addListener(
+            'onBleDisCon',
+            (reminder) => this.blueToolConect=false
+        );
+
+        NativeAppEventEmitter.addListener(
+            'onReadData',
+            (reminder) => alert(reminder.result)
+        );
+
         SQLite.createTable();
         SQLite.selectData('SELECT * FROM carCollectInfo WHERE vin= ?',[this.props.navigation.state.params.carFrameNumber],
             (data)=>{
@@ -101,11 +123,16 @@ export  default  class CollectCarInfo extends BaseComponent{
 
     _markScan=()=>{
 
+        if(this.blueToolConect==false){
+
+            this.toNextPage('BluetoothScene')
+        }
+
     }
     _obdScan=()=>{
-        NativeModules.DmsCustom.qrScan((info,error)=>{
-            this.rfid._setTitle(info)
-            SQLite.changeData('UPDATE carCollectInfo SET obd_number=? WHERE vin=?',[info,this.props.navigation.state.params.carFrameNumber])
+        NativeModules.DmsCustom.qrScan((info)=>{
+            this.rfid._setTitle(info.suc)
+            SQLite.changeData('UPDATE carCollectInfo SET obd_number=? WHERE vin=?',[info.suc,this.props.navigation.state.params.carFrameNumber])
         })
     }
 
@@ -113,27 +140,27 @@ export  default  class CollectCarInfo extends BaseComponent{
 //登记证
         if(key=='regbr'){
 
-            NativeModules.DmsCustom.qrScan((info,error)=>{
+            NativeModules.DmsCustom.qrScan((info)=>{
 
-                this.cttBlobs['regbr'].setTitle(info)
-                SQLite.changeData('UPDATE carCollectInfo SET regbr=? WHERE vin=?',[info,this.props.navigation.state.params.carFrameNumber])
+                this.cttBlobs['regbr'].setTitle(info.suc)
+                SQLite.changeData('UPDATE carCollectInfo SET regbr=? WHERE vin=?',[inf.suc,this.props.navigation.state.params.carFrameNumber])
             })
         }
 //行驶证
         else if(key=='runbr'){
 
-            NativeModules.DmsCustom.scanVL((info,error)=>{
+            NativeModules.DmsCustom.scanVL((info)=>{
 
-                this.cttBlobs['runbr'].setTitle(info.carVl)
-                SQLite.changeData('UPDATE carCollectInfo SET runbr=? WHERE vin=?',[info.carVl,this.props.navigation.state.params.carFrameNumber])
+                this.cttBlobs['runbr'].setTitle(info.suc.carVl)
+                SQLite.changeData('UPDATE carCollectInfo SET runbr=? WHERE vin=?',[info.suc.carVl,this.props.navigation.state.params.carFrameNumber])
             })
 
         }
 //身份证
         else if(key=='carid') {
 
-            NativeModules.DmsCustom.scanID((info, error) => {
-                this.cttBlobs['carid'].setTitle(info)
+            NativeModules.DmsCustom.scanID((info) => {
+                this.cttBlobs['carid'].setTitle(info.suc)
                 SQLite.changeData('UPDATE carCollectInfo SET carid=? WHERE vin=?',[info,this.props.navigation.state.params.carFrameNumber])
             })
         }

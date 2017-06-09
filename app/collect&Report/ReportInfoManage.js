@@ -166,7 +166,7 @@ export default class ReportInfoManage extends BaseComponent{
 
                 <View style={{marginLeft:10}}>
                     <Text>{data.index+1+'、'+data.item.title}</Text>
-                    <RepRateInput typeName="批发" onChangeText={(text)=>{this.PostData.wholesale_rate=text}} defaultValue={getDefaultValue(this.PostData.wholesale_rate)}/>
+                        <RepRateInput typeName="批发" onChangeText={(text)=>{this.PostData.wholesale_rate=text}} defaultValue={getDefaultValue(this.PostData.wholesale_rate)}/>
                     <RepRateInput typeName="零售" onChangeText={(text)=>{this.PostData.retail_rate=text}} defaultValue={getDefaultValue(this.PostData.retail_rate)}/>
                 </View>
             )
