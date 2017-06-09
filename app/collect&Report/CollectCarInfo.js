@@ -43,8 +43,6 @@ export  default  class CollectCarInfo extends BaseComponent{
 
     initFinish(){
 
-        NativeModules.DmsCustom.startBluetooth();
-        NativeModules.DmsCustom.startFind();
         NativeAppEventEmitter.addListener(
             'onBleConnection',
             (reminder) =>this.blueToolConect=true
