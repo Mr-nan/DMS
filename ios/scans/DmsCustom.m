@@ -19,6 +19,7 @@
 
 @property(nonatomic,strong)BLERFID *fild;
 @property(nonatomic,strong)NSMutableDictionary *fils;
+@property(nonatomic,assign)BOOL isconection;
 @end
 
 @implementation DmsCustom
@@ -36,8 +37,11 @@ RCT_EXPORT_METHOD(startBluetooth){
 
 }
 //开始扫描
-RCT_EXPORT_METHOD(startFind){
+RCT_EXPORT_METHOD(startFind:(RCTResponseSenderBlock)callback){
+    callback(@[ @{@"suc":@"正在扫描",@"fail":@"请开启蓝牙"}]);
   [self.fild scanForPeripherals];
+  
+
 }
 
 RCT_EXPORT_METHOD(startConnection:(NSString *)perUUid){
@@ -56,11 +60,24 @@ RCT_EXPORT_METHOD(disConperipheral:(CBPeripheral *)peripheral){
   [self.fild disConn:peripheral];
 }
 
-//-(void)mgrDidUpdateState:(CBManagerState)state{
-//  
-//  [self.bridge.eventDispatcher sendAppEventWithName:@"stateChange" body:@{@"state":[NSNumber numberWithInteger:state]}];
-//  
-//}
+RCT_EXPORT_METHOD(isConnection:(RCTResponseSenderBlock)callback){
+  
+  if(self.isconection){
+    
+    callback(@[ @{@"suc":@"1",@"fail":@"0"}]);
+
+  }else{
+     callback(@[ @{@"suc":@"0",@"fail":@"0"}]);
+  }
+  
+}
+
+-(void)mgrDidUpdateState:(CBManagerState)state{
+  
+ 
+
+  
+}
 
 
 -(void)pushData:(char *)tid epc:(char *)epc{
@@ -79,7 +96,7 @@ RCT_EXPORT_METHOD(disConperipheral:(CBPeripheral *)peripheral){
   
   if(state==BLEConnStateSuc){
     
-   
+    self.isconection=YES;
     [self.bridge.eventDispatcher sendAppEventWithName:@"onBleConnection" body:nil];
     
     
@@ -87,7 +104,10 @@ RCT_EXPORT_METHOD(disConperipheral:(CBPeripheral *)peripheral){
     
    [self.bridge.eventDispatcher sendAppEventWithName:@"onBleDisCon" body:nil];
     
+    self.isconection=NO;
+    
   }
+  
 }
 
 RCT_EXPORT_METHOD(scanVL:(RCTResponseSenderBlock)callback){

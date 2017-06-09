@@ -45,17 +45,27 @@ export  default  class CollectCarInfo extends BaseComponent{
 
         NativeAppEventEmitter.addListener(
             'onBleConnection',
-            (reminder) =>this.blueToolConect=true
+            (reminder) =>{
+                this.blueToolConect=true
+                console.log('蓝牙连接成功')
+
+            }
         );
 
         NativeAppEventEmitter.addListener(
             'onBleDisCon',
-            (reminder) => this.blueToolConect=false
+            (reminder) => {
+                this.blueToolConect=false
+                console.log('蓝牙断开连接')
+            }
         );
 
         NativeAppEventEmitter.addListener(
             'onReadData',
-            (reminder) => alert(reminder.result)
+            (reminder) => {
+
+                alert(reminder.result)
+            }
         );
 
         SQLite.createTable();
@@ -125,7 +135,7 @@ export  default  class CollectCarInfo extends BaseComponent{
 
         if(this.blueToolConect==false){
 
-            this.toNextPage('BluetoothScene')
+            this.toNextPage('BluetoothScene',{onReadData:()=>{},isConnection:()=>{}})
         }
 
     }
