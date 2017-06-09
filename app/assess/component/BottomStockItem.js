@@ -63,7 +63,7 @@ export default class BottomStockItem extends Component {
                {
                    dq &&
                    <Image resizeMode={'contain'} style={styles.pgdqImg} source={pgdq}>
-                       <Text style={styles.pgdqFont}>{'评\n估\n即\n将\n到\n期'}</Text>
+                       <Text style={styles.pgdqFont}>{'评\r\n估\r\n即\r\n将\r\n到\r\n期'}</Text>
                    </Image>
                }
 

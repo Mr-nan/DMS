@@ -50,6 +50,9 @@ export default class StockTopCarScene extends BaseComponent{
 
     initFinish = ()=>{
         this._showLoadingModal();
+        this.page = 1;
+        this.total = 0;
+        this.allSource = [];
         this._getData();
     };
 
@@ -75,7 +78,8 @@ export default class StockTopCarScene extends BaseComponent{
             auto_id:item.auto_id,
             is_time_out:item.is_time_out,
             payment_id:this.payment_id,
-            merge_id:this.merge_id
+            merge_id:this.merge_id,
+            refreshLastPage:this.initFinish
         })
     };
 
@@ -88,8 +92,6 @@ export default class StockTopCarScene extends BaseComponent{
     };
 
     _onRefresh = ()=>{
-
-        console.log('下拉刷新');
         this.page = 1;
         this.total = 0;
         this.frame_number = '';
@@ -103,7 +105,6 @@ export default class StockTopCarScene extends BaseComponent{
     };
 
     _getData = ()=>{
-        console.log('请求数据');
         let maps = {
             p:this.page,
             frame_number:this.frame_number,
@@ -173,9 +174,9 @@ export default class StockTopCarScene extends BaseComponent{
     };
 
     _onAddCarClick = ()=>{
-        this.props.toNextPage('AddCarNumberScene',{
+        this.toNextPage('AddCarNumberScene',{
             from:'StockTopCarScene',
-            payment_id:'',
+            payment_id:this.payment_id,
             merge_id:this.merge_id,
             refreshMethod:this.initFinish
         })

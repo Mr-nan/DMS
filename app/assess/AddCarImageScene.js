@@ -87,11 +87,14 @@ export default class CarUpImageScene extends BaseComponent {
         Net.request(AppUrls.AUTOGETATTACHMENTLIST, 'post', {}).then(
             (response) => {
                 this._closeLoading();
-                let rb = response.mjson.retdata;
-                this._setFirstRender(rb);
+                if(response.mycode === 1){
+                    let rb = response.mjson.retdata;
+                    this._setFirstRender(rb);
+                }
             },
-            () => {
+            (error) => {
                 this._closeLoading();
+                this._delayShowHint(error);
             });
     };
 
@@ -372,33 +375,61 @@ export default class CarUpImageScene extends BaseComponent {
 
                         Net.request(requestUrl, 'post', maps).then(
                             (response) => {
-                                if (this.from === ('CarInfoScene' + 'StockTopCarScene')) {
-                                    this._changeMoney(AppUrls.INVENTORYFINANCINGRESETPRICE);
-                                } else if (this.from === ('CarInfoScene' + 'OneCarListScene')) {
-                                    this._changeMoney(AppUrls.ONECARRESETPRICE);
-                                } else if (this.from === ('CarInfoScene' + 'StockBottomScene')) {
-                                    this._changeMoney(AppUrls.INVENTORYFINANCINGRESETPRICE);
-                                } else {
-                                    try {
-                                        this._closeLoading();
-                                        this.showToast('添加成功');
-                                        SQLite.changeData('delete from carimage where ' + 'frame_number = ?',
-                                            [this.number]);
-                                        SQLite.changeData('delete from newcar where ' + 'frame_number = ?',
-                                            [this.number]);
-                                        //返回到初始页并刷新
-                                        this.props.navigation.state.params.refreshMethod();
-                                        this.backPage2(this.backRoute);
+                                if(response.mycode === 1){
+                                    if (this.from === ('CarInfoScene' + 'StockTopCarScene')) {
+                                        this._changeMoney(AppUrls.INVENTORYFINANCINGRESETPRICE);
+                                    } else if (this.from === ('CarInfoScene' + 'OneCarListScene')) {
+                                        this._changeMoney(AppUrls.ONECARRESETPRICE);
+                                    } else if (this.from === ('CarInfoScene' + 'StockBottomScene')) {
+                                        this._changeMoney(AppUrls.INVENTORYFINANCINGRESETPRICE);
+                                    } else {
+                                        try {
+                                            this._closeLoading();
+                                            if (IS_ANDROID === true) {
+                                                this.props.screenProps.showToast('添加成功');
+                                                this.timer = setTimeout(
+                                                    () => {
+                                                        SQLite.changeData('delete from carimage where ' + 'frame_number = ?',
+                                                            [this.number]);
+                                                        SQLite.changeData('delete from newcar where ' + 'frame_number = ?',
+                                                            [this.number]);
+                                                        //返回到初始页并刷新
+                                                        this.props.navigation.state.params.refreshMethod();
+                                                        this.backPage2(this.backRoute);
+                                                    },
+                                                    500
+                                                );
+                                            }else{
+                                                this.timer = setTimeout(
+                                                    () => {
+                                                        this.props.screenProps.showToast('添加成功');
+                                                        this.timer = setTimeout(
+                                                            () => {
+                                                                SQLite.changeData('delete from carimage where ' + 'frame_number = ?',
+                                                                    [this.number]);
+                                                                SQLite.changeData('delete from newcar where ' + 'frame_number = ?',
+                                                                    [this.number]);
+                                                                //返回到初始页并刷新
+                                                                this.props.navigation.state.params.refreshMethod();
+                                                                this.backPage2(this.backRoute);
+                                                            },
+                                                            500
+                                                        );
+                                                    },
+                                                    500
+                                                );
+                                            }
 
-                                    } catch (error) {
-                                        this._closeLoading();
-                                        this.showToast('服务器请求失败，请重新请求！');
+                                        } catch (error) {
+                                            this._closeLoading();
+                                            this.showToast('服务器请求失败，请重新请求！');
+                                        }
                                     }
                                 }
                             },
                             (error) => {
                                 this._closeLoading();
-                                this.showToast('服务器请求失败，请重新请求！');
+                                this._delayShowHint(error);
                             });
 
                     } else {
@@ -436,24 +467,52 @@ export default class CarUpImageScene extends BaseComponent {
 
                 Net.request(url, 'post', maps).then(
                     (response) => {
-                        try {
-                            this._closeLoading();
-                            this.showToast('编辑成功');
-                            SQLite.changeData('delete from carimage where ' + 'frame_number = ?',
-                                [this.number]);
-                            SQLite.changeData('delete from newcar where ' + 'frame_number = ?',
-                                [this.number]);
-                            //返回到初始页并刷新
-                            this.props.navigation.state.params.refreshMethod();
-                            this.backPage2(this.backRoute);
-                        } catch (error) {
-                            this._closeLoading();
-                            this.showToast('服务器请求失败，请重新请求！');
+                        if(response.mycode === 1){
+                            try {
+                                this._closeLoading();
+                                if (IS_ANDROID === true) {
+                                    this.props.screenProps.showToast('编辑成功');
+                                    this.timer = setTimeout(
+                                        () => {
+                                            SQLite.changeData('delete from carimage where ' + 'frame_number = ?',
+                                                [this.number]);
+                                            SQLite.changeData('delete from newcar where ' + 'frame_number = ?',
+                                                [this.number]);
+                                            //返回到初始页并刷新
+                                            this.props.navigation.state.params.refreshMethod();
+                                            this.backPage2(this.backRoute);
+                                        },
+                                        500
+                                    );
+                                }else{
+                                    this.timer = setTimeout(
+                                        () => {
+                                            this.props.screenProps.showToast('添加成功');
+                                            this.timer = setTimeout(
+                                                () => {
+                                                    SQLite.changeData('delete from carimage where ' + 'frame_number = ?',
+                                                        [this.number]);
+                                                    SQLite.changeData('delete from newcar where ' + 'frame_number = ?',
+                                                        [this.number]);
+                                                    //返回到初始页并刷新
+                                                    this.props.navigation.state.params.refreshMethod();
+                                                    this.backPage2(this.backRoute);
+                                                },
+                                                500
+                                            );
+                                        },
+                                        500
+                                    );
+                                }
+                            } catch (error) {
+                                this._closeLoading();
+                                this.showToast('服务器请求失败，请重新请求！');
+                            }
                         }
                     },
                     (error) => {
                         this._closeLoading();
-                        this.showToast('评估价格修改失败');
+                        this._delayShowHint(error);
                         // SQLite.changeData('delete from carimage where ' + 'frame_number = ?',
                         //     [this.number]);
                         // SQLite.changeData('delete from newcar where ' + 'frame_number = ?',
@@ -474,6 +533,28 @@ export default class CarUpImageScene extends BaseComponent {
                 },
                 500
             );
+        }
+    };
+
+    _delayShowHint = (error) => {
+        if(error.mycode === -300 || error.mycode === -500){
+            if(IS_ANDROID === true){
+                this.props.screenProps.showToast('网络请求失败');
+            }else {
+                this.timer = setTimeout(
+                    () => { this.props.screenProps.showToast('网络请求失败'); },
+                    500
+                );
+            }
+        }else{
+            if(IS_ANDROID === true){
+                this.props.screenProps.showToast(error.mjson.retmsg);
+            }else {
+                this.timer = setTimeout(
+                    () => {this.props.screenProps.showToast(error.mjson.retmsg); },
+                    500
+                );
+            }
         }
     };
 

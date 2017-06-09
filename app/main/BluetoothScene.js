@@ -20,20 +20,20 @@ import * as FontAndColor from '../constant/fontAndColor';
 import AllNavigationView from '../component/AllNavigationView';
 const {width} = Dimensions.get('window');
 
-export default class BluetoothScene extends BaseComponent{
+export default class BluetoothScene extends BaseComponent {
 
-    constructor(props){
+    constructor(props) {
         super(props);
         this.allSource = [];
         this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-        this.state= {
-            deviceName:'',
+        this.state = {
+            deviceName: '',
             dataSource: this.ds.cloneWithRows(this.allSource),
-            scan:'搜索设备'
+            scan: '搜索设备'
         };
     }
 
-    componentDidMount(){
+    componentDidMount() {
         NativeAppEventEmitter
             .addListener('findBluetooth', this._findBluetooth);
 
@@ -42,59 +42,76 @@ export default class BluetoothScene extends BaseComponent{
 
         NativeAppEventEmitter
             .addListener('onReadData', this.props.navigation.state.params.onReadData);
+
+        NativeModules.DmsCustom.isConnection((rep) => {
+            if (typeof(rep.suc) !== 'undefined' && rep.suc === null) {
+                if(rep.suc === '1'){
+                    NativeModules.DmsCustom.getConnectionDevice((dName)=>{
+                        if(typeof(dName.suc) !== 'undefined' && rep.suc === null){
+                            this.setState({
+                                deviceName: dName.suc
+                            })
+                        }
+                    });
+
+                }
+            }
+        });
     }
 
-    _findBluetooth = (data)=>{
-        if(this._hasContain(data) === false){
-            if(data.name !== null && data.name.length > 3 &&
-            data.name.substring(0,3) === 'CJJ'){
+    _findBluetooth = (data) => {
+        if (this._hasContain(data) === false) {
+            if (data.name !== null && data.name.length > 3 &&
+                data.name.substring(0, 3) === 'CJJ') {
                 this.allSource.push(data);
                 this.setState({
-                    dataSource:this.ds.cloneWithRows(this.allSource),
+                    dataSource: this.ds.cloneWithRows(this.allSource),
                 });
             }
         }
     };
 
-    _hasContain =(data)=>{
+    _hasContain = (data) => {
         let ctn = false;
-        this.allSource.map((dt)=>{
-            if(data.name !== null && data.address !== null
-                && data.name === dt.name && data.address === dt.address){
+        this.allSource.map((dt) => {
+            if (data.name !== null && data.address !== null
+                && data.name === dt.name && data.address === dt.address) {
                 ctn = true;
             }
         });
         return ctn;
     };
 
-    _showHint=(hint)=>{
+    _showHint = (hint) => {
         this.props.screenProps.showToast(hint);
     };
 
-    _onBleConnection = (data)=>{
-        if(data.can == '1'){
+    _onBleConnection = (data) => {
+        if (data.can == '1') {
             NativeModules.DmsCustom.scanSound(1);
             NativeModules.DmsCustom.stopFind();
             this.setState({
-                deviceName:this.deviceN,
-                scan:'搜索设备'
+                deviceName: this.deviceN,
+                scan: '搜索设备'
             });
             this.props.navigation.state.params.onBlueConnection();
-        }else{
+        } else {
             NativeModules.DmsCustom.scanSound(0);
             console.log('连接失败');
         }
     };
 
-    _startConnection = (item)=>{
+    _startConnection = (item) => {
         this.deviceN = item.name;
-        NativeModules.DmsCustom.startConnection(item.name,item.address);
+        NativeModules.DmsCustom.startConnection(item.name, item.address);
     };
 
-    _renderItem=(item)=>{
-        return(
+    _renderItem = (item) => {
+        return (
             <TouchableOpacity style={styles.bleItemWrap}
-            onPress={()=>{this._startConnection(item)}}>
+                              onPress={() => {
+                                  this._startConnection(item)
+                              }}>
                 <Text style={styles.bleItemName}>{item.name}</Text>
                 <Text style={styles.bleItemAddress}>{item.address}</Text>
             </TouchableOpacity>
@@ -102,28 +119,31 @@ export default class BluetoothScene extends BaseComponent{
     };
 
 
-    _openBlueTooth = ()=>{
+    _openBlueTooth = () => {
         NativeModules.DmsCustom.startBluetooth();
     };
 
-    _scanBlueTooth = ()=>{
-        NativeModules.DmsCustom.startFind((success)=>{this.setState({
-                scan:'正在搜索'
-            })},
-            (error)=>{
-                this._showHint(error);
-            });
+    _scanBlueTooth = () => {
+        NativeModules.DmsCustom.startFind((rep) => {
+            if (typeof(rep.suc) === 'undefined' || rep.suc === null) {
+                this._showHint(rep.fail);
+            } else {
+                this.setState({
+                    scan: '正在搜索'
+                })
+            }
+        });
     };
 
-    render(){
-        return(
+    render() {
+        return (
             <View style={styles.container}>
                 <View style={styles.wrapContainer}>
                     <View style={styles.titleWrap}>
                         <Text style={styles.titleLeftFont}>{'当前连接设备：'}</Text>
                         <Text style={styles.titleRightFont}>{this.state.deviceName}</Text>
                     </View>
-                    <View style={{flex:1}}>
+                    <View style={{flex: 1}}>
                         <ListView
                             enableEmptySections={true}
                             dataSource={this.state.dataSource}
@@ -165,63 +185,63 @@ const styles = StyleSheet.create({
         backgroundColor: FontAndColor.all_background,
         alignItems: 'center'
     },
-    titleWrap:{
-        flexDirection:'row',
-        height:Pixel.getPixel(40),
-        alignItems:'center',
-        width:width
+    titleWrap: {
+        flexDirection: 'row',
+        height: Pixel.getPixel(40),
+        alignItems: 'center',
+        width: width
     },
-    titleLeftFont:{
-        marginLeft:Pixel.getPixel(5),
-        fontSize:Pixel.getFontPixel(20),
-        color:FontAndColor.txt_gray
+    titleLeftFont: {
+        marginLeft: Pixel.getPixel(5),
+        fontSize: Pixel.getFontPixel(20),
+        color: FontAndColor.txt_gray
     },
-    titleRightFont:{
-        marginLeft:Pixel.getPixel(5),
-        fontSize:Pixel.getFontPixel(20),
-        color:FontAndColor.black
+    titleRightFont: {
+        marginLeft: Pixel.getPixel(5),
+        fontSize: Pixel.getFontPixel(20),
+        color: FontAndColor.black
     },
-    bottomWrap:{
-        height:Pixel.getPixel(50),
-        paddingBottom:Pixel.getPixel(10),
-        flexDirection:'row'
+    bottomWrap: {
+        height: Pixel.getPixel(50),
+        paddingBottom: Pixel.getPixel(10),
+        flexDirection: 'row'
     },
-    leftBtnWrap:{
-        flex:1,
-        marginHorizontal:Pixel.getPixel(30),
-        justifyContent:'center',
-        alignItems:'center',
-        backgroundColor:'#76C8C2',
-        borderRadius:Pixel.getPixel(5)
+    leftBtnWrap: {
+        flex: 1,
+        marginHorizontal: Pixel.getPixel(30),
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#76C8C2',
+        borderRadius: Pixel.getPixel(5)
     },
-    BtnTxt:{
-        color:FontAndColor.white,
-        fontSize:Pixel.getFontPixel(20),
+    BtnTxt: {
+        color: FontAndColor.white,
+        fontSize: Pixel.getFontPixel(20),
         fontWeight: 'bold'
     },
-    rightBtnWrap:{
-        flex:1,
-        marginRight:Pixel.getPixel(30),
-        justifyContent:'center',
-        alignItems:'center',
-        backgroundColor:'#76C8C2',
-        borderRadius:Pixel.getPixel(5)
+    rightBtnWrap: {
+        flex: 1,
+        marginRight: Pixel.getPixel(30),
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#76C8C2',
+        borderRadius: Pixel.getPixel(5)
     },
-    bleItemWrap:{
-        width:width,
-        backgroundColor:FontAndColor.all_background
+    bleItemWrap: {
+        width: width,
+        backgroundColor: FontAndColor.all_background
     },
-    bleItemName:{
-        height:Pixel.getPixel(40),
-        marginLeft:Pixel.getPixel(20),
-        color:FontAndColor.all_blue,
-        fontSize:Pixel.getFontPixel(18)
+    bleItemName: {
+        height: Pixel.getPixel(40),
+        marginLeft: Pixel.getPixel(20),
+        color: FontAndColor.all_blue,
+        fontSize: Pixel.getFontPixel(18)
     },
-    bleItemAddress:{
-        height:Pixel.getPixel(40),
-        marginLeft:Pixel.getPixel(20),
-        color:FontAndColor.all_blue,
-        fontSize:Pixel.getFontPixel(14)
+    bleItemAddress: {
+        height: Pixel.getPixel(40),
+        marginLeft: Pixel.getPixel(20),
+        color: FontAndColor.all_blue,
+        fontSize: Pixel.getFontPixel(14)
     }
 
 });

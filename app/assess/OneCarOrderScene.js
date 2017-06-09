@@ -89,7 +89,6 @@ export default class OneCarOrderScene extends Component{
 
     _onRefresh = ()=>{
 
-        console.log('下拉刷新');
         this.page = 1;
         this.total = 0;
         this.payment_number = '';
@@ -103,7 +102,7 @@ export default class OneCarOrderScene extends Component{
     };
 
     _getData = ()=>{
-        console.log('请求数据');
+
         let maps = {
             p:this.page,
             payment_number:this.payment_number,

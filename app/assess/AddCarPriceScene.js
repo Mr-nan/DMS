@@ -77,6 +77,10 @@ export default class AddCarPriceScene extends BaseComponent {
         this._getData();
     };
 
+    componentWillUnmount(){
+        this.timer && clearTimeout(this.timer);
+    }
+
     _getData = () => {
         let maps = {
             merge_id: this.merge_id,
@@ -96,8 +100,10 @@ export default class AddCarPriceScene extends BaseComponent {
 
                     Net.request(appUrls.AUTOGETESTIMATEPRICE, 'post', maps).then(
                         (response) => {
-                            this.che300_mny = response.mjson.retdata.price;
-                            this._firstRender();
+                            if(response.mycode === 1){
+                                this.che300_mny = response.mjson.retdata.price;
+                                this._firstRender();
+                            }
                         },
                         (error) => {
                             this._closeLoadingModal();

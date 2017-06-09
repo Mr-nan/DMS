@@ -51,6 +51,9 @@ export default class OneCarListScene extends BaseComponent{
 
     initFinish = ()=>{
         this._showLoadingModal();
+        this.page = 1;
+        this.total = 0;
+        this.allSource = [];
         this._getData();
     };
 
@@ -90,7 +93,6 @@ export default class OneCarListScene extends BaseComponent{
 
     _onRefresh = ()=>{
 
-        console.log('下拉刷新');
         this.page = 1;
         this.total = 0;
         this.frame_number = '';
@@ -185,11 +187,11 @@ export default class OneCarListScene extends BaseComponent{
     };
 
     _onAddCarClick = ()=>{
-        this.props.toNextPage('AddCarNumberScene',{
+        this.toNextPage('AddCarNumberScene',{
             from:'OneCarListScene',
-            payment_id:'',
+            payment_id:this.payment_id,
             merge_id:this.merge_id,
-            refreshMethod:this._onRefresh
+            refreshMethod:this.initFinish
         })
     };
 
