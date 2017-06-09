@@ -10,6 +10,7 @@ import {
     ListView,
     Dimensions,
     NativeModules,
+    Platform,
     NativeAppEventEmitter
 }from 'react-native';
 
@@ -19,6 +20,7 @@ const Pixel = new PixelUtil();
 import * as FontAndColor from '../constant/fontAndColor';
 import AllNavigationView from '../component/AllNavigationView';
 const {width} = Dimensions.get('window');
+const IS_ANDROID = Platform.OS === 'android';
 
 export default class BluetoothScene extends BaseComponent {
 
@@ -103,7 +105,11 @@ export default class BluetoothScene extends BaseComponent {
 
     _startConnection = (item) => {
         this.deviceN = item.name;
-        NativeModules.DmsCustom.startConnection(item.name, item.address);
+        if(IS_ANDROID === true){
+            NativeModules.DmsCustom.startConnection(item.name, item.address);
+        }else{
+            NativeModules.DmsCustom.startConnection(item.address);
+        }
     };
 
     _renderItem = (item) => {
@@ -117,7 +123,6 @@ export default class BluetoothScene extends BaseComponent {
             </TouchableOpacity>
         );
     };
-
 
     _openBlueTooth = () => {
         NativeModules.DmsCustom.startBluetooth();
