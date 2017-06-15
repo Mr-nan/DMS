@@ -495,7 +495,7 @@ export default class CarInfoScene extends BaseComponent {
     _renderImagePage = (data, index) => {
         return (
             <TouchableOpacity
-                style={styles.content_image_btn}
+                style={{flex:1}}
                 activeOpacity={1}
                 onPress={() => {
                     this._onImageTouch(index)
@@ -772,12 +772,14 @@ const styles = StyleSheet.create({
         marginBottom: Pixel.getPixel(10)
     },
     content_image_wrap: {
-        padding: Pixel.getPixel(15),
+        paddingVertical: Pixel.getPixel(15),
         backgroundColor: FontAndColor.white,
     },
     content_image_btn: {
         height: Pixel.getPixel(220),
-        flex:1
+        width:width - Pixel.getPixel(30),
+        marginHorizontal:Pixel.getPixel(15),
+        resizeMode:'stretch'
     },
     content_blank_bottom: {
         backgroundColor: FontAndColor.white,
