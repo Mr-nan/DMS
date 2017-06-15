@@ -27,8 +27,6 @@ export default class AllTitleNavigationView extends PureComponent {
         this.menu.openModal();
     };
 
-
-
     render() {
         const {title, backIconClick, parentNavigation} = this.props;
         return (
@@ -93,7 +91,8 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
         alignItems: 'center',
         width: Pixel.getPixel(60),
-        marginRight: Pixel.getPixel(15),
+        height: Pixel.getPixel(48),
+        paddingRight: Pixel.getPixel(15)
     },
     navigation: {
         width:width,

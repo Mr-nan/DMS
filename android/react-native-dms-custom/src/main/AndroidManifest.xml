@@ -31,5 +31,6 @@
         <activity android:name=".vin.scan.FDScanActivity" />
         <activity android:name=".vin.scan.VLScanActivity"></activity>
         <activity android:name=".idcard.IDCardActivity"></activity>
+        <activity android:name=".camera.CameraActivity"></activity>
     </application>
 </manifest>

@@ -1,15 +1,20 @@
 package com.dms.custom;
 
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.dms.custom.bluetooths.BluetoothControl;
 import com.dms.custom.bluetooths.IBluetoothCallBack;
 import com.dms.custom.bluetooths.ItemBluetoothDevice;
+import com.dms.custom.camera.CameraActivity;
 import com.dms.custom.idcard.IDCardActivity;
 import com.dms.custom.qr.scan.ScanCaptureAct;
 import com.dms.custom.utils.IUpLoadImageResult;
@@ -30,6 +35,9 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.modules.core.RCTNativeAppEventEmitter;
 
+import java.io.Console;
+import java.io.File;
+
 /**
  * Created by Administrator on 2017/5/11.
  */
@@ -41,10 +49,14 @@ public class DmsCustomModule extends ReactContextBaseJavaModule implements Activ
     private final int VIN_REQUEST = 1;
     private final int VL_REQUEST = 2;
     private final int SD_REQUEST = 3;
+    private final int CAMERA_REQUEST = 4;
     private Callback qr_success_ck;
     private Callback vin_success_ck;
     private Callback vl_success_ck;
     private Callback sd_success_ck;
+
+    private Callback camera_success_ck;
+    private Callback camera_fail_ck;
 
 
     private Context mContext;
@@ -162,6 +174,17 @@ public class DmsCustomModule extends ReactContextBaseJavaModule implements Activ
                 sd_success_ck.invoke(map);
                 sd_success_ck = null;
             }
+        }else if(requestCode == CAMERA_REQUEST){
+            if (resultCode == Activity.RESULT_CANCELED) {
+                camera_fail_ck.invoke("取消拍照");
+                camera_fail_ck = null;
+            } else if (resultCode == Activity.RESULT_OK) {
+                WritableMap map = Arguments.createMap();
+                map.putString("path",data.getStringExtra("img_path"));
+                map.putString("uri",Uri.fromFile(new File(data.getStringExtra("img_path"))).toString());
+                camera_success_ck.invoke(map);
+                camera_success_ck = null;
+            }
         }
 
     }
@@ -184,11 +207,30 @@ public class DmsCustomModule extends ReactContextBaseJavaModule implements Activ
     }
 
     /********************************************
-     * 评估照片压缩
+     * 根据路径删除文件
      *******************************************/
     @ReactMethod
-    public void assessCompress(String uri,Callback callback){
-        String filePath = ImageUtil.getRealPathFromURI(mContext,Uri.parse(uri));
+    public void deleteImageFile(String imagePath) {
+        try {
+            ContentResolver resolver = getCurrentActivity().getContentResolver();
+            Cursor cursor = MediaStore.Images.Media.query(resolver,
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    new String[] { MediaStore.Images.Media._ID },
+                    MediaStore.Images.Media.DATA + "=?",
+                    new String[] { imagePath }, null);
+            if (cursor.moveToFirst()) {
+                long id = cursor.getLong(0);
+                Uri contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                Uri uri = ContentUris.withAppendedId(contentUri, id);
+                getCurrentActivity().getContentResolver().delete(uri, null, null);
+            } else {
+                File file = new File(imagePath);
+                file.delete();
+                System.gc();
+            }
+        } catch (Exception e) {
+            Log.e("delete image from ddd",e.toString());
+        }
     }
 
     /********************************************
@@ -264,32 +306,89 @@ public class DmsCustomModule extends ReactContextBaseJavaModule implements Activ
         }
     }
 
+    /********************************************
+     * 使用自定义相机
+     *******************************************/
+    @ReactMethod
+    public void customCamera(int compressC,Callback sCk,Callback fCk) {
+        camera_success_ck = sCk;
+        camera_fail_ck = fCk;
+
+        Activity currentActivity = getCurrentActivity();
+        if (currentActivity == null) {
+            camera_fail_ck.invoke("调用相机失败！");
+            camera_fail_ck = null;
+            return;
+        }
+        try {
+            Intent vlIntent = new Intent(currentActivity, CameraActivity.class);
+            vlIntent.putExtra("compress",compressC);
+            currentActivity.startActivityForResult(vlIntent, CAMERA_REQUEST);
+        } catch (Exception e) {
+            camera_fail_ck.invoke(e.toString());
+            camera_fail_ck = null;
+        }
+
+    }
+
 
     /********************************************
      * 文件上传
      *******************************************/
     @ReactMethod
-    public void uploadFile(String url, String token, String filePath,
+    public void uploadFile(String url, String token, final String filePath, String fileName, int ratio,
                            final Callback up_s_ck, final Callback up_e_ck) {
 
-        UpLoadFile.upload(url, token, filePath, new IUpLoadImageResult() {
-            @Override
-            public void success(String response) {
-                up_s_ck.invoke(response);
-            }
+        if(ratio != 100){
+            try{
+                final String filePath2 = ImageUtil.compressBitmapWithRatio(filePath,fileName,ratio);
+                UpLoadFile.upload(url, token, filePath2, new IUpLoadImageResult() {
+                    @Override
+                    public void success(String response) {
+                        File file = new File(filePath2);
+                        file.delete();
+                        System.gc();
+                        up_s_ck.invoke(response);
+                    }
 
-            @Override
-            public void error(int arg0, String arg2) {
-                up_e_ck.invoke(arg2);
-            }
+                    @Override
+                    public void error(int arg0, String arg2) {
+                        up_e_ck.invoke(arg2);
+                    }
 
-            @Override
-            public void progress(int count) {
-                WritableMap map = Arguments.createMap();
-                map.putString("progress", count + "");
-                sendEvent("onProgress", map);
+                    @Override
+                    public void progress(int count) {
+                        WritableMap map = Arguments.createMap();
+                        map.putString("progress", count + "");
+                        sendEvent("onProgress", map);
+                    }
+                });
+            }catch (Exception e){
+                up_e_ck.invoke(e.toString());
             }
-        });
+        }else{
+            UpLoadFile.upload(url, token, filePath, new IUpLoadImageResult() {
+                @Override
+                public void success(String response) {
+                    File file = new File(filePath);
+                    file.delete();
+                    System.gc();
+                    up_s_ck.invoke(response);
+                }
+
+                @Override
+                public void error(int arg0, String arg2) {
+                    up_e_ck.invoke(arg2);
+                }
+
+                @Override
+                public void progress(int count) {
+                    WritableMap map = Arguments.createMap();
+                    map.putString("progress", count + "");
+                    sendEvent("onProgress", map);
+                }
+            });
+        }
     }
 
 

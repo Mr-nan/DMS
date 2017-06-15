@@ -598,6 +598,7 @@ export default class CarInfoScene extends BaseComponent {
             (response) => {
                 this._closePop();
                 this._getData();
+                this.props.navigation.state.params.refreshLastPage();
             },
             (error) => {
                 this._showHint('服务器请求失败，请重新请求');

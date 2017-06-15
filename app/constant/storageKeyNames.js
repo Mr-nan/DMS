@@ -22,3 +22,4 @@ export const PATROLEVALREFRESH = "patrolevalrefresh"; //巡查报告暂存刷新
 export const CHANGE_URL = "change_url";               //手动更改地址
 
 export const USER_FUNCTION = "user_function";         //功能模块
+export const CAMERA_CUSTOM = "camera_custom";         //安卓使用自定义相机

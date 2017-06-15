@@ -130,6 +130,7 @@ const styles = StyleSheet.create({
         fontSize:Pixel.getFontPixel(12),
         color:FontAndColor.white,
         marginLeft:Pixel.getPixel(11),
-        marginTop:Pixel.getPixel(28)
+        marginTop:Pixel.getPixel(28),
+        backgroundColor:'transparent'
     }
 });

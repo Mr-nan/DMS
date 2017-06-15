@@ -42,7 +42,27 @@ const PixelUtil = React.createClass({
             return ((px / 375.0) * width);
 
         }
+    },
+
+
+    getMenuHeightPixel(px){
+        if (Platform.OS === 'android') {
+            return (((px + 50) / 375.0) * width);
+        } else {
+            return ((px / 375.0) * width);
+
+        }
+    },
+    getMenuWidthPixel(px){
+        if (Platform.OS === 'android') {
+            return (((px + 10) / 375.0) * width);
+        } else {
+            return ((px / 375.0) * width);
+
+        }
     }
+
+
 });
 
 module.exports = PixelUtil;
