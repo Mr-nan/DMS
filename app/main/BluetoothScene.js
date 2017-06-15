@@ -46,10 +46,10 @@ export default class BluetoothScene extends BaseComponent {
             .addListener('onReadData', this.props.navigation.state.params.onReadData);
 
         NativeModules.DmsCustom.isConnection((rep) => {
-            if (typeof(rep.suc) !== 'undefined' && rep.suc === null) {
-                if(rep.suc === '1'){
+            if (typeof(rep.suc) !== 'undefined' && rep.suc != null) {
+                if(rep.suc == '1'){
                     NativeModules.DmsCustom.getConnectionDevice((dName)=>{
-                        if(typeof(dName.suc) !== 'undefined' && rep.suc === null){
+                        if(typeof(dName.suc) !== 'undefined' && rep.suc != null){
                             this.setState({
                                 deviceName: dName.suc
                             })

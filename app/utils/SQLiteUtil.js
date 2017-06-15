@@ -213,7 +213,7 @@ const SQLite = React.createClass({
         db = null;
     },
     _successCB(name){
-        // console.log("SQLiteStorage " + name + " success");
+        console.log("SQLiteStorage " + name + " success");
     },
     _errorCB(name, err){
         // console.log("SQLiteStorage " + name + " error:" + err);

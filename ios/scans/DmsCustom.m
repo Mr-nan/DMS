@@ -15,11 +15,22 @@
 #import "BLERFID.h"
 
 
+
+static const NSString *blueKey =@"blue";
+
+static const NSString *bluesToos=@"blueToos";
+
+
 @interface DmsCustom ()<IParseRFID>
 
 @property(nonatomic,strong)BLERFID *fild;
 @property(nonatomic,strong)NSMutableDictionary *fils;
 @property(nonatomic,assign)BOOL isconection;
+@property(nonatomic,strong)CBPeripheral *temp;
+@property(nonatomic,strong)CBPeripheral *currentPer;
+@property(nonatomic,strong)RCTResponseSenderBlock tempcallback;
+
+@property(nonatomic,assign)CBManagerState tempstate;
 @end
 
 @implementation DmsCustom
@@ -32,27 +43,55 @@ RCT_EXPORT_MODULE();
 //初始化蓝牙
 RCT_EXPORT_METHOD(startBluetooth){
   
-  self.fild=[[BLERFID alloc]initWithParseRFIDDelegate:self];
+
+  AppDelegate *app=(AppDelegate*)[UIApplication sharedApplication].delegate;
+  
+  NSMutableDictionary *blue =app.blueContain;
+  
+  BLERFID *blues=[blue objectForKey:blueKey];
+  
+  if(!blues){
+    
+    blues=[[BLERFID alloc]initWithParseRFIDDelegate:self];
+    
+    [blue setObject:blues forKey:blueKey];
+    
+  }
+  self.fild=blues;
   self.fils=[[NSMutableDictionary alloc]init];
 
 }
 //开始扫描
 RCT_EXPORT_METHOD(startFind:(RCTResponseSenderBlock)callback){
-    callback(@[ @{@"suc":@"正在扫描",@"fail":@"请开启蓝牙"}]);
-  [self.fild scanForPeripherals];
   
-
+    if(self.tempstate==CBManagerStatePoweredOn){
+      
+//      if(self.currentPer){
+//        
+//        [self.fild disConn:self.currentPer];
+//      }
+      callback(@[@{@"suc":@"正在扫描"}]);
+      [self.fild scanForPeripherals];
+    }else{
+      callback(@[@{@"fail":@"请开启蓝牙"}]);
+    }
 }
+
+
 
 RCT_EXPORT_METHOD(startConnection:(NSString *)perUUid){
   
   CBPeripheral *perl=[self.fils objectForKey:perUUid];
+  
+  self.temp =perl;
 
   [self.fild connPeripheral:perl];
 }
 
 RCT_EXPORT_METHOD(stopFind){
 
+  [self.fild stopScan];
+  
 }
 
 RCT_EXPORT_METHOD(disConperipheral:(CBPeripheral *)peripheral){
@@ -72,10 +111,21 @@ RCT_EXPORT_METHOD(isConnection:(RCTResponseSenderBlock)callback){
   
 }
 
+RCT_EXPORT_METHOD(getConnectionDevice:(RCTResponseSenderBlock)callback){
+  
+  if(self.currentPer){
+      callback(@[@{@"suc":self.currentPer.name}]);
+  }else{
+    
+     callback(@[@{@"suc":@""}]);
+  }
+  
+}
+
 -(void)mgrDidUpdateState:(CBManagerState)state{
   
- 
 
+  self.tempstate=state;
   
 }
 
@@ -96,6 +146,7 @@ RCT_EXPORT_METHOD(isConnection:(RCTResponseSenderBlock)callback){
   
   if(state==BLEConnStateSuc){
     
+    self.currentPer=self.temp;
     self.isconection=YES;
     [self.bridge.eventDispatcher sendAppEventWithName:@"onBleConnection" body:nil];
     

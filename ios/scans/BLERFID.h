@@ -69,4 +69,8 @@ typedef NS_ENUM(NSInteger, BLEConnState) {
  发送指令(软按键),注：目前只能读取TID区数据
  */
 -(void)sendCmd;
+/**
+ 停止扫描
+ */
+-(void) stopScan;
 @end

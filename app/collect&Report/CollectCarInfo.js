@@ -26,79 +26,67 @@ import SQLiteUtil from '../utils/SQLiteUtil';
 const SQLite = new SQLiteUtil();
 export  default  class CollectCarInfo extends BaseComponent{
 
-
+    // 构造
+      constructor(props) {
+        super(props);
+        // 初始状态
+        this. state={
+            isdatePikershow:false,
+            data:[],
+            renderModel:STATECODE.loading
+        }
+          SQLite.createTable();
+      }
     tempTimeKeyType='';
-    blueToolConect=false;
-
     cttBlobs={}
-    state={
-        isdatePikershow:false,
-        data:[],
-        renderModel:STATECODE.loading
+
+    componentWillUnmount() {
+        readData.remove();
+
     }
 
+    initFinish() {
 
-
-
-
-    initFinish(){
-
-        NativeAppEventEmitter.addListener(
-            'onBleConnection',
-            (reminder) =>{
-                this.blueToolConect=true
-                console.log('蓝牙连接成功')
-
-            }
-        );
-
-        NativeAppEventEmitter.addListener(
-            'onBleDisCon',
-            (reminder) => {
-                this.blueToolConect=false
-                console.log('蓝牙断开连接')
-            }
-        );
-
-        NativeAppEventEmitter.addListener(
+        readData = NativeAppEventEmitter.addListener(
             'onReadData',
             (reminder) => {
 
-                alert(reminder.result)
+                this.rfid._setTitle(reminder.result)
+                SQLite.changeData('UPDATE carCollectInfo SET rfid=? WHERE vin=?', [reminder.result, this.props.navigation.state.params.carFrameNumber])
             }
         );
 
-        SQLite.createTable();
-        SQLite.selectData('SELECT * FROM carCollectInfo WHERE vin= ?',[this.props.navigation.state.params.carFrameNumber],
-            (data)=>{
+        SQLite.selectData('SELECT * FROM carCollectInfo WHERE vin= ?', [this.props.navigation.state.params.carFrameNumber], (data) => {
 
-                if(data.code==1){
-                    if(data.result.rows.length==0){
+            if (data.code == 1) {
 
-                        SQLite.changeData('INSERT INTO carCollectInfo (vin) VALUES(?)',[this.props.navigation.state.params.carFrameNumber])
-                    }
-                    let cacheData=data.result.rows.item(0);
-
-                    this.setState({
-                        data:[
-                            {title:"车架号",type:show,showValue:this.props.navigation.state.params.carFrameNumber,key:'vin'},
-                            {title:'入库时间',type:date,showValue:cacheData.onstorge,placeholder:'请选择',key:'onstorge'},
-                            {title:'录入时间',type:date,showValue:cacheData.oncard,placeholder:'请选择',key:'oncard'},
-                            {title:'车辆所有人',type:input,showValue:cacheData.owner,placeholder:'请输入车辆所有人',key:'owner'},
-                            {title:['借款人','担保人','员工','未过户'], type:select,showValue:cacheData.ownership?cacheData.ownership:'1',key:'ownership'},
-                            {title:['资料已收全','随车资料未收全'], type:select,showValue:cacheData.allin?cacheData.allin:'1',key:'allin'},
-                            {title:['抵押监管','质押监管','过户监管'], type:select,showValue:cacheData.rg_type?cacheData.rg_type:'1',key:'rg_type'},
-                            {title:'扫描登记证',type:click,showValue:cacheData.regbr,placeholder:'请扫描登记证',key:'regbr'},
-                            {title:'扫描行驶证',type:click,showValue:cacheData.runbr,placeholder:'请扫描行驶证',key:'runbr'},
-                            {title:'扫描身份证',type:click,showValue:cacheData.carid,placeholder:'请扫描身份证',key:'carid'},
-                            {title:['扫描标签','扫描OBD'],type:doubleClick,showValue:'',placeholder:'请扫描标签',key:'obd_numberrfid'},
-                        ],
-                        renderModel:STATECODE.loadSuccess
-                    })
+                if (data.result.rows.length == 0) {
+                    SQLite.changeData('INSERT INTO carCollectInfo (vin) VALUES(?)', [this.props.navigation.state.params.carFrameNumber])
                 }
-            })
+
+                let cacheData = data.result.rows.item(0);
+
+                this.setState({
+                    data:[
+                        {title:"车架号",type:show,showValue:this.props.navigation.state.params.carFrameNumber,key:'vin'},
+                        {title:'入库时间',type:date,showValue:cacheData.onstorge,placeholder:'请选择',key:'onstorge'},
+                        {title:'录入时间',type:date,showValue:cacheData.oncard,placeholder:'请选择',key:'oncard'},
+                        {title:'车辆所有人',type:input,showValue:cacheData.owner,placeholder:'请输入车辆所有人',key:'owner'},
+                        {title:['借款人','担保人','员工','未过户'], type:select,showValue:cacheData.ownership?cacheData.ownership:'1',key:'ownership'},
+                        {title:['资料已收全','随车资料未收全'], type:select,showValue:cacheData.allin?cacheData.allin:'1',key:'allin'},
+                        {title:['抵押监管','质押监管','过户监管'], type:select,showValue:cacheData.rg_type?cacheData.rg_type:'1',key:'rg_type'},
+                        {title:'扫描登记证',type:click,showValue:cacheData.regbr,placeholder:'请扫描登记证',key:'regbr'},
+                        {title:'扫描行驶证',type:click,showValue:cacheData.runbr,placeholder:'请扫描行驶证',key:'runbr'},
+                        {title:'扫描身份证',type:click,showValue:cacheData.carid,placeholder:'请扫描身份证',key:'carid'},
+                         {title:['扫描标签','扫描OBD'],type:doubleClick,showValue:'',placeholder:'请扫描标签',key:'obd_numberrfid'},
+                    ],
+                    renderModel:STATECODE.loadSuccess
+                })
+            }
 
 
+
+        })
     }
 
     //日期
@@ -118,6 +106,17 @@ export  default  class CollectCarInfo extends BaseComponent{
         })
 
     }
+     _dateClick=(key)=>{
+
+        this.tempTimeKeyType=key;
+        this.setState({
+
+            isdatePikershow:true
+        })
+    }
+
+
+
     _hideDateTimePicker=()=>{
 
         this.setState({
@@ -133,11 +132,7 @@ export  default  class CollectCarInfo extends BaseComponent{
 
     _markScan=()=>{
 
-        if(this.blueToolConect==false){
-
-            this.toNextPage('BluetoothScene',{onReadData:()=>{},isConnection:()=>{}})
-        }
-
+            this.toNextPage('BluetoothScene',{onReadData:()=>{},isConnection:()=>{},onBlueConnection:()=>{}})
     }
     _obdScan=()=>{
         NativeModules.DmsCustom.qrScan((info)=>{
@@ -153,7 +148,7 @@ export  default  class CollectCarInfo extends BaseComponent{
             NativeModules.DmsCustom.qrScan((info)=>{
 
                 this.cttBlobs['regbr'].setTitle(info.suc)
-                SQLite.changeData('UPDATE carCollectInfo SET regbr=? WHERE vin=?',[inf.suc,this.props.navigation.state.params.carFrameNumber])
+                SQLite.changeData('UPDATE carCollectInfo SET regbr=? WHERE vin=?',[info.suc,this.props.navigation.state.params.carFrameNumber])
             })
         }
 //行驶证
@@ -171,7 +166,7 @@ export  default  class CollectCarInfo extends BaseComponent{
 
             NativeModules.DmsCustom.scanID((info) => {
                 this.cttBlobs['carid'].setTitle(info.suc)
-                SQLite.changeData('UPDATE carCollectInfo SET carid=? WHERE vin=?',[info,this.props.navigation.state.params.carFrameNumber])
+                SQLite.changeData('UPDATE carCollectInfo SET carid=? WHERE vin=?',[info.suc,this.props.navigation.state.params.carFrameNumber])
             })
         }
 
@@ -206,7 +201,7 @@ export  default  class CollectCarInfo extends BaseComponent{
                 return <CollectSelect titles={tempdata.title} selectedIndex={this._selctIndex} itemKey={tempdata.key} defaultSelct={tempdata.showValue}/>
                 break;
             case doubleClick:
-                return <CollectOBDRFID markScan={this._markScan} OBDScan={this._obdScan} ref={(rfid)=>{this.rfid=rfid}}/>
+                return <CollectOBDRFID markScan={this._markScan} OBDScan={this._obdScan} ref={(c)=>{this.rfid=c}}/>
                 break;
         }
 
