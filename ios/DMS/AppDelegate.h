@@ -11,6 +11,7 @@
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
+@property (nonatomic,strong) NSMutableDictionary *blueContain;
 @property (nonatomic, strong) UIWindow *window;
 
 @end
