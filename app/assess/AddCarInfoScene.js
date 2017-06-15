@@ -1161,14 +1161,14 @@ const styles = StyleSheet.create({
         fontSize: Pixel.getFontPixel(14)
     },
     type_three_right_wrap: {
-        height: Pixel.getPixel(240),
+        width: Pixel.getPixel(240),
         marginRight: Pixel.getPixel(15),
         backgroundColor: FontAndColor.white,
         flexDirection: 'row',
         alignItems: 'center'
     },
     type_three_right_input: {
-        width: Pixel.getPixel(240),
+        width: Pixel.getPixel(210),
         textAlign: 'right',
         color: FontAndColor.black,
         fontSize: Pixel.getFontPixel(14)
@@ -1176,8 +1176,7 @@ const styles = StyleSheet.create({
     type_three_right_img: {
         height: Pixel.getPixel(30),
         width: Pixel.getPixel(30),
-        marginRight: Pixel.getPixel(5),
-        padding: Pixel.getPixel(5)
+        backgroundColor:'red'
     },
     type_four_wrap: {
         height: Pixel.getPixel(46),
