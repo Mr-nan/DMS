@@ -4,17 +4,20 @@ import {
     Text,
     View,
     Dimensions,
-    NativeModules
+    NativeModules,
+    Platform
 } from 'react-native';
 //图片加文字
 const {width, height} = Dimensions.get('window');
 import PixelUtil from '../../utils/PixelUtil';
 const Pixel = new PixelUtil();
 import * as fontAndColor from '../../constant/fontAndColor';
+import StorageUtil from '../../utils/StorageUtil';
+import * as StorageKeyNames from '../../constant/storageKeyNames';
 import  CarImagePickerItem from './CarImagePickerItem';
 import ImagePicker from "react-native-image-picker";
 import * as Net from '../../utils/UpLoadFileUtil';
-
+const IS_ANDROID = Platform.OS === 'android';
 
 export  default class CarUpImageCell extends PureComponent {
 
@@ -96,6 +99,26 @@ export  default class CarUpImageCell extends PureComponent {
     }
 
     selectPhotoTapped = (id) => {
+        if(IS_ANDROID === true){
+            StorageUtil.mGetItem(StorageKeyNames.CAMERA_CUSTOM, (data) => {
+                if (data.code == 1) {
+                    if(data.result === '0' ){
+                        //使用自定义相机
+                        this.customeCamera(id);
+                    }else if(data.result === '1' || data.result == null){
+                        //使用系统相机
+                        this.systemCamera(id);
+                    }
+                }
+            });
+        }else{
+            this.systemCamera(id);
+        }
+
+
+    };
+
+    systemCamera = (id) => {
         const options = {
             //弹出框选项
             title: '请选择',
@@ -104,7 +127,7 @@ export  default class CarUpImageCell extends PureComponent {
             chooseFromLibraryButtonTitle: '选择相册',
             allowsEditing: true,
             noData: true,
-            quality: 1.0,
+            quality: 0.4,
             maxWidth: 480,
             maxHeight: 800,
             storageOptions: {
@@ -112,20 +135,20 @@ export  default class CarUpImageCell extends PureComponent {
                 path: 'images',
             }
         };
-        ImagePicker.launchCamera(options, (response) => {
-            if (response.didCancel) {
+        ImagePicker.launchCamera(options, (responsesss) => {
+            if (responsesss.didCancel) {
             }
-            else if (response.error) {
+            else if (responsesss.error) {
             }
-            else if (response.customButton) {
+            else if (responsesss.customButton) {
             }
             else {
                 this.props.showModal(true);
 
-                Net.request(response.uri).then(
+                Net.request(responsesss.uri).then(
                     (response)=>{
                         this.props.showModal(false);
-                        this.props.showToast('上传成功');
+                        this._delayShowHint('上传成功');
                         let news =[];
                         let rep = response.mjson;
                         news.push(...this.state.childMovie);
@@ -139,10 +162,16 @@ export  default class CarUpImageCell extends PureComponent {
                         this.setState({
                             childMovie:news,
                         });
+                        if(IS_ANDROID === true){
+                            console.log('file path',responsesss.path);
+                            NativeModules.DmsCustom.deleteImageFile(responsesss.path);
+                        }else{
+
+                        }
                     },
                     (error)=>{
                         this.props.showModal(false);
-                        this.props.showToast('上传失败');
+                        this._delayShowHint('上传失败');
                     });
 
                 // StorageUtil.mGetItem(StorageKeyNames.TOKEN, (data) => {
@@ -180,6 +209,57 @@ export  default class CarUpImageCell extends PureComponent {
                 // });
             }
         });
+    };
+
+    customeCamera = (id)=>{
+        NativeModules.DmsCustom.customCamera(60,
+            (success) => {
+                this.props.showModal(true);
+                Net.request(success.uri).then(
+                    (response)=>{
+                        this.props.showModal(false);
+                        this._delayShowHint('上传成功');
+                        let news =[];
+                        let rep = response.mjson;
+                        news.push(...this.state.childMovie);
+                        news.push({
+                            file_url: rep.retdata[0].file_url,
+                            file_id:rep.retdata[0].file_id
+                        });
+                        this.props.results.push({file_url: rep.retdata[0].file_url,
+                            file_id:rep.retdata[0].file_id,syscodedata_id:this.props.items.syscodedata_id});
+                        this.props.retureSaveAction('1',rep.retdata[0].file_id,rep.retdata[0].file_url);
+                        this.setState({
+                            childMovie:news,
+                        });
+                        if(IS_ANDROID === true){
+                            console.log('file path',success.path);
+                            NativeModules.DmsCustom.deleteImageFile(success.path);
+                        }else{
+
+                        }
+                    },
+                    (error)=>{
+                        this.props.showModal(false);
+                        this._delayShowHint('上传失败');
+                    });
+
+
+            }, (error) => {
+                this.props.showModal(false);
+                this._delayShowHint(error);
+            });
+    };
+
+    _delayShowHint = (hint) => {
+        if(IS_ANDROID === true){
+            this.props.showToast(hint);
+        }else {
+            this.timer = setTimeout(
+                () => { this.props.showToast(hint); },
+                500
+            );
+        }
     };
 
 }

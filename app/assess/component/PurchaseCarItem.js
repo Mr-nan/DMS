@@ -153,7 +153,8 @@ const styles = StyleSheet.create({
         fontSize:Pixel.getFontPixel(12),
         color:FontAndColor.white,
         marginLeft:Pixel.getPixel(11),
-        marginTop:Pixel.getPixel(48)
+        marginTop:Pixel.getPixel(48),
+        backgroundColor:'transparent'
     },
     pgdqWrap:{
         width:Pixel.getPixel(40),

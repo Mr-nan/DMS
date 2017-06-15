@@ -598,6 +598,7 @@ export default class CarInfoScene extends BaseComponent {
             (response) => {
                 this._closePop();
                 this._getData();
+                this.props.navigation.state.params.refreshLastPage();
             },
             (error) => {
                 this._showHint('服务器请求失败，请重新请求');
@@ -776,7 +777,7 @@ const styles = StyleSheet.create({
     },
     content_image_btn: {
         height: Pixel.getPixel(220),
-        width: width - Pixel.getPixel(30)
+        flex:1
     },
     content_blank_bottom: {
         backgroundColor: FontAndColor.white,

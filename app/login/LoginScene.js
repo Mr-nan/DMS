@@ -125,7 +125,7 @@ export default class LoginScene extends BaseComponent {
                     isCheck: true
                 });
             } else {
-                this._showHint('获取验证码失败');
+                this._delayShowHint('获取验证码失败');
             }
         };
 
@@ -211,23 +211,34 @@ export default class LoginScene extends BaseComponent {
                         || rd.retcode == '4620004' || rd.retcode == '-4620003'
                         || rd.retcode == '-4620002') {
                         //需要输入验证码
-                        this._showHint("" + rd.retmsg);
+                        this._delayShowHint("" + rd.retmsg);
                         this._getImageCode(rd.retdata.img_ver_code_key);
                     } else {
                         if (!this.isEmpty(rd.retmsg)) {
-                            this._showHint("" + rd.retmsg);
+                            this._delayShowHint("" + rd.retmsg);
                         } else {
-                            this._showHint("服务器请求失败，请重新请求");
+                            this._delayShowHint("服务器请求失败，请重新请求");
                         }
                     }
                 } else {
-                    this._showHint('网络请求失败1');
+                    this._delayShowHint('网络请求失败1');
                 }
             }
         ).catch((error) => {
             this._closeLoading();
-            this._showHint('网络请求失败2');
+            this._delayShowHint('网络请求失败2');
         });
+    };
+
+    _delayShowHint = (hint) => {
+        if(IS_ANDROID === true){
+            this._showHint(hint);
+        }else {
+            this.timer = setTimeout(
+                () => { this._showHint(hint); },
+                500
+            );
+        }
     };
 
     render() {
