@@ -1168,15 +1168,15 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     type_three_right_input: {
-        width: Pixel.getPixel(210),
+        width: Pixel.getPixel(205),
         textAlign: 'right',
         color: FontAndColor.black,
-        fontSize: Pixel.getFontPixel(14)
+        fontSize: Pixel.getFontPixel(14),
+        marginRight:Pixel.getPixel(5)
     },
     type_three_right_img: {
         height: Pixel.getPixel(30),
-        width: Pixel.getPixel(30),
-        backgroundColor:'red'
+        width: Pixel.getPixel(30)
     },
     type_four_wrap: {
         height: Pixel.getPixel(46),
