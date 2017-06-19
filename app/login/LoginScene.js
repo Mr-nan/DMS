@@ -265,6 +265,7 @@ export default class LoginScene extends BaseComponent {
                             ref={(input) => {
                                 this.pwdInput = input
                             }}
+                            secureTextEntry={true}
                             style={styles.inputContainer}
                             underlineColorAndroid='transparent'
                             placeholder={'密码'}

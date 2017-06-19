@@ -4,7 +4,7 @@
 import React, {Component,PureComponent} from 'react';
 import {
     View,
-    
+
 } from 'react-native';
 
 import MyNavigator  from './component/MyNavigator';
