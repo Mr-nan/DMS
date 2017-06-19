@@ -170,7 +170,7 @@ export default class CollectCarPhoto extends BaseComponent{
 
     _renderItem=(data)=>{
 
-        return <CollectPhhotoSelect
+        return <CollectPhotoSelect
             ref={(photo)=>{this.tempCellBlobs[data.index]=photo}}
             index={data.index}
             addCarClick={this._addImagePiker}
