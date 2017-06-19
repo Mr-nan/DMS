@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {AppRegistry, Text, View, Image, TextInput, StyleSheet, TouchableOpacity,NativeModules,NativeAppEventEmitter,} from 'react-native';
+import {AppRegistry, Text, View, Image, TextInput, StyleSheet, TouchableOpacity,NativeModules,NativeAppEventEmitter,Platform} from 'react-native';
 const login_logs = require('../../images/login_logs.png');
 import BaseComponent from '../component/BaseComponent';
 import {request} from '../utils/RequestUtil';
@@ -12,6 +12,8 @@ import SelectMaskComponent from '../makingInventory/SelectMaskComponent';
 import ImagePicker from "react-native-image-picker";
 import StorageUtil from '../utils/StorageUtil';
 import * as StorageKeyNames from '../constant/storageKeyNames';
+import * as Net from '../utils/UpLoadFileUtil';
+const IS_ANDROID = Platform.OS === 'android';
 let allSouce = [];
 let imageData;
 let files;
@@ -299,36 +301,79 @@ export  default class CarCheckWarning extends BaseComponent {
     }
 
     takePhoto = () => {
-        ImagePicker.launchCamera(options, (response) => {
-            if (response.didCancel) {
+        if(IS_ANDROID === true){
+            StorageUtil.mGetItem(StorageKeyNames.CAMERA_CUSTOM, (data) => {
+                if (data.code == 1) {
+                    if(data.result === '0' ){
+                        //使用自定义相机
+                        this.customeCamera();
+                    }else if(data.result === '1' || data.result == null){
+                        //使用系统相机
+                        this.systemCamera();
+                    }
+                }
+            });
+        }else{
+            this.systemCamera();
+        }
+    }
+
+    systemCamera = () =>{
+        ImagePicker.launchCamera(options, (responsesss) => {
+            if (responsesss.didCancel) {
             }
-            else if (response.error) {
+            else if (responsesss.error) {
             }
-            else if (response.customButton) {
+            else if (responsesss.customButton) {
             }
             else {
-                console.log('take camera', response);
-                StorageUtil.mGetItem(StorageKeyNames.TOKEN, (data) => {
-                    if (data.code == 1) {
-                        let token = data.result;
+                Net.request(responsesss.uri).then(
+                    (response)=>{
+                        this.props.screenProps.showToast('上传成功');
+                        this.setState({
+                            imageSource: {uri: response.mjson.retdata[0].file_url}
+                        });
 
-                        NativeModules.DmsCustom.uploadFile(Urls.FILEUPLOAD,token,response.path,
-                            (rep)=>{console.log('success',JSON.parse(rep).retdata)
-                                imageData=JSON.parse(rep).retdata[0];
-                                console.log(imageData);
-                                if(JSON.parse(rep).retcode!=='1'){
-                                    this.setState({
-                                        imageSource: {uri: imageData.file_url}
-                                    });
-                                }
-                            },(error)=>{console.log(error)});
-                    }
-                });
+                        if(IS_ANDROID === true){
+                            console.log('file path',responsesss.path);
+                            NativeModules.DmsCustom.deleteImageFile(responsesss.path);
+                        }else{
 
-
+                        }
+                    },
+                    (error)=>{
+                        this.props.screenProps.showToast('上传失败');
+                    });
             }
         });
     }
+    customeCamera = () =>{
+        NativeModules.DmsCustom.customCamera(40,
+            (success) => {
+                Net.request(success.uri).then(
+                    (response)=>{
+                        this.props.screenProps.showToast('上传成功');
+                        this.setState({
+                            imageSource: {uri: response.mjson.retdata[0].file_url}
+                        });
+
+                        if(IS_ANDROID === true){
+                            console.log('file path',success.path);
+                            NativeModules.DmsCustom.deleteImageFile(success.path);
+                        }else{
+
+                        }
+                    },
+                    (error)=>{
+                        this.props.screenProps.showToast('上传失败');
+                    });
+
+
+            }, (error) => {
+                this.props.screenProps.showToast(error);
+            });
+    }
+
     save = () => {
         console.log('-----------'+this.state.warningExplain+'--------'+valueText);
         if(this.state.warningExplain==''){
