@@ -57,7 +57,7 @@ export default class AddCarNumberScene extends BaseComponent {
     }
 
     initFinish = () => {
-        SQLite.createTable();
+        // SQLite.createTable();
     };
 
     componentWillUnmount(){

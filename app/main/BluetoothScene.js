@@ -42,8 +42,8 @@ export default class BluetoothScene extends BaseComponent {
         NativeAppEventEmitter
             .addListener('onBleConnection', this._onBleConnection);
 
-        NativeAppEventEmitter
-            .addListener('onReadData', this.props.navigation.state.params.onReadData);
+        // NativeAppEventEmitter
+        //     .addListener('onReadData', this.props.navigation.state.params.onReadData);
 
         NativeModules.DmsCustom.isConnection((rep) => {
             if (typeof(rep.suc) !== 'undefined' && rep.suc != null) {
@@ -93,24 +93,30 @@ export default class BluetoothScene extends BaseComponent {
             if (data.can == '1') {
                 NativeModules.DmsCustom.scanSound(1);
                 NativeModules.DmsCustom.stopFind();
+                this.allSource = [];
                 this.setState({
+                    dataSource: this.ds.cloneWithRows(this.allSource),
                     deviceName: this.deviceN,
                     scan: '搜索设备'
                 });
-                this.props.navigation.state.params.onBlueConnection();
+                if(this.props.navigation.state.params.onBlueConnection){
+                    this.props.navigation.state.params.onBlueConnection();
+                }
             } else {
                 NativeModules.DmsCustom.scanSound(0);
                 console.log('连接失败');
             }
         }else{
+            this.allSource = [];
             this.setState({
+                dataSource: this.ds.cloneWithRows(this.allSource),
                 deviceName: this.deviceN,
                 scan: '搜索设备'
             });
-            this.props.navigation.state.params.onBlueConnection();
+            if(this.props.navigation.state.params.onBlueConnection){
+                this.props.navigation.state.params.onBlueConnection();
+            }
         }
-
-
     };
 
     _startConnection = (item) => {

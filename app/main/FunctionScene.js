@@ -25,6 +25,8 @@ const {width} = Dimensions.get('window');
 
 import * as Net from '../utils/RequestUtil';
 import * as appUrls from '../constant/appUrls';
+import SQLiteUtil from '../utils/SQLiteUtil';
+const SQLite = new SQLiteUtil();
 
 const clpg = require('../../images/clpg.png');
 const clrk = require('../../images/clrk.png');
@@ -45,6 +47,7 @@ export default class FunctionScene extends BaseComponent {
     }
 
     initFinish = () => {
+        SQLite.createTable();
         StorageUtil.mGetItem(StorageKeyNames.USER_FUNCTION, (data) => {
             if (data.code == 1) {
                 let func = JSON.parse(data.result);
@@ -57,9 +60,9 @@ export default class FunctionScene extends BaseComponent {
                 if (func.check_car == '1') {
                     this.funcs.push('盘库');
                 }
-                if (func.vehicle_storage == '1') {
-                    this.funcs.push('车辆建档');
-                }
+                // if (func.vehicle_storage == '1') {
+                //     this.funcs.push('车辆建档');
+                // }
                 if (func.patrol_report == '1') {
                     this.funcs.push('巡查报告');
                 }
@@ -83,8 +86,6 @@ export default class FunctionScene extends BaseComponent {
     _itemClick = (type) => {
         switch (type) {
             case 1:
-                //NativeModules.DmsCustom.scanSound(1);
-                // NativeModules.DmsCustom.qrScan((success)=>{console.log('success',success)},(error)=>{console.log('error',error)});
                 this.toNextPage('AssessCustomerScene', {});
                 break;
             case 2:
