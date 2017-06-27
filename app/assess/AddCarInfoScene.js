@@ -1138,7 +1138,7 @@ const styles = StyleSheet.create({
     type_two_right_input: {
         width: Pixel.getPixel(240),
         marginRight: Pixel.getPixel(15),
-        textAlign: 'right',
+        textAlign: IS_ANDROID ? 'left' :'right',
         color: FontAndColor.black,
         fontSize: Pixel.getFontPixel(14)
     },
@@ -1169,7 +1169,7 @@ const styles = StyleSheet.create({
     },
     type_three_right_input: {
         width: Pixel.getPixel(205),
-        textAlign: 'right',
+        textAlign: IS_ANDROID ? 'left' :'right',
         color: FontAndColor.black,
         fontSize: Pixel.getFontPixel(14),
         marginRight:Pixel.getPixel(5)
@@ -1197,10 +1197,10 @@ const styles = StyleSheet.create({
         fontSize: Pixel.getFontPixel(14)
     },
     type_four_right_value: {
-        width: Pixel.getPixel(240),
+        width: Pixel.getPixel(210),
         color: FontAndColor.black,
         fontSize: Pixel.getFontPixel(14),
-        textAlign: 'right'
+        textAlign: IS_ANDROID ? 'left' :'right'
     },
     type_four_right_img: {
         width: Pixel.getPixel(35),

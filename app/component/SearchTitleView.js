@@ -1,7 +1,7 @@
 /**
  * Created by Administrator on 2017/5/15.
  */
-import React from 'react';
+import React,{Component} from 'react';
 import {
     View,
     Image,
@@ -16,7 +16,7 @@ const Pixel = new PixelUtil();
 import * as FontAndColor from '../constant/fontAndColor';
 const {width} = Dimensions.get('window');
 
-export default class SearchTitleView extends View{
+export default class SearchTitleView extends Component{
 
     constructor(props){
         super(props);
