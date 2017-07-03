@@ -10,6 +10,7 @@ import{
     StyleSheet,
     Dimensions,
     FlatList,
+    Platform,
     NativeModules,
     NativeAppEventEmitter
 } from 'react-native';
@@ -35,14 +36,15 @@ const sc = require('../../images/sc.png');
 const xcbg = require('../../images/xcbg.png');
 const obd_jg = require('../../images/obd_jg.png');
 
+const IS_ANDROID = Platform.OS === 'android';
 
 export default class FunctionScene extends BaseComponent {
 
     constructor(props) {
         super(props);
         this.funcs = [];
-        this.state={
-            funcs:[]
+        this.state = {
+            funcs: []
         };
     }
 
@@ -66,20 +68,20 @@ export default class FunctionScene extends BaseComponent {
                 if (func.patrol_report == '1') {
                     this.funcs.push('巡查报告');
                 }
-                if (func.auto_assess == '1') {
+                if (func.close_the_car == '1') {
                     this.funcs.push('OBD监管');
                 }
                 this.setState({
-                    funcs:this.funcs
+                    funcs: this.funcs
                 })
             }
         });
 
-        Net.request(appUrls.AUTOGETVIEWINGPOSITION,'post',{}).then(
-            (response)=>{
+        Net.request(appUrls.AUTOGETVIEWINGPOSITION, 'post', {}).then(
+            (response) => {
                 StorageUtil.mSetItem(StorageKeyNames.TAG_VIEW, JSON.stringify(response.mjson.retdata));
             },
-            (error)=>{
+            (error) => {
             });
     };
 
@@ -89,7 +91,7 @@ export default class FunctionScene extends BaseComponent {
                 this.toNextPage('AssessCustomerScene', {});
                 break;
             case 2:
-                this.toNextPage('CustomerList',{});
+                this.toNextPage('CustomerList', {});
                 break;
             case 3:
                 this.toNextPage('CarCheckCustomer', {});
@@ -97,7 +99,7 @@ export default class FunctionScene extends BaseComponent {
             case 4:
                 break;
             case 5:
-                this.toNextPage('ReportCustomerList',{})
+                this.toNextPage('ReportCustomerList', {})
                 break;
             case 6:
                 this.toNextPage('ObdCustom', {});
@@ -158,9 +160,15 @@ export default class FunctionScene extends BaseComponent {
                         horizontal={false}
                     />
                 </View>
-                <AllNavigationView title={'第1车贷'} backIconClick={() => {
-                    this.backPage();
-                }} parentNavigation={this}/>
+                {
+                    IS_ANDROID
+                        ?
+                        <AllNavigationView title={'第1车贷'} backIconClick={() => {
+                        this.backPage();
+                    }} parentNavigation={this}/>
+                        :
+                        <AllNavigationView title={'第1车贷'} parentNavigation={this}/>
+                }
             </View>
         )
     }

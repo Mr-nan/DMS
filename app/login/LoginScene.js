@@ -297,6 +297,9 @@ export default class LoginScene extends BaseComponent {
                         </TouchableOpacity>
                     </View>
                 </View>
+                <View style={styles.versionWrap}>
+                    <Text style={styles.versionText}>v 1.0-新</Text>
+                </View>
                 <AllNavigationView title={'第1车贷'}/>
             </View>
         )
@@ -369,6 +372,18 @@ const styles = StyleSheet.create({
         fontSize: Pixel.getFontPixel(20),
         color: fontAndColor.white,
         fontWeight: 'bold'
+    },
+    versionWrap:{
+        position:'absolute',
+        width:width,
+        alignItems:'center',
+        left:0,
+        bottom:0
+    },
+    versionText:{
+        color:fontAndColor.all_blue,
+        fontSize:Pixel.getFontPixel(14),
+        marginBottom:Pixel.getPixel(20)
     }
 });
 
