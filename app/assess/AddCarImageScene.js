@@ -304,7 +304,9 @@ export default class CarUpImageScene extends BaseComponent {
                         maps.transfer_count = transfer_count;
 
                         let viewing_position = '';
+
                         if (this._isEmpty(carD.viewing_position) === false) {
+                            console.log('=========...',carD.viewing_position);
                             let vp = JSON.parse(carD.viewing_position);
                             vp.map((m) => {
                                 viewing_position += (m.syscodedata_id + ',');
@@ -588,7 +590,7 @@ export default class CarUpImageScene extends BaseComponent {
     };
 
     _isEmpty = (str) => {
-        if (typeof(str) !== 'undefined' && str !== '') {
+        if (typeof(str) !== 'undefined' && str !== '' && str !== "\"\"") {
             return false;
         } else {
             return true;
