@@ -417,22 +417,22 @@ export default class CarInfoScene extends BaseComponent {
     _delayShowHint = (error) => {
         if (error.mycode === -300 || error.mycode === -500) {
             if (IS_ANDROID === true) {
-                this.props.showHint('网络请求失败');
+                this.props.screenProps.showToast('网络请求失败');
             } else {
                 this.timer = setTimeout(
                     () => {
-                        this.props.showHint('网络请求失败');
+                        this.props.screenProps.showToast('网络请求失败');
                     },
                     400
                 );
             }
         } else {
             if (IS_ANDROID === true) {
-                this.props.showHint(error.mjson.retmsg);
+                this.props.screenProps.showToast(error.mjson.retmsg);
             } else {
                 this.timer = setTimeout(
                     () => {
-                        this.props.showHint(error.mjson.retmsg);
+                        this.props.screenProps.showToast(error.mjson.retmsg);
                     },
                     400
                 );

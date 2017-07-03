@@ -223,6 +223,7 @@ export default class CarUpImageScene extends BaseComponent {
     };
 
     _requestData = () => {
+        this._showLoading();
         let maps = {
             merge_id: this.merge_id,
             payment_id: this.payment_id
@@ -436,6 +437,8 @@ export default class CarUpImageScene extends BaseComponent {
                         //本地无法取到数据
                         this.showToast('数据丢失，请重新录入');
                     }
+                }else{
+                    this._closeLoading();
                 }
             });
     };
