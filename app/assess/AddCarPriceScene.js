@@ -485,7 +485,7 @@ export default class AddCarPriceScene extends BaseComponent {
                                     <Text>一般</Text>
                                 </RadioButton>
                                 <RadioButton value='3'>
-                                    <Text>良好</Text>
+                                    <Text>较差</Text>
                                 </RadioButton>
                             </RadioGroup>
                     }

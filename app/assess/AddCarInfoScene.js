@@ -688,10 +688,14 @@ export default class AddCarInfoScene extends BaseComponent {
 
         if (data.type === 1) {
             let rtv = data.value;
+            let blackStyle = false;
             if (data.title === '车型') {
                 if (data.value === '') {
-                    rtv = '请选择车型'
+                    rtv = '请选择车型';
+                    blackStyle = true;
                 }
+            }else{
+                blackStyle = true;
             }
             return (
                 <TouchableOpacity key={index} style={styles.type_one_wrap}
@@ -703,7 +707,13 @@ export default class AddCarInfoScene extends BaseComponent {
                     <Text style={styles.type_one_star_mark}>*</Text>
                     <Text style={styles.type_one_left_title}>{data.title}</Text>
                     <View style={styles.fillSpace}/>
-                    <Text style={styles.type_one_right_value}>{rtv}</Text>
+                    {
+                        blackStyle
+                            ?
+                            <Text style={styles.type_one_right_value}>{rtv}</Text>
+                            :
+                            <Text style={styles.type_one_right_value2}>{rtv}</Text>
+                    }
                 </TouchableOpacity>
             )
         } else if (data.type === 2) {
@@ -715,7 +725,7 @@ export default class AddCarInfoScene extends BaseComponent {
                 keyboardType = 'numeric';
             } else if (data.title === '排量'
                 || data.title === '过户次数') {
-                keyboardType = 'numeric';
+                keyboardType = 'ascii-capable';
             }
             return (
                 <View key={index} style={styles.type_two_wrap}>
@@ -1115,6 +1125,13 @@ const styles = StyleSheet.create({
         textAlign: 'right',
         marginRight: Pixel.getPixel(15),
         color: FontAndColor.txt_gray,
+        fontSize: Pixel.getFontPixel(14),
+    },
+    type_one_right_value2: {
+        width: Pixel.getPixel(240),
+        textAlign: 'right',
+        marginRight: Pixel.getPixel(15),
+        color: FontAndColor.black,
         fontSize: Pixel.getFontPixel(14),
     },
     type_two_wrap: {
