@@ -13,7 +13,7 @@
 #import "IDCardCameraViewController.h"
 #import "AppDelegate.h"
 #import "BLERFID.h"
-
+#import <AVFoundation/AVFoundation.h>
 
 
 static const NSString *blueKey =@"blue";
@@ -29,6 +29,9 @@ static const NSString *bluesToos=@"blueToos";
 @property(nonatomic,strong)CBPeripheral *temp;
 @property(nonatomic,strong)CBPeripheral *currentPer;
 @property(nonatomic,strong)RCTResponseSenderBlock tempcallback;
+@property(nonatomic,strong)AVAudioPlayer *sucavAudioPlayer;
+@property(nonatomic,strong)AVAudioPlayer *failAudioPlayer;
+
 
 @property(nonatomic,assign)CBManagerState tempstate;
 @end
@@ -40,6 +43,17 @@ static const NSString *bluesToos=@"blueToos";
 RCT_EXPORT_MODULE();
 
 
+
+RCT_EXPORT_METHOD(scanSound:(int)type){
+  
+  if (type==1) {
+    [self.sucavAudioPlayer play];
+    
+  }else {
+    
+    [self.failAudioPlayer play];
+  }
+}
 //初始化蓝牙
 RCT_EXPORT_METHOD(startBluetooth){
   
@@ -57,6 +71,8 @@ RCT_EXPORT_METHOD(startBluetooth){
     [blue setObject:blues forKey:blueKey];
     
   }
+  [self sucavAudioPlayer];
+  [self failAudioPlayer];
   self.fild=blues;
   self.fils=[[NSMutableDictionary alloc]init];
 
@@ -224,7 +240,41 @@ RCT_EXPORT_METHOD(scanID:(RCTResponseSenderBlock)callback){
   });
 }
 
-
+-(AVAudioPlayer *)sucavAudioPlayer{
+  
+  if (!_sucavAudioPlayer) {
+    
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"success" ofType:@"mp3"];
+    NSURL *url = [NSURL fileURLWithPath:path];
+    _sucavAudioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:nil];
+    
+    _sucavAudioPlayer.volume = 1;
+    
+    _sucavAudioPlayer.numberOfLoops = 0;
+    
+    [_sucavAudioPlayer prepareToPlay];
+  }
+  
+  return _sucavAudioPlayer;
+  
+}
+-(AVAudioPlayer*)failAudioPlayer{
+  
+  if (!_failAudioPlayer) {
+    
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"errorvl" ofType:@"mp3"];
+    NSURL *url = [NSURL fileURLWithPath:path];
+    _failAudioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:nil];
+    
+    _failAudioPlayer.volume = 1;
+    
+    _failAudioPlayer.numberOfLoops = 0;
+    
+    [_failAudioPlayer prepareToPlay];
+  }
+  
+  return _failAudioPlayer;
+}
 
 
 @end
