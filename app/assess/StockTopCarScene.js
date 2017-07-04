@@ -43,7 +43,7 @@ export default class StockTopCarScene extends BaseComponent{
         this.state= {
             loading: false,
             dataSource: this.ds.cloneWithRows(this.allSource),
-            waitPrice:'库容待评估车辆金额：',
+            waitPrice:'库融待评估车辆金额：',
             isFirst:true
         };
     }
@@ -122,7 +122,7 @@ export default class StockTopCarScene extends BaseComponent{
                     this.setState({
                         dataSource:this.ds.cloneWithRows(this.allSource),
                         loading:false,
-                        waitPrice:'库容待评估车辆金额：' + rep.wait_mny_str,
+                        waitPrice:'库融待评估车辆金额：' + rep.wait_mny_str,
                         isFirst:false
                     });
                 }

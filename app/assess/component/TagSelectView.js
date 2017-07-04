@@ -55,6 +55,41 @@ export default class TagSelectView extends Component {
 
     }
 
+    componentWillReceiveProps(nextProps){
+        const {cellData} = nextProps;
+
+        let viewItems = null;
+
+        if(this.props.onTagClick){
+            viewItems =  cellData.map((dt, index) => {
+                return (
+                    <TouchableOpacity key={index} activeOpacity={1} onPress={() => {
+                        this.props.onTagClick(dt, index);
+                    }}>
+                        <View key={index}
+                              style={dt.check ? styles.tag_select_Wrap : styles.tag_default_Wrap}>
+                            <Text
+                                style={dt.check ? styles.tag_select_text : styles.tag_default_text}>{dt.name}</Text>
+                        </View>
+                    </TouchableOpacity>
+                )
+            })
+        }else {
+            viewItems = cellData.map((dt, index) => {
+                return (
+                    <View key={index} style={dt.check ? styles.tag_select_Wrap : styles.tag_default_Wrap}>
+                        <Text
+                            style={dt.check ? styles.tag_select_text : styles.tag_default_text}>{dt.name}</Text>
+                    </View>
+                )
+            })
+        }
+
+        this.setState({
+            cellData:viewItems
+        });
+    }
+
     refreshData = (cellData)=>{
 
         let viewItems =  cellData.map((dt, index) => {
