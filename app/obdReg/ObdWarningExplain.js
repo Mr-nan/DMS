@@ -14,6 +14,7 @@ import StorageUtil from '../utils/StorageUtil';
 import * as StorageKeyNames from '../constant/storageKeyNames';
 const IS_ANDROID = Platform.OS === 'android';
 let imageData;
+let file_id='';
 
 const options = {
     //弹出框选项
@@ -54,7 +55,7 @@ export  default class ObdWarningExplain extends BaseComponent {
                     <Text style={{marginRight: 3, marginLeft:10, color:'black'}}>异常说明:</Text>
                     <TextInput
                         multiline={true}
-                        style={{flex:1, flexWrap: 'wrap', height:this.state.height}}
+                        style={{flex:1, flexWrap: 'wrap', height:this.state.height, paddingVertical:Pixel.getPixel(5)}}
                         placeholder={'请输入异常类说明'}
                         onContentSizeChange={this.onContentSizeChange.bind(this)}
                         underlineColorAndroid={"#00000000"}
@@ -122,6 +123,7 @@ export  default class ObdWarningExplain extends BaseComponent {
                         this.setState({
                             imageSource: {uri: response.mjson.retdata[0].file_url}
                         });
+                        file_id=response.mjson.retdata[0].file_id;
 
                         if(IS_ANDROID === true){
                             console.log('file path',responsesss.path);
@@ -145,7 +147,7 @@ export  default class ObdWarningExplain extends BaseComponent {
                         this.setState({
                             imageSource: {uri: response.mjson.retdata[0].file_url}
                         });
-
+                        file_id=response.mjson.retdata[0].file_id;
                         if(IS_ANDROID === true){
                             console.log('file path',success.path);
                             NativeModules.DmsCustom.deleteImageFile(success.path);
@@ -169,10 +171,14 @@ export  default class ObdWarningExplain extends BaseComponent {
     save = () => {
         if(this.state.text==''){
             this.props.screenProps.showToast('请输入异常类说明！');
+            return;
+        }else if(file_id==''){
+            this.props.screenProps.showToast('请上传车辆照片！');
+            return;
         }
             let maps = {
                 alarm_explain: this.state.text,
-                alarm_explain_img_id: imageData.file_id,
+                alarm_explain_img_id: file_id,
                 warn_record_id: this.props.navigation.state.params.warn_record_id,
             };
             request(Urls.ALARM_EXPLAIN, 'Post', maps)

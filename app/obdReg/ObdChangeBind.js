@@ -25,7 +25,7 @@ import ImagePicker from "react-native-image-picker";
 import StorageUtil from '../utils/StorageUtil';
 import * as StorageKeyNames from '../constant/storageKeyNames';
 const IS_ANDROID = Platform.OS === 'android';
-let imageData;
+let file_id='';
 let files;
 let that=null;
 const options = {
@@ -204,14 +204,13 @@ export  default class ObdChangeBind extends BaseComponent {
         if (this.state.scanLabel == '请扫描标签') {
             this.props.screenProps.showToast('请扫描标签！');
             return;
-        }
-        if(imageData==null){
+        } else if(file_id==''){
             this.props.screenProps.showToast('请拍照！');
             return;
         }
 
         files = {
-            file_id: imageData.file_id,
+            file_id: file_id,
             syscodedata_id: 'reqfile1'
         }
         let maps = {
@@ -272,6 +271,7 @@ export  default class ObdChangeBind extends BaseComponent {
                         this.setState({
                             imageSource: {uri: response.mjson.retdata[0].file_url}
                         });
+                        file_id=response.mjson.retdata[0].file_id;
 
                         if(IS_ANDROID === true){
                             console.log('file path',responsesss.path);
@@ -295,7 +295,7 @@ export  default class ObdChangeBind extends BaseComponent {
                         this.setState({
                             imageSource: {uri: response.mjson.retdata[0].file_url}
                         });
-
+                        file_id=response.mjson.retdata[0].file_id;
                         if(IS_ANDROID === true){
                             console.log('file path',success.path);
                             NativeModules.DmsCustom.deleteImageFile(success.path);
@@ -324,15 +324,19 @@ export  default class ObdChangeBind extends BaseComponent {
 
             this.toNextPage('BluetoothScene',{onReadData:this.onReadData})
         } else {
-            NativeModules.DmsCustom.qrScan((success) => {
-                console.log('success', success)
-                this.setState({
-                    scanObdText: success.scan_result
-                });
 
-            }, (error) => {
-                console.log('error', error)
-            });
+            NativeModules.DmsCustom.qrScan((rep) => {
+
+                console.log('scan result', rep);
+                if(typeof(rep.suc) === 'undefined' || rep.suc === null){
+                    this._showHint('扫描失败');
+                }else{
+                    this.setState({
+                        scanObdText: rep.suc.scan_result
+                    });
+                }
+            })
+
         }
     }
 }
