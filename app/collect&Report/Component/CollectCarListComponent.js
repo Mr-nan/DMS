@@ -102,7 +102,7 @@ class CollectTitle extends  PureComponent{
             <View style={styles.titleWarp}>
                 <Text style={styles.textleft}>{title}</Text>
                 <TouchableOpacity style={styles.textinptuWarp} onPress={onPress}>
-                    <TextInput ref={(ti)=>{this.input=ti}} editable={false} style={[styles.textRight,styles.tintput]} placeholder={placeholder} defaultValue={value}/>
+                    <TextInput underlineColorAndroid={'transparent'} ref={(ti)=>{this.input=ti}} editable={false} style={[styles.textRight,styles.tintput]} placeholder={placeholder} defaultValue={value}/>
                 </TouchableOpacity>
             </View>
         )

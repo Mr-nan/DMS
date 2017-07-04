@@ -395,6 +395,8 @@ const repStyles=StyleSheet.create({
         marginLeft:adapeSize(10),
         marginTop:adapeSize(10),
         marginBottom:adapeSize(5),
+        height:adapeSize(30),
+        alignItems:'center'
     },
     rateinputstyle:{
         borderColor:PAGECOLOR.esc_button,

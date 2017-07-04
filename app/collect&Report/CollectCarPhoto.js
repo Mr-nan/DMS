@@ -50,7 +50,6 @@ export default class CollectCarPhoto extends BaseComponent{
             {title: '车辆权属声明', key: 'sm', default: []},
             {title: '保单', key: 'bd', default: []},
             {title: '预审单', key: 'ysd', default: []},
-            {title: '行驶证', key: 'xsz', default: []},
             {title: '委托书', key: 'wts', default: []},
             {title: '买卖合同', key: 'ht', default: []},
             {title: '其他', key: 'other', default: []}]
