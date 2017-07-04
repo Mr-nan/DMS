@@ -34,7 +34,7 @@ export default class SelectMaskComponent extends BaseComponent {
 
             <View style={styles.container}>
                 <ListView
-                    contentContainerStyle={{marginTop:Pixel.getFontPixel(48)}}
+                    contentContainerStyle={{marginTop: Pixel.getTitlePixel(78),}}
                     dataSource={this.state.dataSource}
                     renderRow={this._renderRow}
                 />

@@ -204,7 +204,7 @@ export  default class CarCheckWarning extends BaseComponent {
                     <Text style={{marginRight: 3, marginLeft:10, color:'black'}}>异常说明：</Text>
                     <TextInput
                         multiline={true}
-                        style={{flex:1, flexWrap: 'wrap', height:this.state.height,textAlign: 'right',marginRight:10}}
+                        style={{flex:1, flexWrap: 'wrap', height:Pixel.getPixel(68),textAlign: 'right',marginRight:10}}
                         onContentSizeChange={this.onContentSizeChange.bind(this)}
                         underlineColorAndroid={"#00000000"}
                         onChangeText={(text) => this.setState({text})}
