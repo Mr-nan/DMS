@@ -427,7 +427,7 @@ const styles=StyleSheet.create({
     textRight:{
 
         textAlign:'right',
-
+        padding:0,
     },
 
     tintput:{
