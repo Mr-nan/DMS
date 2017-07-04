@@ -199,8 +199,23 @@ class CollectTitle extends  PureComponent{
 class CollectOBDRFID extends PureComponent{
 
 
+    // 构造
+      constructor(props) {
+        super(props);
+        // 初始状态
+        this.state = {
+
+            editAble:false
+        };
+      }
     componentDidMount() {
-        this.bq.setSelected(true)
+
+        const {selectType}=this.props;
+        if(selectType==1){
+            this._setStateScan()
+        }else {
+           this._setStateMark();
+        }
     }
     _setTitle=(title)=>{
 
@@ -208,43 +223,59 @@ class CollectOBDRFID extends PureComponent{
             text:title
         })
     }
-    _bqClick=()=>{
+    _setStateMark =()=>{
 
-       const {markScan}=this.props;
-       this.bq.setSelected(true);
-       this.obd.setSelected(false);
-       this.input.setNativeProps({
-           placeholder:'请扫描标签',
-           text:''
-       })
-        markScan();
+        const {rfid,obdNumber}=this.props;
+
+        this.bq.setSelected(true);
+        this.obd.setSelected(false);
+        this.input.setNativeProps({
+            placeholder:'请扫描标签',
+            text:rfid
+        })
+            this.setState({
+                editAble:true
+            })
+
+
     }
-    _obdClick=()=>{
-        const {OBDScan}=this.props;
+    _setStateScan=()=>{
+        const {rfid,obdNumber}=this.props
         this.bq.setSelected(false);
         this.obd.setSelected(true);
         this.input.setNativeProps({
             placeholder:'请扫描OBD',
-            text:''
+            text:obdNumber,
         })
-        OBDScan();
+
+        this.setState({
+                editAble:false
+            })
     }
 
+    _bqClick=()=>{
+       const {markScan}=this.props;
+       this._setStateMark();
+       markScan();
+    }
+    _obdClick=()=>{
+        const {OBDScan}=this.props;
+        this._setStateScan();
+        OBDScan();
+    }
     render(){
-
         return(
             <View style={styles.selectStyle}>
 
                 <RfIdButton ref={(biaoqian)=>{this.bq=biaoqian}} onPress={this._bqClick} title={'扫描标签'}/>
                 <RfIdButton ref={(obd)=>{this.obd=obd}}  onPress={this._obdClick} title={'扫描OBD'}/>
-                <TextInput ref={(ip)=>{this.input=ip}} editable={false} style={[styles.tintput,{height:adapeSize(40),marginTop:adapeSize(3),textAlign:'right'}]}  placeholder={'请选择'}/>
+                <TextInput ref={(ip)=>{this.input=ip}} editable={this.state.editAble} style={[styles.tintput,{height:adapeSize(40),marginTop:adapeSize(3),textAlign:'right'}]}  placeholder={'请选择'}/>
 
             </View>
         )
     }
 
 }
-
 class CollectNestTep extends PureComponent{
 
     render(){

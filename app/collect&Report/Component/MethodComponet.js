@@ -50,7 +50,7 @@ const changeToMillion=(number)=>{
 }
 const addition=(number,additonNum)=>{
 
-    return number==0?'0':Number.parseFloat(number/additonNum).toString()
+    return number=='0'?'0':Number.parseFloat(number/additonNum).toString()
 }
 const dateFormat = (date,fmt) => {
     let o = {

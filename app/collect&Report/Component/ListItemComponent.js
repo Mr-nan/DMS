@@ -41,8 +41,8 @@ class CollectCarListItem extends PureComponent{
 
     _onclick=()=>{
 
-        const {carListItemClick,carFrameNumber}=this.props;
-        carListItemClick(carFrameNumber);
+        const {carListItemClick,carFrameNumber,type,base_id,carid}=this.props;
+        carListItemClick(carFrameNumber,base_id,carid,type);
     }
 
     render(){

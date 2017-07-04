@@ -68,10 +68,10 @@ export  default class CustomerItemCarList extends BaseComponent{
         pageControl.tempSearchValue=tempvalue
     }
 
-    _carItemClick=(carFrameNumber)=>{
+    _carItemClick=(carFrameNumber,base_id,carid,type)=>{
 
 
-        this.toNextPage('CollectCarInfo',{carFrameNumber:carFrameNumber})
+        this.toNextPage('CollectCarInfo',{carFrameNumber:carFrameNumber,baseID:base_id,carId:carid,type:type})
 
     }
     _onEndReached=()=>{
@@ -122,6 +122,7 @@ export  default class CustomerItemCarList extends BaseComponent{
                 place={'监管地 : '+data.item.storge}
                 base_id={data.item.base_id}
                 type={data.item.type}
+                carid={data.item.carid}
                 carListItemClick={this._carItemClick}
             />
         )
