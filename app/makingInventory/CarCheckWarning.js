@@ -15,7 +15,7 @@ import * as StorageKeyNames from '../constant/storageKeyNames';
 import * as Net from '../utils/UpLoadFileUtil';
 const IS_ANDROID = Platform.OS === 'android';
 let allSouce = [];
-let imageData;
+let file_id='';
 let files;
 let vin, chkno, model, brand, address, status;
 let valueText='标签损坏';
@@ -121,7 +121,7 @@ export  default class CarCheckWarning extends BaseComponent {
         //     map.put("rfid_img_id", "" + fileid);
         // }
         if(valueText=='标签损坏'){
-            if(imageData==null){
+            if(file_id==''){
                 this.props.screenProps.showToast('请拍照！');
                 return;
             }
@@ -130,7 +130,7 @@ export  default class CarCheckWarning extends BaseComponent {
                 chkno: chkno,
                 excecode: excecode,
                 newrfid: this.state.scanObdText,
-                rfid_img_id: imageData.file_id,
+                rfid_img_id: file_id,
                 execinfo: this.state.warningExplain,
             };
         }else{
@@ -272,15 +272,17 @@ export  default class CarCheckWarning extends BaseComponent {
         if(this.state.labelText=='扫描标签'){
             this.toNextPage('BluetoothScene',{onReadData:this.onReadData})
         }else {
-            NativeModules.DmsCustom.qrScan((success) => {
-                console.log('success', success)
-                this.setState({
-                    scanObdText: success.scan_result
-                });
+            NativeModules.DmsCustom.qrScan((rep) => {
 
-            }, (error) => {
-                console.log('error', error)
-            });
+                console.log('scan result', rep);
+                if(typeof(rep.suc) === 'undefined' || rep.suc === null){
+                    this._showHint('扫描失败');
+                }else{
+                    this.setState({
+                        scanObdText: rep.suc.scan_result
+                    });
+                }
+            })
         }
     }
 
@@ -333,7 +335,7 @@ export  default class CarCheckWarning extends BaseComponent {
                         this.setState({
                             imageSource: {uri: response.mjson.retdata[0].file_url}
                         });
-
+                        file_id=response.mjson.retdata[0].file_id;
                         if(IS_ANDROID === true){
                             console.log('file path',responsesss.path);
                             NativeModules.DmsCustom.deleteImageFile(responsesss.path);
@@ -356,7 +358,7 @@ export  default class CarCheckWarning extends BaseComponent {
                         this.setState({
                             imageSource: {uri: response.mjson.retdata[0].file_url}
                         });
-
+                        file_id=response.mjson.retdata[0].file_id;
                         if(IS_ANDROID === true){
                             console.log('file path',success.path);
                             NativeModules.DmsCustom.deleteImageFile(success.path);

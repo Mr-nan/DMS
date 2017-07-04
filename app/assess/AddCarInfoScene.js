@@ -365,6 +365,7 @@ export default class AddCarInfoScene extends BaseComponent {
                         if (this.json !== '') {
                             //后台有数据
                             let carD = (JSON.parse(this.json)).retdata;
+                            carD.transfer_count = '';
                             SQLite.selectData('select * from newcar where frame_number = ?',
                                 [this.number],
                                 (sqlDt) => {

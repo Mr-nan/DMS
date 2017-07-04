@@ -305,7 +305,9 @@ export default class CarInfoScene extends BaseComponent {
             || carInfo.viewing_position === null) {
 
         } else {
-
+            this.tagViews.map((tag)=>{
+                tag.check = false;
+            });
             this.tagViews.map((tag) => {
                 carInfo.viewing_position.map((inner) => {
                     if (tag.syscodedata_id === inner.syscodedata_id) {

@@ -10,7 +10,9 @@ import {
     TextInput,
     Text,
     Platform,
-    TouchableOpacity
+    PermissionsAndroid,
+    TouchableOpacity,
+    BackHandler
 } from 'react-native';
 
 import BaseComponent from '../component/BaseComponent';
@@ -41,7 +43,45 @@ export default class LoginScene extends BaseComponent {
         }
     }
 
+    _checkPermission = async (pName)=>{
+        try {
+            const granted = await PermissionsAndroid.request(
+                pName,
+                {
+                    'title': 'Cool Photo App Camera Permission',
+                    'message': 'Cool Photo App needs access to your camera ' +
+                    'so you can take awesome pictures.'
+                }
+            );
+            return granted;
+        } catch (err) {
+            console.warn(err)
+        }
+    };
+
+    _requestPermission = async (pName)=>{
+        let result = await PermissionsAndroid.requestPermission(
+            pName,
+            {
+                title: '权限请求',
+                message:
+                '该应用需要如下权限 ' + pName +
+                ' 请授权!'
+            },
+        );
+        return result;
+    };
+
     initFinish = () => {
+        console.log('111111111111111');
+        if(!this._checkPermission(PermissionsAndroid.PERMISSIONS.CAMERA)){
+            console.log('2222222222222222222222');
+            if(!this._requestPermission(PermissionsAndroid.PERMISSIONS.CAMERA)){
+                console.log('3333333333333333333');
+                BackHandler.exitApp();
+            }
+        }
+
         StorageUtil.mGetItem(StorageKeyNames.USERNAME, (data) => {
             if (data.code == 1) {
                 this.userName = data.result;

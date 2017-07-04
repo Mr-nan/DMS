@@ -162,7 +162,7 @@ export default class StockTopOrderScene extends Component{
         console.log('搜索');
         this.page = 1;
         this.total = 0;
-        this.frame = searchValue;
+        this.payment_number = searchValue;
         this.allSource = [];
         this._showLoadingModal();
         this._getData();
