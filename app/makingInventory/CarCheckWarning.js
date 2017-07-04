@@ -406,7 +406,8 @@ let styles = StyleSheet.create({
         flexDirection: 'row',
         marginTop: Pixel.getPixel(10),
         alignItems: 'center',
-        paddingVertical: Pixel.getPixel(8)
+        paddingVertical: Pixel.getPixel(8),
+        height: Pixel.getPixel(68),
     },
     image: {
         height: Pixel.getPixel(90),

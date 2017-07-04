@@ -234,13 +234,13 @@ class CollectOBDRFID extends PureComponent{
             text:rfid
         })
             this.setState({
-                editAble:true
+                editAble:false
             })
 
 
     }
     _setStateScan=()=>{
-        const {rfid,obdNumber}=this.props
+        const {rfid,obdNumber}=this.props;
         this.bq.setSelected(false);
         this.obd.setSelected(true);
         this.input.setNativeProps({
@@ -249,7 +249,7 @@ class CollectOBDRFID extends PureComponent{
         })
 
         this.setState({
-                editAble:false
+                editAble:true
             })
     }
 
@@ -427,7 +427,7 @@ const styles=StyleSheet.create({
     textRight:{
 
         textAlign:'right',
-
+        padding:0,
     },
 
     tintput:{
