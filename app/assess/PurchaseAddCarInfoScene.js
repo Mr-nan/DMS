@@ -80,10 +80,7 @@ export default class PurchaseAddCarInfoScene extends BaseComponent {
     };
 
     initFinish = () => {
-
-        this._showLoadingModal();
         this._getJsonData();
-
     };
 
     _insertSData = (carD) => {
@@ -286,6 +283,7 @@ export default class PurchaseAddCarInfoScene extends BaseComponent {
                     Net.request(appUrls.AUTOGETRUNPLACE, 'post', mapsss).then(
                         (runRep) => {
                             this._closeLoadingModal();
+
                             this.runPlaces = runRep.mjson.retdata;
                             if (this.runPlaces.length === 0) {
                                 if(IS_ANDROID === true){
