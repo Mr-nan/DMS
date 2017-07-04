@@ -141,7 +141,12 @@ export default class BluetoothScene extends BaseComponent {
     };
 
     _openBlueTooth = () => {
-        NativeModules.DmsCustom.startBluetooth();
+        if(IS_ANDROID === true){
+            NativeModules.DmsCustom.startBluetooth();
+        }else{
+            NativeModules.DmsCustom.startBluetooth();
+            this._showHint('请手动开启蓝牙');
+        }
     };
 
     _scanBlueTooth = () => {
