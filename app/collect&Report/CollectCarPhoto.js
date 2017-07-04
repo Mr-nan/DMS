@@ -206,7 +206,7 @@ export default class CollectCarPhoto extends BaseComponent{
                                 Object.assign(this.sumMitInfo,cacheData);
                                 console.log('提交',this.sumMitInfo)
                             }
-                            
+
                         });
 
                     }
