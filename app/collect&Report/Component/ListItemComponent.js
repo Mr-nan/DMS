@@ -399,6 +399,7 @@ const repStyles=StyleSheet.create({
         alignItems:'center'
     },
     rateinputstyle:{
+        padding:0,
         borderColor:PAGECOLOR.esc_button,
         borderWidth:0.5,
         borderRadius:adapeSize(4),
