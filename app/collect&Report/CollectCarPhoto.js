@@ -7,15 +7,16 @@ import {
     View,
     Text,
     FlatList,
-    KeyboardAvoidingView,
-    NativeModules
+    TouchableOpacity,
+    NativeModules,
 } from 'react-native';
 import BaseComponent from '../component/BaseComponent'
 import {CollectPhotoSelect} from './Component/CollectCarListComponent'
 import * as apis from '../constant/appUrls'
 import  {request} from '../utils/RequestUtil'
-import {getTopdistance,STATECODE,height,adapeSize,dateFormat} from './Component/MethodComponet'
+import {getTopdistance,STATECODE,PAGECOLOR,adapeSize,width} from './Component/MethodComponet'
 import {SeparatorComponent} from './Component/ListItemComponent'
+import {CollectNestTep} from './Component/CollectCarListComponent'
 import {commenStyle} from './Component/PageStyleSheet'
 import ImagePicker from "react-native-image-picker";
 import AllNavigationView from '../component/AllNavigationView';
@@ -149,7 +150,7 @@ export default class CollectCarPhoto extends BaseComponent{
                     .then((responseData)=>{
                         this.props.screenProps.showModal(false);
                     let tempdata=responseData.retdata[0];
-                        dataSource.push(tempdata.file_url);
+                        dataSource.push({file_url:tempdata.file_url,file_id:tempdata.file_id});
 
                         SQLite.changeData('INSERT INTO carImageInfo (vin,syscodedata_id,file_url,file_id) VALUES(?,?,?,?)',
                             [this.state.vin,this.state.data[index].key,tempdata.file_url,tempdata.file_id])
@@ -166,7 +167,10 @@ export default class CollectCarPhoto extends BaseComponent{
 
     }
 
+    _SubmitInfo=()=>{
 
+
+    }
 
     _renderItem=(data)=>{
 
@@ -180,6 +184,7 @@ export default class CollectCarPhoto extends BaseComponent{
             imagePress={this._imagePress}
         />
     }
+
     render(){
 
         // getItemLayout={(data, index) => (
@@ -187,7 +192,7 @@ export default class CollectCarPhoto extends BaseComponent{
         // )}
         return(
             <View style={commenStyle.commenPage}>
-                <View style={commenStyle.testUI}>
+                <View style={[commenStyle.testUI,{marginBottom:adapeSize(40)}]}>
                 <FlatList
                     data={this.state.data}
                     renderItem={this._renderItem}
@@ -195,6 +200,9 @@ export default class CollectCarPhoto extends BaseComponent{
                     ItemSeparatorComponent={SeparatorComponent}
                 />
                 </View>
+                <CollectNestTep title="提交" onPress={()=>{
+
+                }}/>
                 <AllNavigationView title={'收车'} backIconClick={() => {
                     this.backPage();
                 }} parentNavigation={this}/>

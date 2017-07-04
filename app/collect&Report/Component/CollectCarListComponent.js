@@ -11,7 +11,7 @@ import {
     TouchableOpacity,
     ActivityIndicator
 } from 'react-native';
-import  {PAGECOLOR,width,height,adapeSize,fontadapeSize} from './MethodComponet'
+import  {PAGECOLOR,width,height,adapeSize,fontadapeSize,getCellHeight} from './MethodComponet'
 
 
 
@@ -117,7 +117,10 @@ class CollectTitle extends  PureComponent{
         return(
             <View style={styles.titleWarp}>
                 <Text style={styles.textleft}>{title}</Text>
-                <TextInput onEndEditing={onEndEditing} style={[styles.textRight,styles.tintput]} placeholder={placeholder} defaultValue={value}/>
+                <View style={{flex:1,flexDirection:'row',justifyContent:'flex-end',alignItems:'center'}}>
+                    <TextInput underlineColorAndroid={'transparent'} onEndEditing={onEndEditing} style={[styles.textRight,styles.tintput,]} placeholder={placeholder} defaultValue={value}/>
+                </View>
+
             </View>
         )
     }
@@ -144,7 +147,10 @@ class CollectTitle extends  PureComponent{
                 <TouchableOpacity style={styles.buttonWarp} onPress={onPress}>
                 <Text style={styles.buttonText}>{title}</Text>
                 </TouchableOpacity>
-                <TextInput ref={(inpt)=>{this.input=inpt}}  style={[styles.textRight,styles.tintput]} placeholder={placeholder} defaultValue={value}/>
+                <View style={{flex:1,flexDirection:'row',justifyContent:'flex-end',alignItems:'center'}}>
+                    <TextInput underlineColorAndroid={'transparent'} ref={(inpt)=>{this.input=inpt}}  style={[styles.textRight,styles.tintput]} placeholder={placeholder} defaultValue={value}/>
+                </View>
+
             </View>
         )
     }
@@ -243,11 +249,11 @@ class CollectNestTep extends PureComponent{
 
     render(){
 
-        const {onPress}=this.props;
+        const {onPress,title}=this.props;
         return (
             <TouchableOpacity style={{width:width,height:adapeSize(40),bottom:0,backgroundColor:PAGECOLOR.all_blue,justifyContent:'center',position: 'absolute',}}
                               onPress={onPress}>
-                <Text style={styles.netTepText}>{'下一步'}</Text>
+                <Text style={styles.netTepText}>{title?title:'下一步'}</Text>
             </TouchableOpacity>
         )
 
@@ -318,7 +324,7 @@ class NetWorkingImage extends PureComponent{
 
      imagePress=(url)=>{
         const {imagePress}=this.props;
-        imagePress(url);
+        imagePress(url.file_url);
      }
 
 
@@ -370,6 +376,7 @@ const styles=StyleSheet.create({
         marginLeft:adapeSize(10),
         marginRight:adapeSize(10),
         alignItems:'center',
+        height:getCellHeight()
     },
     textleft:{
 
@@ -384,9 +391,10 @@ const styles=StyleSheet.create({
         marginTop:adapeSize(10),
         marginBottom:adapeSize(10),
     },
+
     tintput:{
         width:adapeSize(160),
-        height:adapeSize(20),
+        height:getCellHeight()-adapeSize(20),
         fontSize:adapeSize(14)
 
     },
@@ -411,7 +419,8 @@ const styles=StyleSheet.create({
         flexDirection:'row',
         alignItems:'center',
         marginLeft:adapeSize(10),
-        marginRight:adapeSize(10)
+        marginRight:adapeSize(10),
+        height:getCellHeight()
     },
     selectItem:{
         borderRadius:adapeSize(5),

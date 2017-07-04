@@ -35,10 +35,10 @@ export  default  class CollectCarInfo extends BaseComponent{
             data:[],
             renderModel:STATECODE.loading
         }
-          SQLite.createTable();
       }
     tempTimeKeyType='';
     cttBlobs={}
+    current_obd_rfid='1';
 
     componentWillUnmount() {
         readData.remove();
@@ -58,14 +58,17 @@ export  default  class CollectCarInfo extends BaseComponent{
 
         SQLite.selectData('SELECT * FROM carCollectInfo WHERE vin= ?', [this.props.navigation.state.params.carFrameNumber], (data) => {
 
+            console.log(data);
+
+
             if (data.code == 1) {
 
                 if (data.result.rows.length == 0) {
-                    SQLite.changeData('INSERT INTO carCollectInfo (vin) VALUES(?)', [this.props.navigation.state.params.carFrameNumber])
+                    SQLite.changeData('INSERT INTO carCollectInfo (vin,store_type) VALUES(?,?)', [this.props.navigation.state.params.carFrameNumber,'1'])
                 }
 
                 let cacheData = data.result.rows.item(0);
-
+                this.current_obd_rfid=cacheData.store_type;
                 this.setState({
                     data:[
                         {title:"车架号",type:show,showValue:this.props.navigation.state.params.carFrameNumber,key:'vin'},
@@ -78,7 +81,7 @@ export  default  class CollectCarInfo extends BaseComponent{
                         {title:'扫描登记证',type:click,showValue:cacheData.regbr,placeholder:'请扫描登记证',key:'regbr'},
                         {title:'扫描行驶证',type:click,showValue:cacheData.runbr,placeholder:'请扫描行驶证',key:'runbr'},
                         {title:'扫描身份证',type:click,showValue:cacheData.carid,placeholder:'请扫描身份证',key:'carid'},
-                         {title:['扫描标签','扫描OBD'],type:doubleClick,showValue:'',placeholder:'请扫描标签',key:'obd_numberrfid'},
+                        {title:['扫描标签','扫描OBD'],type:doubleClick,showValue:'',placeholder:'请扫描标签',key:'obd_numberrfid',type:cacheData.store_type},
                     ],
                     renderModel:STATECODE.loadSuccess
                 })
