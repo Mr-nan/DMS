@@ -18,11 +18,12 @@ import  LoadMoreFooter from '../component/LoadMoreFooter';
 import * as fontAndColor from '../constant/fontAndColor';
 import  PixelUtil from '../utils/PixelUtil'
 import AllNavigationView from '../component/AllNavigationView';
+import SearchTitleView from '../component/SearchTitleView';
+import * as FontAndColor from '../constant/fontAndColor';
 var Pixel = new PixelUtil();
 let page = 1;
 let allPage = 1;
 let allSouce = [];
-const searchIcon = require('../../images/assessment_customer_find.png');
 
 export  default class ObdCarList extends BaseComponent {
     // 初始化模拟数据
@@ -100,10 +101,6 @@ export  default class ObdCarList extends BaseComponent {
         }
     }
 
-    textChange = (text) => {
-        this.keyword = text;
-    };
-
     render() {
         if (this.state.renderPlaceholderOnly !== 'success') {
             return (<View style={{backgroundColor: fontAndColor.COLORA3, flex: 1, paddingTop: Pixel.getPixel(15)}}>
@@ -115,21 +112,9 @@ export  default class ObdCarList extends BaseComponent {
 
             return (
                 <View style={styles.container}>
-                    <View style={styles.searchStyle}>
-                        <TextInput
-                            multiline={true}
-                            style={{flex:1, flexWrap: 'wrap'}}
-                            placeholder={'车架号、OBD设备号、借款单号关键字'}
-                            underlineColorAndroid={"#00000000"}
-                            onChangeText={this.textChange}
-                        />
-                        <TouchableOpacity activeOpacity={0.8} onPress={this.searchData}>
-                            <Image style={styles.searchIcon} source={searchIcon}/>
-                        </TouchableOpacity>
-
-                    </View>
+                    <View style={styles.wrapContainer}>
+                    <SearchTitleView hint={'车架号、OBD设备号、借款单号关键字'} onSearchClick={this.searchData}/>
                     <ListView
-                        contentContainerStyle={styles.listStyle}
                         dataSource={this.state.dataSource}
                         renderRow={this.renderRow}
                         enableEmptySections = {true}
@@ -147,6 +132,7 @@ export  default class ObdCarList extends BaseComponent {
                         }
                     />
 
+                    </View>
                     <AllNavigationView title={'车辆列表'} backIconClick={() => {
                     this.backPage();
                 }} parentNavigation={this}/>
@@ -156,9 +142,10 @@ export  default class ObdCarList extends BaseComponent {
         }
     }
 
-    searchData = () => {
+    searchData = (text) => {
         allSouce = []
         page = 1;
+        this.keyword =text;
         this.props.screenProps.showModal(true);
         this.getData();
     }
@@ -186,25 +173,10 @@ export  default class ObdCarList extends BaseComponent {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        marginTop: Pixel.getPixel(0),   //设置listView 顶在最上面
-        backgroundColor: fontAndColor.COLORA3,
     },
-    listStyle: {
-        marginTop: Pixel.getPixel(10),
+    wrapContainer: {
+        flex: 1,
+        marginTop: Pixel.getTitlePixel(68),
+        backgroundColor: FontAndColor.all_background,
     },
-    searchStyle: {
-        flexDirection: 'row',
-        marginHorizontal: 10,
-        paddingHorizontal: 10,
-        alignItems: 'center',
-        marginTop: Pixel.getTitlePixel(78),
-        backgroundColor: 'white',
-        borderRadius: 92,
-        height: Pixel.getPixel(40)
-    },
-    searchIcon: {
-        width: Pixel.getPixel(28),
-        height: Pixel.getPixel(28),
-        margin: 3
-    }
 });

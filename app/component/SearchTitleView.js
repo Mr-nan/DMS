@@ -20,6 +20,7 @@ export default class SearchTitleView extends Component{
 
     constructor(props){
         super(props);
+        this.searchValue=''
     }
 
     _onNameChange = (text)=>{

@@ -55,7 +55,7 @@ export  default class ObdWarningExplain extends BaseComponent {
                     <Text style={{marginRight: 3, marginLeft:10, color:'black'}}>异常说明:</Text>
                     <TextInput
                         multiline={true}
-                        style={{flex:1, flexWrap: 'wrap', height:this.state.height, paddingVertical:Pixel.getPixel(5)}}
+                        style={{flex:1, flexWrap: 'wrap', height:Pixel.getTitlePixel(78), paddingVertical:Pixel.getPixel(5)}}
                         placeholder={'请输入异常类说明'}
                         onContentSizeChange={this.onContentSizeChange.bind(this)}
                         underlineColorAndroid={"#00000000"}
@@ -208,7 +208,7 @@ let styles = StyleSheet.create({
         marginTop: Pixel.getTitlePixel(78),
         marginBottom: Pixel.getPixel(10),
         alignItems: 'center',
-        paddingVertical: Pixel.getPixel(12)
+        height:Pixel.getTitlePixel(78)
     },
     image: {
         height: Pixel.getPixel(90),

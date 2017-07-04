@@ -18,11 +18,12 @@ import  LoadMoreFooter from '../component/LoadMoreFooter';
 import * as fontAndColor from '../constant/fontAndColor';
 import  PixelUtil from '../utils/PixelUtil'
 import AllNavigationView from '../component/AllNavigationView';
+import SearchTitleView from '../component/SearchTitleView';
+import * as FontAndColor from '../constant/fontAndColor';
 var Pixel = new PixelUtil();
 let page = 1;
 let allPage = 1;
 let allSouce = [];
-const searchIcon = require('../../images/assessment_customer_find.png');
 
 export  default class CarCheckCustomer extends BaseComponent {
     // 初始化模拟数据
@@ -118,24 +119,8 @@ export  default class CarCheckCustomer extends BaseComponent {
                     <View style={styles.topStyle}>
                         <Text style={{flex: 1, textAlign:'center'}}>{this.retmsg}</Text>
                     </View>
-                    <View style={styles.searchStyle}>
-                        <View style={{flex:1, }}>
-                            <TextInput
-                                multiline={true}
-                                style={{height: Pixel.getPixel(40)}}
-                                placeholder={'客户姓名关键字'}
-                                underlineColorAndroid={"#00000000"}
-                                onChangeText={this.textChange}
-                            />
-                        </View>
-
-                        <TouchableOpacity activeOpacity={0.8} onPress={this.searchData}>
-                            <Image style={styles.searchIcon} source={searchIcon}/>
-                        </TouchableOpacity>
-
-                    </View>
+                    <SearchTitleView hint={'客户姓名关键字'} onSearchClick={this.searchData}/>
                     <ListView
-                        contentContainerStyle={styles.listStyle}
                         dataSource={this.state.dataSource}
                         renderRow={this.renderRow}
                         enableEmptySections = {true}
@@ -162,10 +147,11 @@ export  default class CarCheckCustomer extends BaseComponent {
         }
     }
 
-    searchData = () => {
+    searchData = (text) => {
         allSouce = []
         page = 1;
         this.props.screenProps.showModal(true);
+        this.keyword = text;
         this.getData();
     }
 
@@ -189,25 +175,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         marginTop: Pixel.getPixel(0),   //设置listView 顶在最上面
-        backgroundColor: fontAndColor.COLORA3,
-    },
-    listStyle: {
-        marginTop: Pixel.getPixel(10),
-    },
-    searchStyle: {
-        flexDirection: 'row',
-        marginHorizontal: 10,
-        paddingHorizontal: 10,
-        alignItems: 'center',
-        marginTop: Pixel.getPixel(10),
-        backgroundColor: 'white',
-        borderRadius: 92,
-        height: Pixel.getPixel(40),
-    },
-    searchIcon: {
-        width: Pixel.getPixel(28),
-        height: Pixel.getPixel(28),
-        margin: 3
+        backgroundColor: FontAndColor.all_background,
     },
     topStyle: {
         flexDirection: 'row',
