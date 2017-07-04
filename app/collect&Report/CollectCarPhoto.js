@@ -32,6 +32,14 @@ export default class CollectCarPhoto extends BaseComponent{
    tempCellBlobs={};
 
 
+
+   sumMitInfo={vin:this.state.vin,
+       base_id:this.props.navigation.state.params.baseID,
+       carid:this.props.navigation.state.params.carId,
+       files:'',
+       type:this.props.navigation.state.params.type
+   }
+
     initFinish(){
         let dataS = [
             {title: '车辆照片（体现防伪标签和车架号）', key: 'vin', default: []},
@@ -42,7 +50,6 @@ export default class CollectCarPhoto extends BaseComponent{
             {title: '车辆权属声明', key: 'sm', default: []},
             {title: '保单', key: 'bd', default: []},
             {title: '预审单', key: 'ysd', default: []},
-            {title: '行驶证', key: 'xsz', default: []},
             {title: '委托书', key: 'wts', default: []},
             {title: '买卖合同', key: 'ht', default: []},
             {title: '其他', key: 'other', default: []}]
@@ -63,7 +70,6 @@ export default class CollectCarPhoto extends BaseComponent{
                                       item.default.push({file_url:cacheRow.file_url,file_id:cacheRow.file_id});
                                   }
                               })
-
                           }
 
                         }}
@@ -166,9 +172,49 @@ export default class CollectCarPhoto extends BaseComponent{
         let data = new FormData()
 
     }
-
+//提交信息
     _SubmitInfo=()=>{
 
+
+        SQLite.selectData('SELECT * FROM carImageInfo WHERE vin= ?',[this.state.vin],
+            (data)=>{
+
+                if(data.code==1){
+                    let temp =data.result.rows.length;
+                    if (temp>0){
+
+                        let files = [];
+                        for(let i=0;i<temp;i++){
+
+                            let cacheRow=data.result.rows.item(i);
+
+                            files.push({
+                                file_id: cacheRow.file_id,
+                                syscodedata_id: cacheRow.syscodedata_id
+                            })
+                        }
+                        let  filesID=JSON.stringify(files);
+                        this.sumMitInfo.files=filesID;
+                        SQLite.selectData('SELECT * FROM carCollectInfo WHERE vin= ?', [this.state.vin], (data) => {
+
+                            if(data.code==1){
+
+                                let cacheData = data.result.rows.item(0);
+
+
+                                Object.assign(this.sumMitInfo,cacheData);
+                                console.log('提交',this.sumMitInfo)
+                            }
+
+                        });
+
+                    }
+                    else {
+
+                        alert('还没长传图片');
+                    }
+                }
+            })
 
     }
 
@@ -200,9 +246,7 @@ export default class CollectCarPhoto extends BaseComponent{
                     ItemSeparatorComponent={SeparatorComponent}
                 />
                 </View>
-                <CollectNestTep title="提交" onPress={()=>{
-
-                }}/>
+                <CollectNestTep title="提交" onPress={this._SubmitInfo}/>
                 <AllNavigationView title={'收车'} backIconClick={() => {
                     this.backPage();
                 }} parentNavigation={this}/>

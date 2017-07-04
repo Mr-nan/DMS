@@ -147,7 +147,7 @@ export default class ReportInfoManage extends BaseComponent{
         paramer.msa_wholesale_rate=addition(paramer.msa_wholesale_rate,100);
         paramer.msa_retail_rate=addition(paramer.msa_retail_rate,100);
 
-        console.log('暂存的参数'+paramer);
+        console.log('暂存的参数',paramer);
 
         request(apis.PATROLEVALSAVEUPDATEPATROLEVAL, 'Post', paramer)
             .then((response) => {
@@ -163,7 +163,6 @@ export default class ReportInfoManage extends BaseComponent{
         if(data.item.type==rate){
 
             return (
-
                 <View style={{marginLeft:10}}>
                     <Text>{data.index+1+'、'+data.item.title}</Text>
                         <RepRateInput typeName="批发" onChangeText={(text)=>{this.PostData.wholesale_rate=text}} defaultValue={getDefaultValue(this.PostData.wholesale_rate)}/>
@@ -252,6 +251,14 @@ export default class ReportInfoManage extends BaseComponent{
 
             return(
                 <View style={commenStyle.commenPage}>
+                <View style={commenStyle.testUI}>
+                    <RepDetailListHeader
+                        people={this._getProps('title')}
+                        money={this._getProps('money')}
+                        date={this._getProps('month')}
+                        target="经营指标"/>
+                </View>
+
                 <AllNavigationView title={this._getProps('title')} backIconClick={() => {
                     this.backPage();
                 }} parentNavigation={this}/>

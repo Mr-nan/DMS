@@ -41,8 +41,8 @@ class CollectCarListItem extends PureComponent{
 
     _onclick=()=>{
 
-        const {carListItemClick,carFrameNumber}=this.props;
-        carListItemClick(carFrameNumber);
+        const {carListItemClick,carFrameNumber,type,base_id,carid}=this.props;
+        carListItemClick(carFrameNumber,base_id,carid,type);
     }
 
     render(){
@@ -395,8 +395,11 @@ const repStyles=StyleSheet.create({
         marginLeft:adapeSize(10),
         marginTop:adapeSize(10),
         marginBottom:adapeSize(5),
+        height:adapeSize(30),
+        alignItems:'center'
     },
     rateinputstyle:{
+        padding:0,
         borderColor:PAGECOLOR.esc_button,
         borderWidth:0.5,
         borderRadius:adapeSize(4),

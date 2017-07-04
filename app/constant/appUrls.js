@@ -131,12 +131,12 @@ export const FILEUPLOAD = BASEURL + "File/upload";
 export const INVENTORYFINANCINGADDAUTO = BASEURL + "InventoryFinancing/addAuto";
 
 /**
- * 评估线上库容订单列表
+ * 评估线上库融订单列表
  */
 export const INVENTORYFINANCINGLOANLIST = BASEURL + "InventoryFinancing/loanList";
 
 /**
- * 评估线上库容车辆列表
+ * 评估线上库融车辆列表
  */
 export const INVENTORYFINANCINGLOANAUTOLIST = BASEURL +
     "InventoryFinancing/loanAutoList";
@@ -147,7 +147,7 @@ export const INVENTORYFINANCINGLOANAUTOLIST = BASEURL +
 export const ONECARADDAUTO = BASEURL + "OneCar/addAuto";
 
 /**
- * 评估库容删除车辆
+ * 评估库融删除车辆
  */
 export const INVENTORYFINANCINGDELAUTO = BASEURL + "InventoryFinancing/delAuto";
 
@@ -157,13 +157,13 @@ export const INVENTORYFINANCINGDELAUTO = BASEURL + "InventoryFinancing/delAuto";
 export const ONECARDELAUTO = BASEURL + "OneCar/delAuto";
 
 /**
- * 评估库容二次评估
+ * 评估库融二次评估
  */
 export const INVENTORYFINANCINGRESETPRICE = BASEURL +
     "InventoryFinancing/resetPrice";
 
 /**
- * 评估库容编辑
+ * 评估库融编辑
  */
 export const INVENTORYFINANCINGEDITAUTO = BASEURL + "InventoryFinancing/editAuto";
 

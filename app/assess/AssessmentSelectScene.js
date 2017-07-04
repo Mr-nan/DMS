@@ -76,7 +76,7 @@ export default class AssessmentSelectScene extends BaseComponent{
                                                 closeLoading={this._closeLoadingModal}
                                                 showLoading={this._showLoadingModal}
                                                 toNextPage={this._toNextPage}
-                                                merge_id={this.merge_id} tabLabel='线下库容' />);
+                                                merge_id={this.merge_id} tabLabel='线下库融' />);
                     this.tabFlag = false;
                     if(rep.single !== '0'){
                         tabs.push(<OneCarOrderScene key={'1'}
@@ -95,7 +95,7 @@ export default class AssessmentSelectScene extends BaseComponent{
                                                       closeLoading={this._closeLoadingModal}
                                                       showLoading={this._showLoadingModal}
                                                       toNextPage={this._toNextPage}
-                                                      merge_id={this.merge_id} tabLabel='线上库容' />);
+                                                      merge_id={this.merge_id} tabLabel='线上库融' />);
                         this.tabFlag = true;
                     }
                     if(rep.purcha !== '0'){

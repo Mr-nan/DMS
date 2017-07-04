@@ -171,7 +171,7 @@ const SQLite = React.createClass({
                 + 'rg_type VARCHAR(20) default "",'
                 + 'regbr VARCHAR(20) default "",'
                 + 'runbr VARCHAR(20) default "",'
-                + 'carid VARCHAR(20) default "",'
+                + 'id_card VARCHAR(20) default "",'
                 + 'obd_number VARCHAR(20) default "",'
                 + 'store_type VARCHAR(20) default "",'
                 + 'rfid VARCHAR(20) default "");'

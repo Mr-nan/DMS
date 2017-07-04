@@ -10,7 +10,7 @@ import {
     TouchableOpacity,
     TextInput,
 } from 'react-native';
-import  {PAGECOLOR,width,height,adapeSize,fontadapeSize} from './MethodComponet'
+import  {PAGECOLOR,width,height,adapeSize,fontadapeSize,dateFormat} from './MethodComponet'
 import  {addTextValue} from './DecoratorBlobs'
 
 
@@ -59,9 +59,8 @@ class RepListSearch extends PureComponent{
 
     state={
 
-        buttonText:'时间'
+        buttonText:dateFormat(new Date(),'yyyy-MM')
     }
-
     componentWillMount() {
         tempValue.ccLsTempValue='';
     }

@@ -101,8 +101,8 @@ class CollectTitle extends  PureComponent{
         return(
             <View style={styles.titleWarp}>
                 <Text style={styles.textleft}>{title}</Text>
-                <TouchableOpacity style={{justifyContent:'center'}} onPress={onPress}>
-                    <TextInput ref={(ti)=>{this.input=ti}} editable={false} style={[styles.textRight,styles.tintput]} placeholder={placeholder} defaultValue={value}/>
+                <TouchableOpacity style={styles.textinptuWarp} onPress={onPress}>
+                    <TextInput underlineColorAndroid={'transparent'} ref={(ti)=>{this.input=ti}} editable={false} style={[styles.textRight,styles.tintput]} placeholder={placeholder} defaultValue={value}/>
                 </TouchableOpacity>
             </View>
         )
@@ -117,7 +117,7 @@ class CollectTitle extends  PureComponent{
         return(
             <View style={styles.titleWarp}>
                 <Text style={styles.textleft}>{title}</Text>
-                <View style={{flex:1,flexDirection:'row',justifyContent:'flex-end',alignItems:'center'}}>
+                <View style={styles.textinptuWarp}>
                     <TextInput underlineColorAndroid={'transparent'} onEndEditing={onEndEditing} style={[styles.textRight,styles.tintput,]} placeholder={placeholder} defaultValue={value}/>
                 </View>
 
@@ -147,7 +147,7 @@ class CollectTitle extends  PureComponent{
                 <TouchableOpacity style={styles.buttonWarp} onPress={onPress}>
                 <Text style={styles.buttonText}>{title}</Text>
                 </TouchableOpacity>
-                <View style={{flex:1,flexDirection:'row',justifyContent:'flex-end',alignItems:'center'}}>
+                <View style={styles.textinptuWarp}>
                     <TextInput underlineColorAndroid={'transparent'} ref={(inpt)=>{this.input=inpt}}  style={[styles.textRight,styles.tintput]} placeholder={placeholder} defaultValue={value}/>
                 </View>
 
@@ -199,8 +199,23 @@ class CollectTitle extends  PureComponent{
 class CollectOBDRFID extends PureComponent{
 
 
+    // 构造
+      constructor(props) {
+        super(props);
+        // 初始状态
+        this.state = {
+
+            editAble:false
+        };
+      }
     componentDidMount() {
-        this.bq.setSelected(true)
+
+        const {selectType}=this.props;
+        if(selectType==1){
+            this._setStateScan()
+        }else {
+           this._setStateMark();
+        }
     }
     _setTitle=(title)=>{
 
@@ -208,43 +223,59 @@ class CollectOBDRFID extends PureComponent{
             text:title
         })
     }
-    _bqClick=()=>{
+    _setStateMark =()=>{
 
-       const {markScan}=this.props;
-       this.bq.setSelected(true);
-       this.obd.setSelected(false);
-       this.input.setNativeProps({
-           placeholder:'请扫描标签',
-           text:''
-       })
-        markScan();
+        const {rfid,obdNumber}=this.props;
+
+        this.bq.setSelected(true);
+        this.obd.setSelected(false);
+        this.input.setNativeProps({
+            placeholder:'请扫描标签',
+            text:rfid
+        })
+            this.setState({
+                editAble:true
+            })
+
+
     }
-    _obdClick=()=>{
-        const {OBDScan}=this.props;
+    _setStateScan=()=>{
+        const {rfid,obdNumber}=this.props
         this.bq.setSelected(false);
         this.obd.setSelected(true);
         this.input.setNativeProps({
             placeholder:'请扫描OBD',
-            text:''
+            text:obdNumber,
         })
-        OBDScan();
+
+        this.setState({
+                editAble:false
+            })
     }
 
+    _bqClick=()=>{
+       const {markScan}=this.props;
+       this._setStateMark();
+       markScan();
+    }
+    _obdClick=()=>{
+        const {OBDScan}=this.props;
+        this._setStateScan();
+        OBDScan();
+    }
     render(){
-
         return(
             <View style={styles.selectStyle}>
 
                 <RfIdButton ref={(biaoqian)=>{this.bq=biaoqian}} onPress={this._bqClick} title={'扫描标签'}/>
                 <RfIdButton ref={(obd)=>{this.obd=obd}}  onPress={this._obdClick} title={'扫描OBD'}/>
-                <TextInput ref={(ip)=>{this.input=ip}} editable={false} style={[styles.tintput,{height:adapeSize(40),marginTop:adapeSize(3),textAlign:'right'}]}  placeholder={'请选择'}/>
+                <TextInput underlineColorAndroid={'transparent'} ref={(ip)=>{this.input=ip}} editable={this.state.editAble} style={[styles.tintput,{height:adapeSize(40),marginTop:adapeSize(3),textAlign:'right'}]}  placeholder={'请选择'}/>
 
             </View>
         )
     }
 
 }
-
 class CollectNestTep extends PureComponent{
 
     render(){
@@ -369,6 +400,14 @@ export {CollectButtonInput,CollectDate,CollectTitelInput,CollectTitle,CollectSel
 
 const styles=StyleSheet.create({
 
+    textinptuWarp:{
+
+        flex:1,
+        flexDirection:'row',
+        justifyContent:'flex-end',
+        alignItems:'center',
+        height:getCellHeight()
+    },
     titleWarp:{
 
         flexDirection:'row',
@@ -388,13 +427,12 @@ const styles=StyleSheet.create({
     textRight:{
 
         textAlign:'right',
-        marginTop:adapeSize(10),
-        marginBottom:adapeSize(10),
+        padding:0,
     },
 
     tintput:{
         width:adapeSize(160),
-        height:getCellHeight()-adapeSize(20),
+
         fontSize:adapeSize(14)
 
     },
