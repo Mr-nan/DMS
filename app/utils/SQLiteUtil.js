@@ -173,6 +173,7 @@ const SQLite = React.createClass({
                 + 'runbr VARCHAR(20) default "",'
                 + 'carid VARCHAR(20) default "",'
                 + 'obd_number VARCHAR(20) default "",'
+                + 'store_type VARCHAR(20) default "",'
                 + 'rfid VARCHAR(20) default "");'
                 , [], () => {
                     this._successCB('executeSql');

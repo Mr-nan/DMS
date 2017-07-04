@@ -32,7 +32,15 @@ const PAGECOLOR = {
 
 
 
+
+
 const {width, height} = Dimensions.get('window')
+
+const getCellHeight=()=>{
+
+  return  (height-getTopdistance()-adapeSize(40))/12;
+
+}
 
 const changeToMillion=(number)=>{
 
@@ -85,4 +93,4 @@ const toutalPage =(toutal,rows)=>{
 
 }
 
-export {STATECODE,PAGECOLOR,width,height,dateFormat,adapeSize,fontadapeSize,changeToMillion,toutalPage,getTopdistance,addition,getDefaultValue}
+export {STATECODE,PAGECOLOR,width,height,dateFormat,adapeSize,fontadapeSize,changeToMillion,toutalPage,getTopdistance,addition,getDefaultValue,getCellHeight}
